@@ -1,0 +1,13 @@
+# Dev tooling — not part of the deployed game
+_build/
+_preview_stats.html
+_preview_leaderboard.html
+.claude/
+
+# Raw source images — not referenced by index.html
+assets/img/_orig/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.log
