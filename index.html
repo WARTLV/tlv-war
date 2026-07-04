@@ -1150,6 +1150,25 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .wpts{font-family:'Bebas Neue',sans-serif;font-size:clamp(20px,6vw,32px);letter-spacing:2px;color:var(--g);text-shadow:2px 2px 0 #000,0 0 16px rgba(245,197,24,.55);margin-top:clamp(4px,1.4vw,8px);min-height:1em;opacity:0;transform:scale(.7);transition:opacity .4s,transform .4s cubic-bezier(.2,.85,.3,1.4);}
 .wpts.on{opacity:1;transform:scale(1);}
 .wpts .wpx{display:block;font-family:'Heebo',system-ui,sans-serif;font-weight:700;font-size:clamp(9px,2.4vw,12px);letter-spacing:.5px;color:#cdb98a;text-shadow:0 1px 2px #000;margin-top:2px;}
+/* ── RETENTION SUITE: rank card, daily streak, achievements, rematch, kb hint ── */
+.prank,.wrank{margin:clamp(4px,1.2vw,7px) auto 0;width:min(86vw,340px);text-align:center;direction:rtl;font-family:'Heebo',system-ui,sans-serif;font-weight:800;font-size:clamp(10px,2.9vw,13px);color:#e8d9a8;text-shadow:0 1px 2px #000;}
+.wrank{width:min(80vw,300px);margin-bottom:clamp(6px,1.8vw,10px);color:#cdb98a;font-size:clamp(9px,2.6vw,12px);}
+.prank .prb,.wrank .prb{height:7px;margin-top:4px;background:rgba(255,255,255,.09);border:1px solid rgba(245,197,24,.35);border-radius:4px;overflow:hidden;}
+.prank .prf,.wrank .prf{height:100%;width:0%;background:linear-gradient(90deg,#a9760c,#f5c518,#fff6d2);box-shadow:0 0 8px rgba(245,197,24,.6);transition:width .6s ease;}
+.prank .prd{display:inline-block;margin-top:5px;padding:2px 10px;border:1px solid rgba(255,120,40,.5);border-radius:20px;background:rgba(80,30,0,.45);color:#ffb46a;font-size:clamp(9px,2.6vw,12px);}
+.ach-cnt{text-align:center;font-family:'Bebas Neue',sans-serif;font-size:clamp(13px,3.6vw,17px);letter-spacing:2px;color:var(--g);text-shadow:1px 1px 0 #000;margin:0 0 clamp(10px,2.8vw,14px);}
+.ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(6px,1.8vw,10px);}
+.ach-i{display:flex;align-items:center;gap:8px;direction:rtl;text-align:right;padding:clamp(7px,2vw,10px) clamp(6px,1.8vw,9px);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.012));border:1px solid rgba(255,255,255,.08);border-radius:4px;font-family:'Heebo',system-ui,sans-serif;}
+.ach-i.off{opacity:.38;filter:grayscale(.9);}
+.ach-i b{font-size:clamp(15px,4.4vw,21px);flex-shrink:0;}
+.ach-i .an{font-weight:900;font-size:clamp(10px,2.9vw,13px);color:#fff;line-height:1.25;}
+.ach-i .ad{font-size:clamp(8px,2.4vw,11px);color:#bda87c;line-height:1.3;}
+.acht{position:absolute;top:11%;left:50%;z-index:200;display:flex;align-items:center;gap:9px;direction:rtl;padding:9px 17px;background:linear-gradient(180deg,#2a1f08,#120c03);border:2px solid var(--g);border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.8),0 0 22px rgba(245,197,24,.35);font-family:'Heebo',system-ui,sans-serif;font-weight:900;color:#ffe9a8;font-size:clamp(11px,3.2vw,15px);text-shadow:0 1px 2px #000;opacity:0;pointer-events:none;transform:translate(-50%,-26px);transition:opacity .35s,transform .35s cubic-bezier(.2,.85,.3,1.2);}
+.acht.on{opacity:1;transform:translate(-50%,0);}
+.acht b{font-size:clamp(15px,4.4vw,21px);}
+.wbtns{display:flex;gap:clamp(8px,2.4vw,12px);justify-content:center;}
+.kbh{display:none;margin-top:3px;font-family:'Heebo',system-ui,sans-serif;font-weight:700;font-size:10px;letter-spacing:.3px;color:#8f9bb0;text-shadow:0 1px 2px #000;white-space:nowrap;}
+@media (pointer:fine) and (min-width:900px){.kbh{display:block;}}
 </style>
 <div class="scr" id="SN">
   <div class="sbg"><div class="sbg-img"></div><div class="sbg-spot"></div><div class="sbg-vig"></div><div class="sbg-floor"></div></div>
@@ -1195,6 +1214,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
   </div>
   <div class="pgr" id="PNAME_GREET"></div>
   <div class="pstats" id="PSTATS"></div>
+  <div class="prank" id="PRANK"></div>
   <div class="hero" id="HERO">
     <div class="hero-glow" id="HGLOW"></div>
     <img class="hero-img" id="HIMG" src="" alt=""/>
@@ -1242,6 +1262,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
   <div class="scf">
     <div class="scf-p" onclick="showTutorial()"><b>?</b><span>איך משחקים</span></div>
     <div class="scf-p" onclick="openLeaderboard()"><b>🏆</b><span>טבלת אלופים</span></div>
+    <div class="scf-p" onclick="openAch()"><b>🎖</b><span>הישגים</span></div>
     <div class="scf-p" onclick="toggleSound()"><b>♪</b><span>צליל</span></div>
     <div class="scf-p" onclick="openGCount()"><b>🌐</b><span>שחקנים</span></div>
   </div>
@@ -1258,6 +1279,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
       <div class="hrn" id="RND">R1</div>
       <div class="htm" id="TMR">100</div>
       <div class="tur" id="TURN"></div>
+      <div class="kbh">⌨ A=□ · S=✕ · D=○ · W=△ · חצים = תנועה/הגנה</div>
     </div>
     <div class="hs R">
       <div class="ht"><div class="hpo"><img id="PT2" src="" alt=""/></div><div class="hna" id="HN2">CPU</div></div>
@@ -1353,7 +1375,11 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
     <div class="wnm" id="WN"></div>
     <div class="wsb" id="WB"></div>
     <div class="wpts" id="WPTS"></div>
-    <button class="bpa" onclick="rst()">▶ PLAY AGAIN</button>
+    <div class="wrank" id="WRANK"></div>
+    <div class="wbtns">
+      <button class="bpa" onclick="rematch()">🔁 קרב חוזר</button>
+      <button class="bpa" onclick="rst()">▶ החלף לוחם</button>
+    </div>
   </div>
 </div>
 <div class="tut" id="TUT">
@@ -1391,6 +1417,16 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
     <button class="lbgo" onclick="closeGCount()">סגור ←</button>
   </div>
 </div>
+<div class="lb" id="ACH">
+  <div class="lbbox">
+    <div class="lbkk">ACHIEVEMENTS</div>
+    <div class="lbh">🎖 הישגים</div>
+    <div class="ach-cnt" id="ACH_C"></div>
+    <div class="ach-grid" id="ACH_G"></div>
+    <button class="lbgo" onclick="closeAch()">סגור ←</button>
+  </div>
+</div>
+<div class="acht" id="ACHT"></div>
 </div>
 <script>
 /* ════════════════════════════════════════════════════════════════════════════
@@ -1676,16 +1712,17 @@ function confirmName(){
   if(g)g.textContent='לוחם: '+n;
   SS('SS');
   playAMN();
+  checkDaily();                       // daily-streak tick (before renderStats so the flame chip is fresh)
   renderStats();
   fbFetchLeaderboard();               // warm the shared champions board for the select screen
   maybeShowTutorial();                // first-ever player → show the how-to-play card once
 }
 // ── LOCAL STATS (per-device record card) + TUTORIAL ──
 const STATS_KEY='tlvwar_stats';
-let curMaxCombo=0,gameEnded=false;
-function loadStats(){try{return Object.assign({w:0,l:0,g:0,bc:0,sc:0},JSON.parse(localStorage.getItem(STATS_KEY))||{});}catch(e){return {w:0,l:0,g:0,bc:0,sc:0};}}
+let curMaxCombo=0,gameEnded=false,lastDailyPct=0,pCineUsed=false;
+function loadStats(){try{return Object.assign({w:0,l:0,g:0,bc:0,sc:0,beat:{}},JSON.parse(localStorage.getItem(STATS_KEY))||{});}catch(e){return {w:0,l:0,g:0,bc:0,sc:0,beat:{}};}}
 function saveStats(s){try{localStorage.setItem(STATS_KEY,JSON.stringify(s));}catch(e){}}
-function renderStats(){const s=loadStats();const el=document.getElementById('PSTATS');if(el)el.textContent='🏅 '+(s.sc||0).toLocaleString()+' נק׳ · ⚔ '+s.w+' נצח׳ · 🔥 שיא '+s.bc;}
+function renderStats(){const s=loadStats();const el=document.getElementById('PSTATS');if(el)el.textContent='🏅 '+(s.sc||0).toLocaleString()+' נק׳ · ⚔ '+s.w+' נצח׳ · 🔥 שיא '+s.bc;renderRank(s);}
 function recordResult(playerWon){
   const s=loadStats();s.g++;
   if(playerWon){
@@ -1695,12 +1732,100 @@ function recordResult(playerWon){
       const lvl=Math.min(diffLvl,DIFF_MAX);                    // the difficulty tier the player just beat (before it climbs)
       lastWinLvl=lvl;
       lastWinPts=Math.round(100*(1+0.6*lvl)*(1+0.5*cpuEdge));  // harder CPU (higher tier / clamped basic-spam) → bigger reward
+      const _dm=dailyMult();                                   // daily-streak bonus multiplies real wins only
+      lastDailyPct=_dm>1?Math.round((_dm-1)*100):0;
+      if(lastDailyPct)lastWinPts=Math.round(lastWinPts*_dm);
       s.sc=(s.sc||0)+lastWinPts;
     }
+    if(!s.beat)s.beat={};if(P2&&P2.id)s.beat[P2.id]=1;        // roster-conquest tracking (achievement: beat all 5)
     lossStreak=0;                                             // any win clears the losing streak
-  }else{s.l++;lastWinPts=0;lossStreak++;}                     // another loss → climb toward the mercy threshold
+  }else{s.l++;lastWinPts=0;lastDailyPct=0;lossStreak++;}      // another loss → climb toward the mercy threshold
   if(curMaxCombo>s.bc)s.bc=curMaxCombo;
   saveStats(s);renderStats();fbSubmitScore();
+  checkAch({perfect:playerWon&&typeof h1!=='undefined'&&P1&&h1>=P1.hp,cine:pCineUsed,lvl:playerWon?lastWinLvl:0});
+  pCineUsed=false;                                            // per-battle flag consumed by the 'קולנוען' achievement
+}
+// ── RETENTION SUITE: ranks · daily streak · achievements · rematch ──────────
+// All additive + soft: pure localStorage, never touches combat logic.
+const RANKS=[[0,'מתאבק רחוב'],[400,'לוחם זירה'],[1200,'כוכב עולה'],[2500,'מתמודד בכיר'],[5000,'אלוף שכונתי'],[9000,'אלוף TLV'],[16000,'אגדת הזירה'],[28000,'מלך הזירה 👑']];
+function rankOf(sc){let i=0;for(let k=0;k<RANKS.length;k++)if(sc>=RANKS[k][0])i=k;return i;}
+function renderRank(s){
+  const el=document.getElementById('PRANK');if(!el)return;
+  const sc=s.sc||0,i=rankOf(sc),cur=RANKS[i],nxt=RANKS[i+1];
+  let h='🎖 '+cur[1];
+  if(nxt){const p=Math.min(100,Math.round(100*(sc-cur[0])/(nxt[0]-cur[0])));
+    h+=' <span style="opacity:.72">· עוד '+(nxt[0]-sc).toLocaleString()+' נק׳ ל־'+nxt[1]+'</span><div class="prb"><div class="prf" style="width:'+p+'%"></div></div>';
+  }else h+=' · הדרגה הגבוהה ביותר!';
+  const d=loadDaily();
+  if(d.last===localDay(0)&&(d.streak||0)>=2)h+='<span class="prd">🔥 רצף '+d.streak+' ימים · +'+Math.round((dailyMult()-1)*100)+'% נק׳ היום</span>';
+  el.innerHTML=h;
+}
+// daily streak — LOCAL calendar day (not UTC) so an evening session counts as today
+const DAILY_KEY='tlvwar_daily';
+function localDay(back){const t=new Date(Date.now()-(back||0));return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');}
+function loadDaily(){try{return JSON.parse(localStorage.getItem(DAILY_KEY))||{};}catch(e){return {};}}
+function dailyMult(){const d=loadDaily();const st=(d.last===localDay(0))?(d.streak||0):0;return 1+0.1*Math.min(Math.max(st-1,0),5);} // day2 +10% … capped +50%
+function checkDaily(){
+  const today=localDay(0);let d=loadDaily();
+  if(d.last===today)return d;                                  // already counted today
+  d={last:today,streak:(d.last===localDay(864e5))?(d.streak||0)+1:1};
+  try{localStorage.setItem(DAILY_KEY,JSON.stringify(d));}catch(e){}
+  if(d.streak>=2)achToast('🔥','רצף '+d.streak+' ימים! בונוס +'+Math.round((dailyMult()-1)*100)+'% נקודות היום');
+  return d;
+}
+// achievements — checked on every game end; toast queue never overlaps
+const ACH_KEY='tlvwar_ach';
+const ACH_DEFS=[
+  {id:'w1',    ic:'🥇',n:'ניצחון ראשון',     d:'נצח את הקרב הראשון שלך',      c:s=>s.w>=1},
+  {id:'w5',    ic:'⚔', n:'לוחם מנוסה',       d:'צבור 5 ניצחונות',              c:s=>s.w>=5},
+  {id:'w15',   ic:'🛡', n:'קשוח של הזירה',    d:'צבור 15 ניצחונות',             c:s=>s.w>=15},
+  {id:'w50',   ic:'👊',n:'מכונת מלחמה',      d:'צבור 50 ניצחונות',             c:s=>s.w>=50},
+  {id:'perfect',ic:'💎',n:'ללא שריטה',       d:'נצח קרב בלי לספוג נזק',        c:(s,x)=>!!x.perfect},
+  {id:'cine',  ic:'🎬',n:'קולנוען',          d:'הפעל מהלך קולנועי בקרב',       c:(s,x)=>!!x.cine},
+  {id:'combo5',ic:'🔥',n:'קומבו לוהט',       d:'הגע לשיא קומבו 5',             c:s=>s.bc>=5},
+  {id:'combo8',ic:'🌋',n:'בלתי ניתן לעצירה', d:'הגע לשיא קומבו 8',             c:s=>s.bc>=8},
+  {id:'all5',  ic:'🌍',n:'שולט בכולם',       d:'נצח את כל 5 הלוחמים',          c:s=>s.beat&&Object.keys(s.beat).length>=5},
+  {id:'tier3', ic:'🏔', n:'צייד ראשים',       d:'נצח יריב ברמת קושי 3 ומעלה',   c:(s,x)=>(x.lvl||0)>=3},
+  {id:'streak3',ic:'📅',n:'מכור לזירה',      d:'שחק 3 ימים ברצף',              c:()=>{const d=loadDaily();return (d.streak||0)>=3;}},
+  {id:'sc5k',  ic:'💰',n:'חמשת אלפים',       d:'צבור 5,000 נקודות',            c:s=>(s.sc||0)>=5000}
+];
+function loadAch(){try{return JSON.parse(localStorage.getItem(ACH_KEY))||{};}catch(e){return {};}}
+let _achQ=[],_achShowing=false;
+function achToast(ic,txt){_achQ.push([ic,txt]);if(!_achShowing)_achNext();}
+function _achNext(){
+  const t=document.getElementById('ACHT');if(!t){_achQ=[];_achShowing=false;return;}
+  const nx=_achQ.shift();if(!nx){_achShowing=false;return;}
+  _achShowing=true;
+  t.innerHTML='<b>'+nx[0]+'</b><span>'+nx[1]+'</span>';
+  t.classList.remove('on');void t.offsetWidth;t.classList.add('on');
+  try{sfx('B',.5);}catch(e){}
+  setTimeout(()=>{t.classList.remove('on');setTimeout(_achNext,380);},2600);
+}
+function checkAch(x){
+  const s=loadStats(),got=loadAch();let neu=false;
+  ACH_DEFS.forEach(a=>{
+    if(got[a.id])return;let ok=false;try{ok=a.c(s,x||{});}catch(e){}
+    if(ok){got[a.id]=1;neu=true;achToast(a.ic,'הישג חדש: '+a.n+'!');}
+  });
+  if(neu){try{localStorage.setItem(ACH_KEY,JSON.stringify(got));}catch(e){}}
+}
+function openAch(){
+  const m=document.getElementById('ACH');if(!m)return;
+  const got=loadAch(),g=document.getElementById('ACH_G');
+  if(g)g.innerHTML=ACH_DEFS.map(a=>'<div class="ach-i'+(got[a.id]?'':' off')+'"><b>'+a.ic+'</b><div><div class="an">'+a.n+'</div><div class="ad">'+a.d+'</div></div></div>').join('');
+  const c=document.getElementById('ACH_C'),n=ACH_DEFS.filter(a=>got[a.id]).length;
+  if(c)c.textContent=n+' / '+ACH_DEFS.length+' הושגו';
+  m.classList.add('on');
+}
+function closeAch(){const m=document.getElementById('ACH');if(m)m.classList.remove('on');}
+// instant rematch — same matchup, zero friction back into the arena
+function rematch(){
+  if(!P1||!P2){rst();return;}
+  ['F1','F2'].forEach(id=>{const el=document.getElementById(id);if(el){el.classList.remove('ko','jmp');el.style.cssText='';}});
+  ['FS1','FS2'].forEach(id=>{const el=document.getElementById(id);if(el)ALL_A.forEach(a=>el.classList.remove(a));});
+  const vwn=document.getElementById('VWN');if(vwn){vwn.pause();vwn.src='';vwn.style.display='none';vwn.style.opacity='0';}
+  stopChar();cBuf=[];
+  showVS(()=>initBattle());
 }
 // ── ONLINE COUNTER (Firebase Firestore) ───────────────────────────────────
 // Counts UNIQUE PLAYERS (by fighter name) and TOTAL GAMES played, shown on the
@@ -2414,6 +2539,7 @@ async function execMove(mv,isP1){
   // ── CINEMATIC ULTIMATE — the move IS a full-screen video ──
   if(mv.cine){
     rcA(fs);
+    if(isP1)pCineUsed=true;             // feeds the 'קולנוען' achievement at game end
     // FREEZE the match for the whole cutscene (same pause the moves-menu uses): the
     // round clock self-gates on mlOpen, and the CPU tick is stopped — nothing advances
     // behind the video. Restored the instant the clip ends / is skipped.
@@ -2817,9 +2943,14 @@ function endG(w,ip){
     if(wpts){
       if(ip&&lastWinPts>0){
         const tierTxt=lastWinLvl>0?(' · '+DIFF_NAMES[lastWinLvl]):'';
-        wpts.innerHTML='+'+lastWinPts.toLocaleString()+' נקודות<span class="wpx">ניצחון'+tierTxt+(pVariety?' · קומבו מגוון 💪':'')+'</span>';
+        wpts.innerHTML='+'+lastWinPts.toLocaleString()+' נקודות<span class="wpx">ניצחון'+tierTxt+(pVariety?' · קומבו מגוון 💪':'')+(lastDailyPct?' · 🔥 בונוס רצף +'+lastDailyPct+'%':'')+'</span>';
         wpts.classList.remove('on');void wpts.offsetWidth;wpts.classList.add('on');
       }else{wpts.classList.remove('on');wpts.innerHTML='';}
+    }
+    const wr=document.getElementById('WRANK');   // rank ladder progress — the "one more fight" hook
+    if(wr){
+      const s=loadStats(),sc=s.sc||0,ri2=rankOf(sc),nxt=RANKS[ri2+1];
+      wr.innerHTML='🎖 '+RANKS[ri2][1]+(nxt?' · עוד '+(nxt[0]-sc).toLocaleString()+' נק׳ לדרגה הבאה<div class="prb"><div class="prf" style="width:'+Math.min(100,Math.round(100*(sc-RANKS[ri2][0])/(nxt[0]-RANKS[ri2][0])))+'%"></div></div>':' · הדרגה הגבוהה ביותר!');
     }
     // Special video: Ref beats BIG
     const refWin=(w.id==='r')&&((ip&&P2&&P2.id==='b')||(!ip&&P1&&P1.id==='b'));
