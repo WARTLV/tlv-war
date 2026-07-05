@@ -1169,6 +1169,17 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .wbtns{display:flex;gap:clamp(8px,2.4vw,12px);justify-content:center;}
 .kbh{display:none;margin-top:3px;font-family:'Heebo',system-ui,sans-serif;font-weight:700;font-size:10px;letter-spacing:.3px;color:#8f9bb0;text-shadow:0 1px 2px #000;white-space:nowrap;}
 @media (pointer:fine) and (min-width:900px){.kbh{display:block;}}
+/* ── SPRINT 2: fighter traits, tournament mode, world rank, near-miss nudge ── */
+.htr{margin-top:clamp(5px,1.6vw,8px);padding-top:clamp(4px,1.2vw,6px);border-top:1px solid rgba(255,255,255,.14);font-size:clamp(8px,2.3vw,11px);color:#ffd98a;line-height:1.35;}
+.htr b{color:#fff;}
+.btour{display:block;margin:clamp(6px,1.8vw,10px) auto 0;font-family:'Bebas Neue','Heebo',sans-serif;font-weight:900;font-size:clamp(13px,3.8vw,18px);letter-spacing:clamp(1px,.8vw,3px);padding:clamp(7px,2vw,10px) clamp(16px,5vw,26px);border:1px solid rgba(245,197,24,.55);border-radius:6px;background:linear-gradient(180deg,#8a6508,#4a3404);color:#ffe9a8;text-shadow:0 1px 3px rgba(0,0,0,.6);box-shadow:0 4px 14px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,236,160,.25);cursor:pointer;}
+.btour:active{transform:scale(.97);}
+.tourbar{display:none;direction:rtl;margin:clamp(4px,1.2vw,7px) auto;padding:clamp(6px,1.8vw,9px) clamp(12px,3.6vw,18px);width:fit-content;max-width:88vw;border:1px solid rgba(245,197,24,.5);border-radius:6px;background:linear-gradient(180deg,rgba(60,44,6,.85),rgba(24,17,2,.9));font-family:'Heebo',system-ui,sans-serif;font-weight:900;font-size:clamp(11px,3.2vw,15px);color:#ffe9a8;text-shadow:0 1px 2px #000;}
+.tourbar.on{display:block;}
+.tourbar.champ{border-color:var(--g);box-shadow:0 0 22px rgba(245,197,24,.5);font-size:clamp(13px,3.8vw,18px);animation:vcpls 1.1s ease-in-out infinite;}
+.tourbar span{display:block;font-weight:700;font-size:clamp(9px,2.6vw,12px);color:#cdb98a;margin-top:2px;}
+.wrld{margin-top:4px;font-family:'Bebas Neue',sans-serif;font-size:clamp(13px,3.7vw,17px);letter-spacing:1px;color:var(--g);text-shadow:1px 1px 0 #000,0 0 12px rgba(245,197,24,.45);}
+.nudge{margin-top:4px;font-weight:700;font-size:clamp(9px,2.6vw,12px);color:#9fb4d8;text-shadow:0 1px 2px #000;}
 </style>
 <div class="scr" id="SN">
   <div class="sbg"><div class="sbg-img"></div><div class="sbg-spot"></div><div class="sbg-vig"></div><div class="sbg-floor"></div></div>
@@ -1228,6 +1239,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
       <div class="segbar"><div class="segf" id="HF_DEF"></div></div>
       <div class="hst-row"><span class="hst-rl">מהירות</span><span class="hst-rv" id="HF_SPD_T"></span></div>
       <div class="segbar"><div class="segf" id="HF_SPD"></div></div>
+      <div class="htr" id="HTRAIT"></div>
     </div>
   </div>
   <div class="sp">— SELECT YOUR FIGHTER —</div>
@@ -1259,6 +1271,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
     <div class="svc"><div class="svp"><img id="SVI2" src="" alt=""/></div><div class="svn" id="SVN2">CPU</div></div>
   </div>
   <button class="bfi" id="BFI" onclick="goFight()">⚡ FIGHT ⚡</button>
+  <button class="btour" id="BTOUR" onclick="startTour()">🏆 אליפות TLV — נצח את כולם</button>
   <div class="scf">
     <div class="scf-p" onclick="showTutorial()"><b>?</b><span>איך משחקים</span></div>
     <div class="scf-p" onclick="openLeaderboard()"><b>🏆</b><span>טבלת אלופים</span></div>
@@ -1374,10 +1387,11 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
     <div class="whero"><div class="wglow" id="WGLOW"></div><img id="WI" src="" alt=""/></div>
     <div class="wnm" id="WN"></div>
     <div class="wsb" id="WB"></div>
+    <div class="tourbar" id="TOURBAR"></div>
     <div class="wpts" id="WPTS"></div>
     <div class="wrank" id="WRANK"></div>
     <div class="wbtns">
-      <button class="bpa" onclick="rematch()">🔁 קרב חוזר</button>
+      <button class="bpa" id="BTN_RE" onclick="rematch()">🔁 קרב חוזר</button>
       <button class="bpa" onclick="rst()">▶ החלף לוחם</button>
     </div>
   </div>
@@ -1453,7 +1467,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
      b(BIG.COM): dedicated idle on NON-blue bg.  s(האייקון): full-body idle w/ legs
      (s_f), refreshed kick (s_kick).  y(ישר)/i(T.M.R)/r(השופט): a true finisher pose.
    ════════════════════════════════════════════════════════════════════════════ */
-const IM={b_s:"assets/img/b_s.jpg",b_f:"assets/img/b_f.webp",r_s:"assets/img/r_s.jpg",r_f:"assets/img/r_f.webp",i_s:"assets/img/i_s.jpg",i_f:"assets/img/i_f.webp",i_punch:"assets/img/i_punch.webp",i_kick:"assets/img/i_kick.webp",i_belt:"assets/img/i_belt.webp",b_kick:"assets/img/b_kick.webp",b_chair:"assets/img/b_chair.webp",r_kick:"assets/img/r_kick.webp",r_redcard:"assets/img/r_redcard.webp",y_s:"assets/img/y_s.jpg",y_f:"assets/img/y_f.webp",y_kick:"assets/img/y_kick.webp",y_jump:"assets/img/y_jump.webp",y_flex:"assets/img/y_flex.webp",y_fight:"assets/img/y_fight.webp",y_tire:"assets/img/y_tire.webp",s_s:"assets/img/s_s.jpg",s_f:"assets/img/s_f.webp",s_kick:"assets/img/s_kick.webp",s_cape:"assets/img/s_cape.webp",s_jump:"assets/img/s_jump.webp",i_run:"assets/img/i_run.webp",s_run:"assets/img/s_run.webp",y_run:"assets/img/y_run.webp",s_punch:"assets/img/s_punch.webp",s_smash:"assets/img/s_smash.webp",s_hook:"assets/img/s_hook.webp",r_punch:"assets/img/r_punch.webp",r_hurt:"assets/img/r_hurt.webp",b_run:"assets/img/b_run.webp",b_up:"assets/img/b_up.webp",b_jump:"assets/img/b_jump.webp",b_kk:"assets/img/b_kk.webp",b_punch:"assets/img/b_punch.webp",b_low:"assets/img/b_low.webp",i_jump:"assets/img/i_jump.webp",i_knee:"assets/img/i_knee.webp",i_lowk:"assets/img/i_lowk.webp",i_guard:"assets/img/i_guard.webp",i_point:"assets/img/i_point.webp",r_run:"assets/img/r_run.webp",r_ready:"assets/img/r_ready.webp",r_knee:"assets/img/r_knee.webp",r_spray:"assets/img/r_spray.webp",y_punch:"assets/img/y_punch.webp",y_hurt:"assets/img/y_hurt.webp",y_guard:"assets/img/y_guard.webp",b_hurt:"assets/img/b_hurt.webp",b_ready:"assets/img/b_ready.webp",s_hurt:"assets/img/s_hurt.webp",s_ready:"assets/img/s_ready.webp",s_air:"assets/img/s_air.webp",b_block:"assets/img/b_block.webp",b_jab:"assets/img/b_jab.webp",b_hook:"assets/img/b_hook.webp",b_blkH:"assets/img/b_blkH.webp",r_blkH:"assets/img/r_blkH.webp",i_blkH:"assets/img/i_blkH.webp",y_blkH:"assets/img/y_blkH.webp",s_blkH:"assets/img/s_blkH.webp",b_blkL:"assets/img/b_blkL.webp",r_blkL:"assets/img/r_blkL.webp",i_blkL:"assets/img/i_blkL.webp",y_blkL:"assets/img/y_blkL.webp",s_blkL:"assets/img/s_blkL.webp",
+const IM={b_s:"assets/img/b_s.jpg",b_f:"assets/img/b_f.webp",r_s:"assets/img/r_s.jpg",r_f:"assets/img/r_f.webp",i_s:"assets/img/i_s.jpg",i_f:"assets/img/i_f.webp",i_punch:"assets/img/i_punch.webp",i_kick:"assets/img/i_kick.webp",i_belt:"assets/img/i_belt.webp",b_kick:"assets/img/b_kick.webp",b_chair:"assets/img/b_chair.webp",r_kick:"assets/img/r_kick.webp",r_redcard:"assets/img/r_redcard.webp",y_s:"assets/img/y_s.jpg",y_f:"assets/img/y_f.webp",y_kick:"assets/img/y_kick.webp",y_jump:"assets/img/y_jump.webp",y_flex:"assets/img/y_flex.webp",y_fight:"assets/img/y_fight.webp",y_tire:"assets/img/y_tire.webp",s_s:"assets/img/s_s.jpg",s_f:"assets/img/s_f.webp",s_kick:"assets/img/s_kick.webp",s_cape:"assets/img/s_cape.webp",s_jump:"assets/img/s_jump.webp",i_run:"assets/img/i_run.webp",s_run:"assets/img/s_run.webp",y_run:"assets/img/y_run.webp",s_punch:"assets/img/s_punch.webp",s_smash:"assets/img/s_smash.webp",s_hook:"assets/img/s_hook.webp",r_punch:"assets/img/r_punch.webp",r_hurt:"assets/img/r_hurt.webp",b_run:"assets/img/b_run.webp",b_up:"assets/img/b_up.webp",b_jump:"assets/img/b_jump.webp",b_kk:"assets/img/b_kk.webp",b_punch:"assets/img/b_punch.webp",b_low:"assets/img/b_low.webp",i_jump:"assets/img/i_jump.webp",i_knee:"assets/img/i_knee.webp",i_lowk:"assets/img/i_lowk.webp",i_guard:"assets/img/i_guard.webp",i_point:"assets/img/i_point.webp",r_run:"assets/img/r_run.webp",r_ready:"assets/img/r_ready.webp",r_knee:"assets/img/r_knee.webp",r_spray:"assets/img/r_spray.webp",y_punch:"assets/img/y_punch.webp",y_hurt:"assets/img/y_hurt.webp",y_guard:"assets/img/y_guard.webp",b_hurt:"assets/img/b_hurt.webp",b_ready:"assets/img/b_ready.webp",s_hurt:"assets/img/s_hurt.webp",s_ready:"assets/img/s_ready.webp",s_air:"assets/img/s_air.webp",b_block:"assets/img/b_block.webp",b_jab:"assets/img/b_jab.webp",b_hook:"assets/img/b_hook.webp",r_blkH:"assets/img/r_blkH.webp",r_blkL:"assets/img/r_blkL.webp",
 /* ── v4 studio-photo poses (clean-bg cutouts) added to enrich battle animation ── */
 b_jab2:"assets/img/b_jab2.webp",b_kick2:"assets/img/b_kick2.webp",b_jump2:"assets/img/b_jump2.webp",b_run2:"assets/img/b_run2.webp",b_money:"assets/img/b_money.webp",
 r_idle2:"assets/img/r_idle2.webp",r_ready2:"assets/img/r_ready2.webp",r_kick2:"assets/img/r_kick2.webp",r_jump:"assets/img/r_jump.webp",r_hvy:"assets/img/r_hvy.webp",
@@ -1575,6 +1589,15 @@ function lvl(v){return v>=86?3:v>=70?2:v>=55?1:0;}
 // render the selected fighter big in the hero stage
 const HSC={b:1.06,r:1.08,i:1.08,y:1.08,s:1.08};  // per-fighter hero zoom
 const HHERO={b:'assets/img/b_hero.webp',s:'assets/img/s_hero.webp'};         // BIG.COM + האייקון: dedicated select-screen render (full-body, fills the stage)
+// ── FIGHTER TRAITS: one passive identity per fighter, single isolated hook each ──
+// (defined BEFORE heroView — it runs at load for the default hero display)
+const TRAITS={
+  b:{ic:'💰',n:'איש העסקים',d:'‎+12% נקודות מכל ניצחון'},
+  r:{ic:'🟥',n:'סמכות השופט',d:'מכות בסיס טוענות יותר אנרגיה'},
+  i:{ic:'💪',n:'דם של אלוף',d:'‎+6% נזק בכל המכות'},
+  y:{ic:'🧱',n:'בטון',d:'סופג 8% פחות נזק'},
+  s:{ic:'🌀',n:'שואומן',d:'טעינת ⚡ חזקה יותר (+38)'}
+};
 function heroView(i){
   const ch=CH[i],f=FS[ch.id];
   const img=document.getElementById('HIMG');
@@ -1591,6 +1614,8 @@ function heroView(i){
   document.getElementById('HF_ATK_T').textContent=LVL_M[lvl(f.atk)];
   document.getElementById('HF_DEF_T').textContent=LVL_F[lvl(f.def)];
   document.getElementById('HF_SPD_T').textContent=LVL_F[lvl(f.spd)];
+  const _tr=TRAITS[ch.id],_te=document.getElementById('HTRAIT');
+  if(_te&&_tr)_te.innerHTML=_tr.ic+' <b>'+_tr.n+'</b> · '+_tr.d;
   document.getElementById('HGLOW').style.background='radial-gradient(circle,'+f.glow+' 0%,transparent 70%)';
 }
 heroView(0);
@@ -1720,7 +1745,7 @@ function confirmName(){
 // ── LOCAL STATS (per-device record card) + TUTORIAL ──
 const STATS_KEY='tlvwar_stats';
 let curMaxCombo=0,gameEnded=false,lastDailyPct=0,pCineUsed=false;
-function loadStats(){try{return Object.assign({w:0,l:0,g:0,bc:0,sc:0,beat:{}},JSON.parse(localStorage.getItem(STATS_KEY))||{});}catch(e){return {w:0,l:0,g:0,bc:0,sc:0,beat:{}};}}
+function loadStats(){try{return Object.assign({w:0,l:0,g:0,bc:0,sc:0,beat:{},tours:0},JSON.parse(localStorage.getItem(STATS_KEY))||{});}catch(e){return {w:0,l:0,g:0,bc:0,sc:0,beat:{},tours:0};}}
 function saveStats(s){try{localStorage.setItem(STATS_KEY,JSON.stringify(s));}catch(e){}}
 function renderStats(){const s=loadStats();const el=document.getElementById('PSTATS');if(el)el.textContent='🏅 '+(s.sc||0).toLocaleString()+' נק׳ · ⚔ '+s.w+' נצח׳ · 🔥 שיא '+s.bc;renderRank(s);}
 function recordResult(playerWon){
@@ -1735,6 +1760,7 @@ function recordResult(playerWon){
       const _dm=dailyMult();                                   // daily-streak bonus multiplies real wins only
       lastDailyPct=_dm>1?Math.round((_dm-1)*100):0;
       if(lastDailyPct)lastWinPts=Math.round(lastWinPts*_dm);
+      if(P1&&P1.id==='b')lastWinPts=Math.round(lastWinPts*1.12); // 💰 BIG.COM trait: the businessman earns more
       s.sc=(s.sc||0)+lastWinPts;
     }
     if(!s.beat)s.beat={};if(P2&&P2.id)s.beat[P2.id]=1;        // roster-conquest tracking (achievement: beat all 5)
@@ -1787,7 +1813,9 @@ const ACH_DEFS=[
   {id:'all5',  ic:'🌍',n:'שולט בכולם',       d:'נצח את כל 5 הלוחמים',          c:s=>s.beat&&Object.keys(s.beat).length>=5},
   {id:'tier3', ic:'🏔', n:'צייד ראשים',       d:'נצח יריב ברמת קושי 3 ומעלה',   c:(s,x)=>(x.lvl||0)>=3},
   {id:'streak3',ic:'📅',n:'מכור לזירה',      d:'שחק 3 ימים ברצף',              c:()=>{const d=loadDaily();return (d.streak||0)>=3;}},
-  {id:'sc5k',  ic:'💰',n:'חמשת אלפים',       d:'צבור 5,000 נקודות',            c:s=>(s.sc||0)>=5000}
+  {id:'sc5k',  ic:'💰',n:'חמשת אלפים',       d:'צבור 5,000 נקודות',            c:s=>(s.sc||0)>=5000},
+  {id:'tour1', ic:'👑',n:'אלוף האליפות',     d:'נצח אליפות שלמה — 4 יריבים ברצף',c:s=>(s.tours||0)>=1},
+  {id:'tour3', ic:'🏟', n:'שושלת',            d:'נצח 3 אליפויות',               c:s=>(s.tours||0)>=3}
 ];
 function loadAch(){try{return JSON.parse(localStorage.getItem(ACH_KEY))||{};}catch(e){return {};}}
 let _achQ=[],_achShowing=false;
@@ -1819,13 +1847,57 @@ function openAch(){
 }
 function closeAch(){const m=document.getElementById('ACH');if(m)m.classList.remove('on');}
 // instant rematch — same matchup, zero friction back into the arena
-function rematch(){
-  if(!P1||!P2){rst();return;}
+function _battleCleanup(){
   ['F1','F2'].forEach(id=>{const el=document.getElementById(id);if(el){el.classList.remove('ko','jmp');el.style.cssText='';}});
   ['FS1','FS2'].forEach(id=>{const el=document.getElementById(id);if(el)ALL_A.forEach(a=>el.classList.remove(a));});
   const vwn=document.getElementById('VWN');if(vwn){vwn.pause();vwn.src='';vwn.style.display='none';vwn.style.opacity='0';}
   stopChar();cBuf=[];
+}
+function rematch(){
+  if(!P1||!P2){rst();return;}
+  tourOn=false;                            // a manual rematch exits tournament mode
+  _battleCleanup();
   showVS(()=>initBattle());
+}
+// ── TOURNAMENT MODE: beat the other 4 in sequence → crowned champion ──
+let tourOn=false,tourIdx=0,tourSeq=[];
+function startTour(){
+  if(si===null){achToast('🏆','בחר לוחם קודם — ואז צא לאליפות!');return;}
+  P1=CH[si];
+  tourSeq=CH.map((c,ix)=>ix).filter(ix=>ix!==si);
+  for(let k=tourSeq.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));const t=tourSeq[k];tourSeq[k]=tourSeq[j];tourSeq[j]=t;}
+  tourOn=true;tourIdx=0;oi=tourSeq[0];P2=CH[oi];
+  showCV(P1,()=>showVS(()=>initBattle()));
+}
+function tourNext(){
+  tourIdx++;oi=tourSeq[tourIdx];P2=CH[oi];
+  _battleCleanup();
+  showVS(()=>initBattle());
+}
+// ── WORLD RANK: live "you are #X worldwide" from the shared Firestore board ──
+function fbWorldRank(){
+  if(!fbInit()||!playerName)return;
+  try{
+    const s=loadStats(),sc=s.sc||0;if(sc<=0)return;
+    _fbDB.collection('players').where('score','>',sc).get().then(qs=>{
+      const el=document.getElementById('WRANK');
+      if(el&&document.getElementById('SW').classList.contains('on'))
+        el.innerHTML+='<div class="wrld">🌍 מקום #'+(qs.size+1)+' בעולם</div>';
+    }).catch(()=>{});
+  }catch(e){}
+}
+// ── NEAR-MISS NUDGE: show the closest locked achievement (research-backed) ──
+function achNudge(){
+  const s=loadStats(),got=loadAch();
+  const prog=[['w5',s.w,5],['w15',s.w,15],['w50',s.w,50],['combo5',s.bc,5],['combo8',s.bc,8],
+    ['all5',Object.keys(s.beat||{}).length,5],['sc5k',s.sc||0,5000],['tour1',s.tours||0,1],['tour3',s.tours||0,3]]
+    .filter(p=>!got[p[0]]&&p[2]-p[1]>0)
+    .map(p=>({a:ACH_DEFS.find(x=>x.id===p[0]),left:p[2]-p[1],frac:p[1]/p[2]}))
+    .filter(p=>p.a);
+  if(!prog.length)return '';
+  prog.sort((x,y)=>y.frac-x.frac);
+  const n=prog[0];
+  return '<div class="nudge">🎯 עוד '+n.left.toLocaleString()+' ל־'+n.a.ic+' „'+n.a.n+'”</div>';
 }
 // ── ONLINE COUNTER (Firebase Firestore) ───────────────────────────────────
 // Counts UNIQUE PLAYERS (by fighter name) and TOTAL GAMES played, shown on the
@@ -2356,8 +2428,10 @@ function flashBtn(btn){const el=document.getElementById(FL_ID[btn]);if(el){el.cl
 // existing-pose guard library (user sends dedicated crouch/block art later → swap here)
 // Dedicated block art (user drops the *_blkH / *_blkL .webp files into assets/img/).
 // GUARD_*_FB = graceful fallback to the existing poses until the real photos land — see setGuard onerror.
-const GUARD_HI={b:'b_blkH',i:'i_blkH',r:'r_blkH',y:'y_blkH',s:'s_blkH'};
-const GUARD_LOW={b:'b_blkL',i:'i_blkL',r:'r_blkL',y:'y_blkL',s:'s_blkL'};
+// r has REAL dedicated block photos; b/i/y/s point at their best existing art until
+// the user supplies {id}_blkH/{id}_blkL photos (then: add IM keys + repoint here).
+const GUARD_HI={b:'b_block',i:'i_guard',r:'r_blkH',y:'y_guard',s:'s_ready'};
+const GUARD_LOW={b:'b_low',i:'i_lowk',r:'r_blkL',y:'y_kick',s:'s_kick'};
 const GUARD_HI_FB={b:'b_block',i:'i_guard',r:'r_ready',y:'y_guard',s:'s_ready'};
 const GUARD_LOW_FB={b:'b_low',i:'i_lowk',r:'r_kick',y:'y_kick',s:'s_kick'};
 function setGuard(g){
@@ -2591,13 +2665,14 @@ async function execMove(mv,isP1){
     const chgT=setTimeout(()=>{drawSparks(scx,scy,'#ffd200',22,false);spawnRing(isP1,'#ffb400',true);},520);
     await sl(640);
     // ⚡ ENERGY LANDS — impact beat
-    regenE(who,mv.chargeAmt||30);
+    regenE(who,mv.chargeAmt||(myC.id==='s'?38:30));   // 🌀 האייקון trait: showman charges harder
     const eb=document.getElementById(isP1?'EN1':'EN2');
     if(eb){eb.classList.remove('chgpulse');void eb.offsetWidth;eb.classList.add('chgpulse');setTimeout(()=>eb.classList.remove('chgpulse'),600);}
     camPunch(false);shake('hvy');flashCol('#f5c518',true);
     drawSparks(scx,scy,'#fff6c0',26,true);spawnRing(isP1,'#f5c518',true);
-    ann('⚡ +30% ENERGY!');
-    log(myC.name+': ⚡ CHARGED +30% ENERGY','sp');
+    const _chAmt=mv.chargeAmt||(myC.id==='s'?38:30);
+    ann('⚡ +'+_chAmt+'% ENERGY!');
+    log(myC.name+': ⚡ CHARGED +'+_chAmt+'% ENERGY','sp');
     await sl(660);
     clearTimeout(chgT);
     rcA(fs);fs.classList.remove('charging');rstSp(isP1);
@@ -2649,6 +2724,11 @@ async function execMove(mv,isP1){
   // ── NORMAL ATTACK ──
   let dmg=mv.d[1]>0?ri(mv.d[0],mv.d[1]):0;
   if(!isP1&&dmg>0)dmg=Math.round(dmg*diffP().dmg*(1+0.4*cpuEdge));   // difficulty ladder + basic-spam edge: CPU hits harder
+  if(dmg>0){                                                          // fighter traits (symmetric: apply by fighter, not by who controls them)
+    const _atk=isP1?P1:P2,_def=isP1?P2:P1;
+    if(_atk&&_atk.id==='i')dmg=Math.round(dmg*1.06);                  // 💪 T.M.R: champion's blood
+    if(_def&&_def.id==='y')dmg=Math.max(1,Math.round(dmg*0.92));      // 🧱 ישר: concrete
+  }
   const isJump=mv.seq[0]==='U';
   const isLow=mv.seq[0]==='D'&&!isJump;
 
@@ -2756,7 +2836,7 @@ async function execMove(mv,isP1){
     spawnImpact(!isP1,mv.ac,isJump,col,mv.fin);
     spawnDmg(dmg,!isP1,mv.fin,mv.e===0&&mv.d[1]>8);
     // Basic attacks refund energy to the attacker (the bridge that rebuilds meter toward the next special)
-    if(mv.seq.length===1&&mv.e===0&&dmg>0)regenE(who,8);
+    if(mv.seq.length===1&&mv.e===0&&dmg>0)regenE(who,myC.id==='r'?11:8);   // 🟥 השופט trait: basics refund more
     if(mv.fin||isSpecial){const ff=document.getElementById('FF');ff.textContent=mv.n;ff.classList.remove('on');void ff.offsetWidth;ff.classList.add('on');setTimeout(()=>ff.classList.remove('on'),1200);}
     addC(who);
     log(myC.name+': '+mv.n+(mv.e>0?' [-'+mv.e+'⚡]':'')+' [-'+dmg+'HP]',mv.fin?'sp':(isP1?'p1':'p2'));
@@ -2922,7 +3002,7 @@ function showRF(t){const rf=document.getElementById('RF'),rt=document.getElement
 function showKO(){const k=document.getElementById('KB');if(!k)return;k.classList.remove('on');void k.offsetWidth;k.classList.add('on');stT();}
 function log(t,c){const l=document.getElementById('LG');if(!l)return;const d=document.createElement('div');d.className='ll '+c;d.textContent='› '+t;l.appendChild(d);l.scrollTop=l.scrollHeight;}
 function clrLog(){const l=document.getElementById('LG');if(l)l.innerHTML='';}
-function exitBattle(){stopCpuTick();clearTimeout(turnTimer);clearTimeout(cTimer);stT();stopCamera();resetKODrama();stopChar();playAMN();SS('SS');}
+function exitBattle(){stopCpuTick();clearTimeout(turnTimer);clearTimeout(cTimer);stT();stopCamera();resetKODrama();stopChar();tourOn=false;playAMN();SS('SS');}
 
 function endG(w,ip){
   if(gameEnded)return;          // record the result + end the match exactly once
@@ -2947,10 +3027,34 @@ function endG(w,ip){
         wpts.classList.remove('on');void wpts.offsetWidth;wpts.classList.add('on');
       }else{wpts.classList.remove('on');wpts.innerHTML='';}
     }
+    // ── TOURNAMENT FLOW: stage banner, champion ceremony, next-fight button ──
+    const tb=document.getElementById('TOURBAR'),bre=document.getElementById('BTN_RE');
+    let tourAdvance=false;
+    if(tb){tb.className='tourbar';tb.innerHTML='';}
+    if(tourOn){
+      if(ip&&tourIdx>=tourSeq.length-1){                 // 👑 CHAMPION — beat all 4
+        tourOn=false;
+        const ts=loadStats();ts.tours=(ts.tours||0)+1;ts.sc=(ts.sc||0)+750;saveStats(ts);renderStats();fbSubmitScore();checkAch({});
+        if(tb){tb.innerHTML='👑 אלוף אליפות TLV!<span>ניצחת את כל 4 היריבים · בונוס +750 נק׳</span>';tb.className='tourbar champ on';}
+        document.getElementById('WB').textContent='◄ 👑 TOURNAMENT CHAMPION ►';
+      }else if(ip){                                      // advance to the next stage
+        tourAdvance=true;
+        if(tb){tb.innerHTML='🏆 שלב '+(tourIdx+2)+'/4 · היריב הבא: '+CH[tourSeq[tourIdx+1]].name;tb.className='tourbar on';}
+      }else{                                             // eliminated
+        if(tb){tb.innerHTML='💀 הודחת מהאליפות בשלב '+(tourIdx+1)+'/4 — נסה שוב!';tb.className='tourbar on';}
+        tourOn=false;
+      }
+    }
+    if(bre){
+      if(tourAdvance){bre.textContent='🏆 הקרב הבא ('+(tourIdx+2)+'/4)';bre.onclick=tourNext;}
+      else{bre.textContent='🔁 קרב חוזר';bre.onclick=rematch;}
+    }
     const wr=document.getElementById('WRANK');   // rank ladder progress — the "one more fight" hook
     if(wr){
       const s=loadStats(),sc=s.sc||0,ri2=rankOf(sc),nxt=RANKS[ri2+1];
       wr.innerHTML='🎖 '+RANKS[ri2][1]+(nxt?' · עוד '+(nxt[0]-sc).toLocaleString()+' נק׳ לדרגה הבאה<div class="prb"><div class="prf" style="width:'+Math.min(100,Math.round(100*(sc-RANKS[ri2][0])/(nxt[0]-RANKS[ri2][0])))+'%"></div></div>':' · הדרגה הגבוהה ביותר!');
+      wr.innerHTML+=achNudge();                  // near-miss: the closest locked achievement
+      fbWorldRank();                             // async: appends "🌍 מקום #X בעולם"
     }
     // Special video: Ref beats BIG
     const refWin=(w.id==='r')&&((ip&&P2&&P2.id==='b')||(!ip&&P1&&P1.id==='b'));
@@ -2977,7 +3081,7 @@ function rst(){
   document.querySelectorAll('.cc').forEach(c=>c.classList.remove('on'));
   document.getElementById('SVS2').classList.remove('on');
   document.getElementById('BFI').classList.remove('on');
-  si=null;cBuf=[];
+  si=null;cBuf=[];tourOn=false;
   heroView(0); // reset hero stage to default fighter
   playAMN(); // restart select music
   renderStats(); // refresh the local record card
