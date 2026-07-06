@@ -1151,8 +1151,8 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .wpts.on{opacity:1;transform:scale(1);}
 .wpts .wpx{display:block;font-family:'Heebo',system-ui,sans-serif;font-weight:700;font-size:clamp(9px,2.4vw,12px);letter-spacing:.5px;color:#cdb98a;text-shadow:0 1px 2px #000;margin-top:2px;}
 /* ── RETENTION SUITE: rank card, daily streak, achievements, rematch, kb hint ── */
-.prank,.wrank{margin:clamp(4px,1.2vw,7px) auto 0;width:min(86vw,340px);text-align:center;direction:rtl;font-family:'Heebo',system-ui,sans-serif;font-weight:800;font-size:clamp(10px,2.9vw,13px);color:#e8d9a8;text-shadow:0 1px 2px #000;}
-.wrank{width:min(80vw,300px);margin-bottom:clamp(6px,1.8vw,10px);color:#cdb98a;font-size:clamp(9px,2.6vw,12px);}
+.prank,.wrank{margin:clamp(4px,1.2vw,7px) auto 0;width:min(86vw,340px);text-align:center;direction:rtl;font-family:'Heebo',system-ui,sans-serif;font-weight:800;font-size:var(--t5);color:#e8d9a8;text-shadow:0 1px 2px #000;}
+.wrank{width:min(80vw,300px);margin-bottom:clamp(6px,1.8vw,10px);color:#cdb98a;font-size:var(--t6);}
 .prank .prb,.wrank .prb{height:7px;margin-top:4px;background:rgba(255,255,255,.09);border:1px solid rgba(245,197,24,.35);border-radius:4px;overflow:hidden;}
 .prank .prf,.wrank .prf{height:100%;width:0%;background:linear-gradient(90deg,#a9760c,#f5c518,#fff6d2);box-shadow:0 0 8px rgba(245,197,24,.6);transition:width .6s ease;}
 .prank .prd{display:inline-block;margin-top:5px;padding:2px 10px;border:1px solid rgba(255,120,40,.5);border-radius:20px;background:rgba(80,30,0,.45);color:#ffb46a;font-size:clamp(9px,2.6vw,12px);}
@@ -1163,23 +1163,33 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .ach-i b{font-size:clamp(15px,4.4vw,21px);flex-shrink:0;}
 .ach-i .an{font-weight:900;font-size:clamp(10px,2.9vw,13px);color:#fff;line-height:1.25;}
 .ach-i .ad{font-size:clamp(8px,2.4vw,11px);color:#bda87c;line-height:1.3;}
-.acht{position:absolute;top:11%;left:50%;z-index:200;display:flex;align-items:center;gap:9px;direction:rtl;padding:9px 17px;background:linear-gradient(180deg,#2a1f08,#120c03);border:2px solid var(--g);border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.8),0 0 22px rgba(245,197,24,.35);font-family:'Heebo',system-ui,sans-serif;font-weight:900;color:#ffe9a8;font-size:clamp(11px,3.2vw,15px);text-shadow:0 1px 2px #000;opacity:0;pointer-events:none;transform:translate(-50%,-26px);transition:opacity .35s,transform .35s cubic-bezier(.2,.85,.3,1.2);}
+.acht{position:absolute;top:11%;left:50%;z-index:200;display:flex;align-items:center;gap:9px;direction:rtl;padding:9px 17px;background:linear-gradient(180deg,#2a1f08,#120c03);border:2px solid var(--g);border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.8),0 0 22px rgba(245,197,24,.35);font-family:'Heebo',system-ui,sans-serif;font-weight:900;color:#ffe9a8;font-size:var(--t4);text-shadow:0 1px 2px #000;opacity:0;pointer-events:none;transform:translate(-50%,-26px);transition:opacity .35s,transform .35s cubic-bezier(.2,.85,.3,1.2);}
 .acht.on{opacity:1;transform:translate(-50%,0);}
 .acht b{font-size:clamp(15px,4.4vw,21px);}
 .wbtns{display:flex;gap:clamp(8px,2.4vw,12px);justify-content:center;}
 .kbh{display:none;margin-top:3px;font-family:'Heebo',system-ui,sans-serif;font-weight:700;font-size:10px;letter-spacing:.3px;color:#8f9bb0;text-shadow:0 1px 2px #000;white-space:nowrap;}
 @media (pointer:fine) and (min-width:900px){.kbh{display:block;}}
+/* ── TYPE SCALE (סריף): one clamp ladder for every new-system text element ── */
+:root{--t1:clamp(30px,9vw,46px);--t2:clamp(20px,6vw,32px);--t3:clamp(13px,3.7vw,17px);--t4:clamp(11px,3.2vw,15px);--t5:clamp(10px,2.9vw,13px);--t6:clamp(9px,2.5vw,11px);}
+/* ── PLAYER CARD (פיקסל): stats + rank + daily challenge in one framed panel ── */
+.pcard{position:relative;z-index:3;width:min(88vw,360px);margin:clamp(4px,1.2vw,8px) auto 0;padding:clamp(7px,2vw,10px) clamp(10px,3vw,14px);background:linear-gradient(180deg,rgba(12,9,4,.74),rgba(4,3,2,.8));border:1px solid rgba(245,197,24,.28);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.5);}
+.pcard::before{content:"";position:absolute;top:0;left:8%;right:8%;height:2px;background:linear-gradient(90deg,transparent,var(--g),transparent);}
+.pcard .pstats{margin:0;}
+.pcard .prank{width:auto;margin:3px 0 0;}
+.dch{direction:rtl;margin-top:clamp(5px,1.5vw,8px);padding-top:clamp(5px,1.5vw,8px);border-top:1px dashed rgba(245,197,24,.3);font-family:'Heebo',system-ui,sans-serif;font-weight:900;font-size:var(--t5);color:#ffd98a;text-shadow:0 1px 2px #000;}
+.dch span{display:block;font-weight:700;font-size:var(--t6);color:#bda87c;margin-top:2px;}
+.dch.done{color:#8fd89a;}
 /* ── SPRINT 2: fighter traits, tournament mode, world rank, near-miss nudge ── */
 .htr{margin-top:clamp(5px,1.6vw,8px);padding-top:clamp(4px,1.2vw,6px);border-top:1px solid rgba(255,255,255,.14);font-size:clamp(8px,2.3vw,11px);color:#ffd98a;line-height:1.35;}
 .htr b{color:#fff;}
 .btour{display:block;margin:clamp(6px,1.8vw,10px) auto 0;font-family:'Bebas Neue','Heebo',sans-serif;font-weight:900;font-size:clamp(13px,3.8vw,18px);letter-spacing:clamp(1px,.8vw,3px);padding:clamp(7px,2vw,10px) clamp(16px,5vw,26px);border:1px solid rgba(245,197,24,.55);border-radius:6px;background:linear-gradient(180deg,#8a6508,#4a3404);color:#ffe9a8;text-shadow:0 1px 3px rgba(0,0,0,.6);box-shadow:0 4px 14px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,236,160,.25);cursor:pointer;}
 .btour:active{transform:scale(.97);}
-.tourbar{display:none;direction:rtl;margin:clamp(4px,1.2vw,7px) auto;padding:clamp(6px,1.8vw,9px) clamp(12px,3.6vw,18px);width:fit-content;max-width:88vw;border:1px solid rgba(245,197,24,.5);border-radius:6px;background:linear-gradient(180deg,rgba(60,44,6,.85),rgba(24,17,2,.9));font-family:'Heebo',system-ui,sans-serif;font-weight:900;font-size:clamp(11px,3.2vw,15px);color:#ffe9a8;text-shadow:0 1px 2px #000;}
+.tourbar{display:none;direction:rtl;margin:clamp(4px,1.2vw,7px) auto;padding:clamp(6px,1.8vw,9px) clamp(12px,3.6vw,18px);width:fit-content;max-width:88vw;border:1px solid rgba(245,197,24,.5);border-radius:6px;background:linear-gradient(180deg,rgba(60,44,6,.85),rgba(24,17,2,.9));font-family:'Heebo',system-ui,sans-serif;font-weight:900;font-size:var(--t4);color:#ffe9a8;text-shadow:0 1px 2px #000;}
 .tourbar.on{display:block;}
 .tourbar.champ{border-color:var(--g);box-shadow:0 0 22px rgba(245,197,24,.5);font-size:clamp(13px,3.8vw,18px);animation:vcpls 1.1s ease-in-out infinite;}
 .tourbar span{display:block;font-weight:700;font-size:clamp(9px,2.6vw,12px);color:#cdb98a;margin-top:2px;}
-.wrld{margin-top:4px;font-family:'Bebas Neue',sans-serif;font-size:clamp(13px,3.7vw,17px);letter-spacing:1px;color:var(--g);text-shadow:1px 1px 0 #000,0 0 12px rgba(245,197,24,.45);}
-.nudge{margin-top:4px;font-weight:700;font-size:clamp(9px,2.6vw,12px);color:#9fb4d8;text-shadow:0 1px 2px #000;}
+.wrld{margin-top:4px;font-family:'Bebas Neue',sans-serif;font-size:var(--t3);letter-spacing:1px;color:var(--g);text-shadow:1px 1px 0 #000,0 0 12px rgba(245,197,24,.45);}
+.nudge{margin-top:4px;font-weight:700;font-size:var(--t6);color:#9fb4d8;text-shadow:0 1px 2px #000;}
 </style>
 <div class="scr" id="SN">
   <div class="sbg"><div class="sbg-img"></div><div class="sbg-spot"></div><div class="sbg-vig"></div><div class="sbg-floor"></div></div>
@@ -1224,8 +1234,11 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
     <div class="sls">SELECT CHARACTER</div>
   </div>
   <div class="pgr" id="PNAME_GREET"></div>
-  <div class="pstats" id="PSTATS"></div>
-  <div class="prank" id="PRANK"></div>
+  <div class="pcard">
+    <div class="pstats" id="PSTATS"></div>
+    <div class="prank" id="PRANK"></div>
+    <div class="dch" id="DCH"></div>
+  </div>
   <div class="hero" id="HERO">
     <div class="hero-glow" id="HGLOW"></div>
     <img class="hero-img" id="HIMG" src="" alt=""/>
@@ -1400,14 +1413,22 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
   <div class="tutbox">
     <div class="tutkk">HOW TO FIGHT</div>
     <div class="tuth">חוקי הזירה</div>
-    <div class="tutc">
+    <div class="tutc" id="TUTP1">
       <div class="tutr"><span class="tuti">🥊</span><div><b class="tt">תקוף</b>לחץ ○ ▲ ✕ □ — מכה מהירה וחינמית.</div></div>
       <div class="tutr"><span class="tuti">🔗</span><div><b class="tt">קומבו</b>כיוון ואז כפתור = מהלך חזק. (◄ ואז ○)</div></div>
       <div class="tutr"><span class="tuti">🛡</span><div><b class="tt">הגן — נחש</b>בעיטה פוגעת <b>נמוך</b>, אגרוף <b>גבוה</b>. קרא את היריב, לחץ על החצי הנכון בזמן = נֶגֶד.</div></div>
       <div class="tutr"><span class="tuti">⚡</span><div><b class="tt">אנרגיה</b>מהלכים חזקים שורפים אנרגיה. ▼▼▼ טוען מחדש.</div></div>
       <div class="tutr"><span class="tuti">🏆</span><div><b class="tt">נצח</b>רוקן את חיי היריב לפני שייגמר הזמן.</div></div>
     </div>
-    <button class="tutgo" onclick="closeTutorial()">הבנתי, קדימה! ←</button>
+    <div class="tutc" id="TUTP2" style="display:none;">
+      <div class="tutr"><span class="tuti">⚡</span><div><b class="tt">תכונה ייחודית</b>לכל לוחם יתרון פסיבי משלו — מוצג במסך הבחירה.</div></div>
+      <div class="tutr"><span class="tuti">🏆</span><div><b class="tt">אליפות</b>נצח את כל 4 היריבים ברצף — והפוך לאלוף TLV.</div></div>
+      <div class="tutr"><span class="tuti">🎖</span><div><b class="tt">דרגות והישגים</b>כל ניצחון מקדם דרגה; הישגים קופצים תוך כדי משחק.</div></div>
+      <div class="tutr"><span class="tuti">🗓</span><div><b class="tt">כל יום</b>אתגר יומי חדש + רצף ימים = בונוס נקודות גדל.</div></div>
+      <div class="tutr"><span class="tuti">🎬</span><div><b class="tt">מהלך קולנועי</b>במפגשים מיוחדים נפתח מהלך וידאו הרסני — חפש אותו ברשימת המהלכים.</div></div>
+      <div class="tutr"><span class="tuti">⌨</span><div><b class="tt">במחשב</b>חצים = תנועה והגנה · A=□ S=✕ D=○ W=△.</div></div>
+    </div>
+    <button class="tutgo" id="TUTGO" onclick="tutNext()">הבא ←</button>
   </div>
 </div>
 <div class="lb" id="LB">
@@ -1515,6 +1536,18 @@ const YSP={"jab":"y_punch","kick":"y_kick","str":"y_punch","hvy":"y_tire","blk":
 // ── השרון ("The Icon"): Ric-Flair theatrical ego — flashy, agile, balanced ──
 const MVS=MVB.map(m=>({...m}));
 ["אגרוף האייקון","בעיטת ראווה","סטירת צ׳ופ","הדיפה יהירה","זינוק ראווה","בעיטת ריצה","צלילה מלמעלה","מפלה נמוכה","מכת גוף","⚡ WOO קומבו","⚡ סיבוב האייקון","⚡ כוח האייקון"].forEach((nm,i)=>MVS[i].n=nm);
+// ── ARCHETYPE TUNING (one-time, data-level): the select-screen stat bars are now TRUE ──
+// dm = damage mult, em = energy-cost mult. Skips charge/defend/redcard (redcard stays 60⚡).
+// b = balanced baseline (untouched). Rebinds d/seq-safe: clones share arrays until retuned here.
+function tuneMV(mv,dm,em){mv.forEach(m=>{
+  if(m.charge||m.defend||m.redcard)return;
+  if(m.d&&m.d[1]>0)m.d=[Math.max(1,Math.round(m.d[0]*dm)),Math.max(1,Math.round(m.d[1]*dm))];
+  if(m.e>0)m.e=Math.min(100,Math.max(1,Math.round(m.e*em)));
+});}
+tuneMV(MVR,0.95,0.92);   // השופט — טנק-שליטה: רך יותר, זול יותר
+tuneMV(MVI,1.08,1.12);   // T.M.R — מכה כבדה: חזק אבל שורף אנרגיה
+tuneMV(MVY,1.00,0.88);   // ישר — טכני-יעיל: ספיישלים זולים
+tuneMV(MVS,0.94,0.82);   // האייקון — מהיר-זול: הרבה מהלכים, כל אחד חלש יותר
 const SSP={"jab":"s_punch","str":"s_punch","bb":"s_punch","hvy":"s_smash","upc":"s_smash","dco":"s_hook","kick":"s_kick","sw":"s_kick","jkk":"s_jump","sjp":"s_air","jsm":"s_air","jjb":"s_jump","flx":"s_hero2","rsh":"s_run","tkx":"s_run","c12":"s_run","fin":"s_cape2","charge":"s_cape2","est":"s_cape","blk":"s_hero2"};
 
 // ── FRAME-SEQUENCE combos, assembled from EACH fighter's existing pose library ──
@@ -1567,12 +1600,13 @@ const CH=[
 ];
 
 // fighter profiles for the hero panel (style text + stat bars + theme colors)
+// Stat bars are TRUE post-tuning: atk=damage mult (+trait), def=HP pool (+y's trait), spd=energy economy (cheaper moves ≈ more actions).
 const FS={
-  b:{role:'TEL AVIV HEEL', style:'POWER BRAWLER', atk:70,def:55,spd:90,col:'#1565c0',glow:'#1f6fd8'},
-  r:{role:'SILENT ENFORCER',style:'GROUND CONTROL',atk:82,def:80,spd:58,col:'#cccccc',glow:'#9aa0aa'},
-  i:{role:'THE CHAMPION',   style:'ALL-ROUNDER',  atk:95,def:65,spd:75,col:'#ffcc00',glow:'#c19300'},
-  y:{role:'THE SOLUTION',   style:'TECHNICIAN',   atk:88,def:72,spd:80,col:'#00e676',glow:'#00b35a'},
-  s:{role:'THE ICON',       style:'HIGH-FLYER',   atk:84,def:70,spd:86,col:'#e040fb',glow:'#b14de0'},
+  b:{role:'TEL AVIV HEEL', style:'POWER BRAWLER', atk:70,def:55,spd:70,col:'#1565c0',glow:'#1f6fd8'},
+  r:{role:'SILENT ENFORCER',style:'GROUND CONTROL',atk:64,def:72,spd:80,col:'#cccccc',glow:'#9aa0aa'},
+  i:{role:'THE CHAMPION',   style:'ALL-ROUNDER',  atk:84,def:80,spd:58,col:'#ffcc00',glow:'#c19300'},
+  y:{role:'THE SOLUTION',   style:'TECHNICIAN',   atk:70,def:78,spd:84,col:'#00e676',glow:'#00b35a'},
+  s:{role:'THE ICON',       style:'HIGH-FLYER',   atk:62,def:64,spd:92,col:'#e040fb',glow:'#b14de0'},
 };
 
 document.getElementById('CI0').src=IM.b_s;
@@ -1739,13 +1773,19 @@ function confirmName(){
   playAMN();
   checkDaily();                       // daily-streak tick (before renderStats so the flame chip is fresh)
   renderStats();
+  renderDailyCh();                    // today's challenge card on the home screen
+  // one-time "what's new" nudge for RETURNING players (new players learn it in tutorial page 2)
+  try{if(localStorage.getItem(TUT_KEY)==='1'&&!localStorage.getItem('tlvwar_tourhint')){
+    localStorage.setItem('tlvwar_tourhint','1');
+    achToast('🏆','חדש: מצב אליפות + אתגר יומי — נסה אותם!');
+  }}catch(e){}
   fbFetchLeaderboard();               // warm the shared champions board for the select screen
   maybeShowTutorial();                // first-ever player → show the how-to-play card once
 }
 // ── LOCAL STATS (per-device record card) + TUTORIAL ──
 const STATS_KEY='tlvwar_stats';
 let curMaxCombo=0,gameEnded=false,lastDailyPct=0,pCineUsed=false;
-function loadStats(){try{return Object.assign({w:0,l:0,g:0,bc:0,sc:0,beat:{},tours:0},JSON.parse(localStorage.getItem(STATS_KEY))||{});}catch(e){return {w:0,l:0,g:0,bc:0,sc:0,beat:{},tours:0};}}
+function loadStats(){try{return Object.assign({w:0,l:0,g:0,bc:0,sc:0,beat:{},tours:0,dch:0,perf:0},JSON.parse(localStorage.getItem(STATS_KEY))||{});}catch(e){return {w:0,l:0,g:0,bc:0,sc:0,beat:{},tours:0,dch:0,perf:0};}}
 function saveStats(s){try{localStorage.setItem(STATS_KEY,JSON.stringify(s));}catch(e){}}
 function renderStats(){const s=loadStats();const el=document.getElementById('PSTATS');if(el)el.textContent='🏅 '+(s.sc||0).toLocaleString()+' נק׳ · ⚔ '+s.w+' נצח׳ · 🔥 שיא '+s.bc;renderRank(s);}
 function recordResult(playerWon){
@@ -1767,8 +1807,12 @@ function recordResult(playerWon){
     lossStreak=0;                                             // any win clears the losing streak
   }else{s.l++;lastWinPts=0;lastDailyPct=0;lossStreak++;}      // another loss → climb toward the mercy threshold
   if(curMaxCombo>s.bc)s.bc=curMaxCombo;
+  const _perf=playerWon&&typeof h1!=='undefined'&&P1&&h1>=P1.hp;
+  if(_perf)s.perf=(s.perf||0)+1;                              // running perfect-win counter (💎 achievement)
   saveStats(s);renderStats();fbSubmitScore();
-  checkAch({perfect:playerWon&&typeof h1!=='undefined'&&P1&&h1>=P1.hp,cine:pCineUsed,lvl:playerWon?lastWinLvl:0});
+  checkAch({perfect:_perf,cine:pCineUsed,lvl:playerWon?lastWinLvl:0});
+  checkDailyCh({won:playerWon,oppId:P2&&P2.id,combo:curMaxCombo,
+    hpFrac:(P1&&P1.hp&&typeof h1!=='undefined')?Math.max(0,h1)/P1.hp:0,inTour:tourOn});
   pCineUsed=false;                                            // per-battle flag consumed by the 'קולנוען' achievement
 }
 // ── RETENTION SUITE: ranks · daily streak · achievements · rematch ──────────
@@ -1815,13 +1859,16 @@ const ACH_DEFS=[
   {id:'streak3',ic:'📅',n:'מכור לזירה',      d:'שחק 3 ימים ברצף',              c:()=>{const d=loadDaily();return (d.streak||0)>=3;}},
   {id:'sc5k',  ic:'💰',n:'חמשת אלפים',       d:'צבור 5,000 נקודות',            c:s=>(s.sc||0)>=5000},
   {id:'tour1', ic:'👑',n:'אלוף האליפות',     d:'נצח אליפות שלמה — 4 יריבים ברצף',c:s=>(s.tours||0)>=1},
-  {id:'tour3', ic:'🏟', n:'שושלת',            d:'נצח 3 אליפויות',               c:s=>(s.tours||0)>=3}
+  {id:'tour3', ic:'🏟', n:'שושלת',            d:'נצח 3 אליפויות',               c:s=>(s.tours||0)>=3},
+  {id:'dch5',  ic:'🗓', n:'יומיומי',          d:'השלם 5 אתגרים יומיים',          c:s=>(s.dch||0)>=5},
+  {id:'perf3', ic:'💠',n:'מושלם פי שלוש',    d:'3 ניצחונות ללא פגיעה',          c:s=>(s.perf||0)>=3}
 ];
 function loadAch(){try{return JSON.parse(localStorage.getItem(ACH_KEY))||{};}catch(e){return {};}}
 let _achQ=[],_achShowing=false;
 function achToast(ic,txt){_achQ.push([ic,txt]);if(!_achShowing)_achNext();}
 function _achNext(){
   const t=document.getElementById('ACHT');if(!t){_achQ=[];_achShowing=false;return;}
+  if(typeof mlOpen!=='undefined'&&mlOpen){_achShowing=true;setTimeout(_achNext,1200);return;}  // defer during pause/cutscene, drain after
   const nx=_achQ.shift();if(!nx){_achShowing=false;return;}
   _achShowing=true;
   t.innerHTML='<b>'+nx[0]+'</b><span>'+nx[1]+'</span>';
@@ -1890,7 +1937,8 @@ function fbWorldRank(){
 function achNudge(){
   const s=loadStats(),got=loadAch();
   const prog=[['w5',s.w,5],['w15',s.w,15],['w50',s.w,50],['combo5',s.bc,5],['combo8',s.bc,8],
-    ['all5',Object.keys(s.beat||{}).length,5],['sc5k',s.sc||0,5000],['tour1',s.tours||0,1],['tour3',s.tours||0,3]]
+    ['all5',Object.keys(s.beat||{}).length,5],['sc5k',s.sc||0,5000],['tour1',s.tours||0,1],['tour3',s.tours||0,3],
+    ['dch5',s.dch||0,5],['perf3',s.perf||0,3]]
     .filter(p=>!got[p[0]]&&p[2]-p[1]>0)
     .map(p=>({a:ACH_DEFS.find(x=>x.id===p[0]),left:p[2]-p[1],frac:p[1]/p[2]}))
     .filter(p=>p.a);
@@ -1898,6 +1946,38 @@ function achNudge(){
   prog.sort((x,y)=>y.frac-x.frac);
   const n=prog[0];
   return '<div class="nudge">🎯 עוד '+n.left.toLocaleString()+' ל־'+n.a.ic+' „'+n.a.n+'”</div>';
+}
+// ── DAILY CHALLENGE: deterministic from the local date — the reason to come back TODAY ──
+const DCH_KEY='tlvwar_dailych';
+const DCH_REWARD=200;
+const DCH_POOL=[
+  {t:o=>'נצח את '+o.name,                       c:(x,o)=>x.won&&x.oppId===o.id},
+  {t:o=>'נצח את '+o.name+' עם קומבו 3+',        c:(x,o)=>x.won&&x.oppId===o.id&&x.combo>=3},
+  {t:o=>'נצח את '+o.name+' עם מעל 50% חיים',    c:(x,o)=>x.won&&x.oppId===o.id&&x.hpFrac>0.5},
+  {t:o=>'נצח קרב בתוך אליפות',                  c:x=>x.won&&x.inTour}
+];
+function dailySeed(){const d=localDay(0);let h=0;for(let i=0;i<d.length;i++)h=(h*31+d.charCodeAt(i))>>>0;return h;}
+function dailyCh(){const s=dailySeed();return {opp:CH[s%CH.length],def:DCH_POOL[(s>>>3)%DCH_POOL.length]};}
+function dailyChDone(){try{return localStorage.getItem(DCH_KEY)===localDay(0);}catch(e){return false;}}
+function renderDailyCh(){
+  const el=document.getElementById('DCH');if(!el)return;
+  const d=dailyCh();
+  el.innerHTML=dailyChDone()
+    ?'🗓 האתגר היומי הושלם ✓ <span>חזור מחר לאתגר חדש</span>'
+    :'🗓 האתגר היומי: '+d.def.t(d.opp)+' <span>פרס: +'+DCH_REWARD+' נק׳'+(dailyMult()>1?' ×בונוס רצף':'')+'</span>';
+  el.classList.toggle('done',dailyChDone());
+}
+function checkDailyCh(x){
+  if(dailyChDone())return;
+  const d=dailyCh();let hit=false;
+  try{hit=d.def.c(x||{},d.opp);}catch(e){}
+  if(!hit)return;
+  try{localStorage.setItem(DCH_KEY,localDay(0));}catch(e){}
+  const s=loadStats(),bonus=Math.round(DCH_REWARD*dailyMult());
+  s.sc=(s.sc||0)+bonus;s.dch=(s.dch||0)+1;
+  saveStats(s);renderStats();fbSubmitScore();
+  achToast('🗓','האתגר היומי הושלם! +'+bonus+' נק׳');
+  renderDailyCh();checkAch({});
 }
 // ── ONLINE COUNTER (Firebase Firestore) ───────────────────────────────────
 // Counts UNIQUE PLAYERS (by fighter name) and TOTAL GAMES played, shown on the
@@ -2016,6 +2096,13 @@ function openGCount(){            // dedicated players/games popup (footer "🌐
 function closeGCount(){const m=document.getElementById('GC');if(m)m.classList.remove('on');}
 const TUT_KEY='tlvwar_tut';
 function showTutorial(){const t=document.getElementById('TUT');if(t)t.classList.add('on');}
+let tutPage=1;
+function tutSetPage(p){tutPage=p;
+  const p1=document.getElementById('TUTP1'),p2=document.getElementById('TUTP2'),g=document.getElementById('TUTGO');
+  if(p1)p1.style.display=p===1?'':'none';
+  if(p2)p2.style.display=p===2?'':'none';
+  if(g)g.textContent=p===1?'הבא ←':'הבנתי, קדימה! ←';}
+function tutNext(){if(tutPage===1)tutSetPage(2);else{tutSetPage(1);closeTutorial();}}
 function closeTutorial(){const t=document.getElementById('TUT');if(t)t.classList.remove('on');try{localStorage.setItem(TUT_KEY,'1');}catch(e){}}
 function maybeShowTutorial(){let seen=false;try{seen=localStorage.getItem(TUT_KEY)==='1';}catch(e){}if(!seen)showTutorial();}
 // ── ROBUST AUDIO UNLOCK ── some phones block autoplay until a real gesture.
@@ -3085,6 +3172,7 @@ function rst(){
   heroView(0); // reset hero stage to default fighter
   playAMN(); // restart select music
   renderStats(); // refresh the local record card
+  renderDailyCh();
 }
 
 const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
