@@ -151,7 +151,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .segbar::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0,transparent 11px,rgba(6,8,10,.95) 11px,rgba(6,8,10,.95) 13px);pointer-events:none;}
 /* CARD STRIP — vertical roster cards, theme-tinted, selected elevated */
 .sc{position:relative;z-index:3;display:flex;flex-wrap:nowrap;gap:clamp(4px,1.4vw,9px);justify-content:center;align-items:flex-end;width:100%;flex:0 0 auto;overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;padding:clamp(8px,2.4vw,14px) clamp(5px,2vw,12px) clamp(4px,1.2vw,8px);}
-.c0{--cc:#2f86ff}.c1{--cc:#c9ced6}.c2{--cc:#ffc41f}.c3{--cc:#28e07a}.c4{--cc:#d94de0}
+.c0{--cc:#2f86ff}.c1{--cc:#c9ced6}.c2{--cc:#ffc41f}.c3{--cc:#28e07a}.c4{--cc:#d94de0}.c5{--cc:#ff7a1a}
 .cc{flex:0 0 clamp(66px,19.5vw,112px);cursor:pointer;position:relative;border-radius:8px;overflow:hidden;background:linear-gradient(180deg,#14171d,#0a0c10);
   border:1.5px solid rgba(255,255,255,.1);border-top:3px solid var(--cc);box-shadow:0 4px 12px rgba(0,0,0,.55);
   transition:transform .2s cubic-bezier(.2,.8,.3,1.3),box-shadow .2s,border-color .2s;}
@@ -1043,6 +1043,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 <audio id="AMR" preload="none"><source src="assets/audio/AMR.mp4" type="audio/mp4"/></audio>
 <audio id="AMY" preload="none"><source src="assets/audio/AMY.mp4" type="audio/mp4"/></audio>
 <audio id="AMS" preload="none"><source src="assets/audio/AMS.mp4" type="audio/mp4"/></audio>
+<audio id="AMF" preload="none"><source src="assets/audio/AMF.mp4" type="audio/mp4"/></audio>
 <audio id="AMN" loop preload="none"><source src="assets/audio/AMN.mp4" type="audio/mp4"/></audio>
 <audio id="AP"><source src="assets/audio/AP.wav" type="audio/wav"/></audio>
 <audio id="AK"><source src="assets/audio/AK.wav" type="audio/wav"/></audio>
@@ -1277,6 +1278,10 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
       <div class="cin"><div class="cnm">האייקון</div></div>
       <div class="cim"><img id="CI4" alt="האייקון"/><div class="cig"></div></div>
     </div>
+    <div class="cc c5" id="CC5" onclick="pick(5)">
+      <div class="cin"><div class="cnm">FRISBEE</div></div>
+      <div class="cim"><img id="CI5" alt="FRISBEE"/><div class="cig"></div></div>
+    </div>
   </div>
   <div class="svs" id="SVS2">
     <div class="svc"><div class="svp"><img id="SVI1" src="" alt=""/></div><div class="svn" id="SVN1">---</div></div>
@@ -1422,7 +1427,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
     </div>
     <div class="tutc" id="TUTP2" style="display:none;">
       <div class="tutr"><span class="tuti">⚡</span><div><b class="tt">תכונה ייחודית</b>לכל לוחם יתרון פסיבי משלו — מוצג במסך הבחירה.</div></div>
-      <div class="tutr"><span class="tuti">🏆</span><div><b class="tt">אליפות</b>נצח את כל 4 היריבים ברצף — והפוך לאלוף TLV.</div></div>
+      <div class="tutr"><span class="tuti">🏆</span><div><b class="tt">אליפות</b>נצח את כל היריבים ברצף — והפוך לאלוף TLV.</div></div>
       <div class="tutr"><span class="tuti">🎖</span><div><b class="tt">דרגות והישגים</b>כל ניצחון מקדם דרגה; הישגים קופצים תוך כדי משחק.</div></div>
       <div class="tutr"><span class="tuti">🗓</span><div><b class="tt">כל יום</b>אתגר יומי חדש + רצף ימים = בונוס נקודות גדל.</div></div>
       <div class="tutr"><span class="tuti">🎬</span><div><b class="tt">מהלך קולנועי</b>במפגשים מיוחדים נפתח מהלך וידאו הרסני — חפש אותו ברשימת המהלכים.</div></div>
@@ -1488,7 +1493,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
      b(BIG.COM): dedicated idle on NON-blue bg.  s(האייקון): full-body idle w/ legs
      (s_f), refreshed kick (s_kick).  y(ישר)/i(T.M.R)/r(השופט): a true finisher pose.
    ════════════════════════════════════════════════════════════════════════════ */
-const IM={b_s:"assets/img/b_s.jpg",b_f:"assets/img/b_f.webp",r_s:"assets/img/r_s.jpg",r_f:"assets/img/r_f.webp",i_s:"assets/img/i_s.jpg",i_f:"assets/img/i_f.webp",i_punch:"assets/img/i_punch.webp",i_kick:"assets/img/i_kick.webp",i_belt:"assets/img/i_belt.webp",b_kick:"assets/img/b_kick.webp",b_chair:"assets/img/b_chair.webp",r_kick:"assets/img/r_kick.webp",r_redcard:"assets/img/r_redcard.webp",y_s:"assets/img/y_s.jpg",y_f:"assets/img/y_f.webp",y_kick:"assets/img/y_kick.webp",y_jump:"assets/img/y_jump.webp",y_flex:"assets/img/y_flex.webp",y_fight:"assets/img/y_fight.webp",y_tire:"assets/img/y_tire.webp",s_s:"assets/img/s_s.jpg",s_f:"assets/img/s_f.webp",s_kick:"assets/img/s_kick.webp",s_cape:"assets/img/s_cape.webp",s_jump:"assets/img/s_jump.webp",i_run:"assets/img/i_run.webp",s_run:"assets/img/s_run.webp",y_run:"assets/img/y_run.webp",s_punch:"assets/img/s_punch.webp",s_smash:"assets/img/s_smash.webp",s_hook:"assets/img/s_hook.webp",r_punch:"assets/img/r_punch.webp",r_hurt:"assets/img/r_hurt.webp",b_run:"assets/img/b_run.webp",b_up:"assets/img/b_up.webp",b_jump:"assets/img/b_jump.webp",b_kk:"assets/img/b_kk.webp",b_punch:"assets/img/b_punch.webp",b_low:"assets/img/b_low.webp",i_jump:"assets/img/i_jump.webp",i_knee:"assets/img/i_knee.webp",i_lowk:"assets/img/i_lowk.webp",i_guard:"assets/img/i_guard.webp",i_point:"assets/img/i_point.webp",r_run:"assets/img/r_run.webp",r_ready:"assets/img/r_ready.webp",r_knee:"assets/img/r_knee.webp",r_spray:"assets/img/r_spray.webp",y_punch:"assets/img/y_punch.webp",y_hurt:"assets/img/y_hurt.webp",y_guard:"assets/img/y_guard.webp",b_hurt:"assets/img/b_hurt.webp",b_ready:"assets/img/b_ready.webp",s_hurt:"assets/img/s_hurt.webp",s_ready:"assets/img/s_ready.webp",s_air:"assets/img/s_air.webp",b_block:"assets/img/b_block.webp",b_jab:"assets/img/b_jab.webp",b_hook:"assets/img/b_hook.webp",r_blkH:"assets/img/r_blkH.webp",r_blkL:"assets/img/r_blkL.webp",
+const IM={b_s:"assets/img/b_s.jpg",b_f:"assets/img/b_f.webp",r_s:"assets/img/r_s.jpg",r_f:"assets/img/r_f.webp",i_s:"assets/img/i_s.jpg",i_f:"assets/img/i_f.webp",i_punch:"assets/img/i_punch.webp",i_kick:"assets/img/i_kick.webp",i_belt:"assets/img/i_belt.webp",b_kick:"assets/img/b_kick.webp",b_chair:"assets/img/b_chair.webp",r_kick:"assets/img/r_kick.webp",r_redcard:"assets/img/r_redcard.webp",y_s:"assets/img/y_s.jpg",y_f:"assets/img/y_f.webp",y_kick:"assets/img/y_kick.webp",y_jump:"assets/img/y_jump.webp",y_flex:"assets/img/y_flex.webp",y_fight:"assets/img/y_fight.webp",y_tire:"assets/img/y_tire.webp",s_s:"assets/img/s_s.jpg",s_f:"assets/img/s_f.webp",s_kick:"assets/img/s_kick.webp",s_cape:"assets/img/s_cape.webp",s_jump:"assets/img/s_jump.webp",i_run:"assets/img/i_run.webp",s_run:"assets/img/s_run.webp",y_run:"assets/img/y_run.webp",s_punch:"assets/img/s_punch.webp",s_smash:"assets/img/s_smash.webp",s_hook:"assets/img/s_hook.webp",r_punch:"assets/img/r_punch.webp",r_hurt:"assets/img/r_hurt.webp",b_run:"assets/img/b_run.webp",b_up:"assets/img/b_up.webp",b_jump:"assets/img/b_jump.webp",b_kk:"assets/img/b_kk.webp",b_punch:"assets/img/b_punch.webp",b_low:"assets/img/b_low.webp",i_jump:"assets/img/i_jump.webp",i_knee:"assets/img/i_knee.webp",i_lowk:"assets/img/i_lowk.webp",i_guard:"assets/img/i_guard.webp",i_point:"assets/img/i_point.webp",r_run:"assets/img/r_run.webp",r_ready:"assets/img/r_ready.webp",r_knee:"assets/img/r_knee.webp",r_spray:"assets/img/r_spray.webp",y_punch:"assets/img/y_punch.webp",y_hurt:"assets/img/y_hurt.webp",y_guard:"assets/img/y_guard.webp",b_hurt:"assets/img/b_hurt.webp",b_ready:"assets/img/b_ready.webp",s_hurt:"assets/img/s_hurt.webp",s_ready:"assets/img/s_ready.webp",s_air:"assets/img/s_air.webp",b_block:"assets/img/b_block.webp",b_jab:"assets/img/b_jab.webp",b_hook:"assets/img/b_hook.webp",r_blkH:"assets/img/r_blkH.webp",r_blkL:"assets/img/r_blkL.webp",f_s:"assets/img/f_s.jpg",f_f:"assets/img/f_f.webp",f_punch:"assets/img/f_punch.webp",f_palm:"assets/img/f_palm.webp",f_kick:"assets/img/f_kick.webp",f_fly:"assets/img/f_fly.webp",f_low:"assets/img/f_low.webp",f_claw:"assets/img/f_claw.webp",f_jump:"assets/img/f_jump.webp",f_knee:"assets/img/f_knee.webp",f_plantj:"assets/img/f_plantj.webp",f_plant:"assets/img/f_plant.webp",f_hero:"assets/img/f_hero.webp",
 /* ── v4 studio-photo poses (clean-bg cutouts) added to enrich battle animation ── */
 b_jab2:"assets/img/b_jab2.webp",b_kick2:"assets/img/b_kick2.webp",b_jump2:"assets/img/b_jump2.webp",b_run2:"assets/img/b_run2.webp",b_money:"assets/img/b_money.webp",
 r_idle2:"assets/img/r_idle2.webp",r_ready2:"assets/img/r_ready2.webp",r_kick2:"assets/img/r_kick2.webp",r_jump:"assets/img/r_jump.webp",r_hvy:"assets/img/r_hvy.webp",
@@ -1528,7 +1533,7 @@ const BSP={"jab":"b_jab","str":"b_hook","bb":"b_punch","upc":"b_up","flx":"b_mon
 const FRB={"jab":["b_jab","b_jab2","b_punch"],"str":["b_jab","b_hook"],"hvy":["b_up","b_chair"],"kick":["b_kk","b_kick2"],"bb":["b_punch","b_jab2"],"rsh":["b_run","b_run2"],"jsm":["b_jump","b_jump2"],"dco":["b_money","b_chair","b_punch"],"fin":["b_chair","b_money"]}; // BIG.COM: 1-2 combos chained from existing + new studio poses
 const RSP={"jab":"r_punch","str":"r_punch","hvy":"r_hvy","bb":"r_punch","upc":"r_knee","kick":"r_kick","sw":"r_kick","flx":"r_spray","jjb":"r_jump","jkk":"r_jump","jsm":"r_jump","sjp":"r_jump","rsh":"r_run","tkx":"r_run","c12":"r_run","dco":"r_spray","redcard":"r_redcard","fin":"r_redcard","est":"r_redcard","charge":"r_ready2","blk":"r_ready2"};
 const ISP={"jab":"i_punch","str":"i_punch","hvy":"i_punch","bb":"i_punch","upc":"i_knee","flx":"i_mic","jjb":"i_jump","jkk":"i_jump","jsm":"i_jump","sjp":"i_jump","kick":"i_kick","sw":"i_lowk","rsh":"i_run","tkx":"i_run","c12":"i_run","charge":"i_point","dco":"i_belt","fin":"i_belt","est":"i_belt","blk":"i_guard"};
-const VD={b:"assets/video/vd_b.mp4",r:"assets/video/vd_r.mp4",i:"assets/video/vd_i.mp4",y:"assets/video/vd_y.mp4",s:"assets/video/vd_s.mp4"};
+const VD={b:"assets/video/vd_b.mp4",r:"assets/video/vd_r.mp4",i:"assets/video/vd_i.mp4",y:"assets/video/vd_y.mp4",s:"assets/video/vd_s.mp4",f:"assets/video/vd_f.mp4"};
 // ── ישר ("Straight"): same balanced mechanics as BIG.COM, own signature names ──
 const MVY=MVB.map(m=>({...m}));
 ["אגרוף ישר","בעיטה ישרה","מכת ישר","הדיפת ראש","זינוק ישר","בעיטת ריצה","מכה מהאוויר","מפלה נמוכה","מכת גוף","⚡ ישר לפנים","⚡ אני הוא הפיתרון","⚡ כוח ישר"].forEach((nm,i)=>MVY[i].n=nm);
@@ -1536,6 +1541,11 @@ const YSP={"jab":"y_punch","kick":"y_kick","str":"y_punch","hvy":"y_tire","blk":
 // ── השרון ("The Icon"): Ric-Flair theatrical ego — flashy, agile, balanced ──
 const MVS=MVB.map(m=>({...m}));
 ["אגרוף האייקון","בעיטת ראווה","סטירת צ׳ופ","הדיפה יהירה","זינוק ראווה","בעיטת ריצה","צלילה מלמעלה","מפלה נמוכה","מכת גוף","⚡ WOO קומבו","⚡ סיבוב האייקון","⚡ כוח האייקון"].forEach((nm,i)=>MVS[i].n=nm);
+// ── FRISBEE ("THE BEACH LEGEND"): aerial trickster — mullet, fish tattoos, potted-plant weaponry ──
+const MVF=MVB.map(m=>({...m}));
+["צליפת דיסק","בעיטת חוף","סנוקרת שפם","הדיפת גלים","ריצת חוף","שצף דגים","הנחתה מהשמיים","גלישת חול","מכת סנפיר","⚡ עציץ מעופף","⚡ פריזבי האש","⚡ כוח החוף"].forEach((nm,i)=>MVF[i].n=nm);
+const FSP={"jab":"f_punch","str":"f_punch","bb":"f_palm","hvy":"f_palm","kick":"f_kick","sw":"f_low","upc":"f_kick","flx":"f_claw","jjb":"f_jump","jkk":"f_fly","jsm":"f_knee","sjp":"f_jump","rsh":"f_palm","tkx":"f_palm","c12":"f_punch","dco":"f_plantj","fin":"f_plant","est":"f_plant","charge":"f_claw","blk":"f_f"};
+const FRF={"jab":["f_punch","f_palm"],"str":["f_palm","f_punch"],"kick":["f_kick","f_fly"],"hvy":["f_claw","f_palm"],"bb":["f_palm","f_punch"],"dco":["f_jump","f_plantj"],"fin":["f_claw","f_plant"]};
 // ── ARCHETYPE TUNING (one-time, data-level): the select-screen stat bars are now TRUE ──
 // dm = damage mult, em = energy-cost mult. Skips charge/defend/redcard (redcard stays 60⚡).
 // b = balanced baseline (untouched). Rebinds d/seq-safe: clones share arrays until retuned here.
@@ -1548,6 +1558,7 @@ tuneMV(MVR,0.95,0.92);   // השופט — טנק-שליטה: רך יותר, ז�
 tuneMV(MVI,1.08,1.12);   // T.M.R — מכה כבדה: חזק אבל שורף אנרגיה
 tuneMV(MVY,1.00,0.88);   // ישר — טכני-יעיל: ספיישלים זולים
 tuneMV(MVS,0.94,0.82);   // האייקון — מהיר-זול: הרבה מהלכים, כל אחד חלש יותר
+tuneMV(MVF,0.97,0.90);   // FRISBEE — זריז-אווירי: קליל, זול, וה-trait מתגמל אוויר
 const SSP={"jab":"s_punch","str":"s_punch","bb":"s_punch","hvy":"s_smash","upc":"s_smash","dco":"s_hook","kick":"s_kick","sw":"s_kick","jkk":"s_jump","sjp":"s_air","jsm":"s_air","jjb":"s_jump","flx":"s_hero2","rsh":"s_run","tkx":"s_run","c12":"s_run","fin":"s_cape2","charge":"s_cape2","est":"s_cape","blk":"s_hero2"};
 
 // ── FRAME-SEQUENCE combos, assembled from EACH fighter's existing pose library ──
@@ -1597,6 +1608,7 @@ const CH=[
   {id:'i',name:'T.M.R', iS:'i_s',iF:'i_f',hp:130,mus:'AMI',mv:MVI,sp:ISP,ap:'i_run',wu:'i_guard',fr:FRI},
   {id:'y',name:'ישר',    iS:'y_s',iF:'y_guard',hp:110,mus:'AMY',mv:MVY,sp:YSP,ap:'y_run',wu:'y_guard',fr:FRY},
   {id:'s',name:'האייקון',  iS:'s_s',iF:'s_f',hp:115,mus:'AMS',mv:MVS,sp:SSP,ap:'s_run',wu:'s_idle2',fr:FRS},
+  {id:'f',name:'FRISBEE',iS:'f_s',iF:'f_f',hp:105,mus:'AMF',mv:MVF,sp:FSP,ap:'f_palm',wu:'f_claw',fr:FRF},
 ];
 
 // fighter profiles for the hero panel (style text + stat bars + theme colors)
@@ -1607,6 +1619,7 @@ const FS={
   i:{role:'THE CHAMPION',   style:'ALL-ROUNDER',  atk:84,def:80,spd:58,col:'#ffcc00',glow:'#c19300'},
   y:{role:'THE SOLUTION',   style:'TECHNICIAN',   atk:70,def:78,spd:84,col:'#00e676',glow:'#00b35a'},
   s:{role:'THE ICON',       style:'HIGH-FLYER',   atk:62,def:64,spd:92,col:'#e040fb',glow:'#b14de0'},
+  f:{role:'THE BEACH LEGEND',style:'AERIAL TRICKSTER',atk:66,def:62,spd:88,col:'#ff7a1a',glow:'#ff9440'},
 };
 
 document.getElementById('CI0').src=IM.b_s;
@@ -1614,15 +1627,16 @@ document.getElementById('CI1').src=IM.r_s;
 document.getElementById('CI2').src=IM.i_s;
 document.getElementById('CI3').src=IM.y_s;
 document.getElementById('CI4').src=IM.s_s;
+document.getElementById('CI5').src=IM.f_s;
 
 // Hebrew style names + qualitative stat labels for the glass panel
-const STYLE_HE={b:'היאבקות חופשית',r:'שליטה קרקעית',i:'אלוף רב-תחומי',y:'לוחם טכני',s:'אקרובט אווירי'};
+const STYLE_HE={b:'היאבקות חופשית',r:'שליטה קרקעית',i:'אלוף רב-תחומי',y:'לוחם טכני',s:'אקרובט אווירי',f:'לוחם חופים אווירי'};
 const LVL_M=['נמוך','בינוני','גבוה','גבוה מאוד'];     // masculine (כוח)
 const LVL_F=['נמוכה','בינונית','גבוהה','גבוהה מאוד']; // feminine (הגנה/מהירות)
 function lvl(v){return v>=86?3:v>=70?2:v>=55?1:0;}
 // render the selected fighter big in the hero stage
-const HSC={b:1.06,r:1.08,i:1.08,y:1.08,s:1.08};  // per-fighter hero zoom
-const HHERO={b:'assets/img/b_hero.webp',s:'assets/img/s_hero.webp'};         // BIG.COM + האייקון: dedicated select-screen render (full-body, fills the stage)
+const HSC={b:1.06,r:1.08,i:1.08,y:1.08,s:1.08,f:1.06};  // per-fighter hero zoom
+const HHERO={b:'assets/img/b_hero.webp',s:'assets/img/s_hero.webp',f:'assets/img/f_hero.webp'};  // dedicated select-screen renders (full-body, fills the stage)
 // ── FIGHTER TRAITS: one passive identity per fighter, single isolated hook each ──
 // (defined BEFORE heroView — it runs at load for the default hero display)
 const TRAITS={
@@ -1630,7 +1644,8 @@ const TRAITS={
   r:{ic:'🟥',n:'סמכות השופט',d:'מכות בסיס טוענות יותר אנרגיה'},
   i:{ic:'💪',n:'דם של אלוף',d:'‎+6% נזק בכל המכות'},
   y:{ic:'🧱',n:'בטון',d:'סופג 8% פחות נזק'},
-  s:{ic:'🌀',n:'שואומן',d:'טעינת ⚡ חזקה יותר (+38)'}
+  s:{ic:'🌀',n:'שואומן',d:'טעינת ⚡ חזקה יותר (+38)'},
+  f:{ic:'🥏',n:'פריזבי קטלני',d:'מהלכי אוויר עושים ‎+15% נזק'}
 };
 function heroView(i){
   const ch=CH[i],f=FS[ch.id];
@@ -1676,7 +1691,7 @@ function updSndBtn(){['SND_BTN','SND_BTN2'].forEach(id=>{const b=document.getEle
 function toggleSound(){soundOn=!soundOn;try{localStorage.setItem('tlvwar_snd',soundOn?'1':'0');}catch(e){}applySound();updSndBtn();if(soundOn){const amn=document.getElementById('AMN');if(amn&&amn.paused&&!anyCharPlaying())playAMN();}}
 function vib(p){try{if(navigator.vibrate)navigator.vibrate(p);}catch(e){}}   // Android only; iOS ignores
 function sfx(id,v=1){if(!soundOn)return;try{const e=document.getElementById(id);if(!e)return;const c=e.cloneNode();c.volume=Math.min(1,v);c.play().catch(()=>{});document.body.appendChild(c);setTimeout(()=>c.remove(),3000);}catch(e){}}
-const CHAR_THEMES=['AMB','AMI','AMR','AMY','AMS'];
+const CHAR_THEMES=['AMB','AMI','AMR','AMY','AMS','AMF'];
 function stopChar(){CHAR_THEMES.forEach(k=>{const e=document.getElementById(k);if(e){e.onended=null;e.pause();e.currentTime=0;}});}
 function anyCharPlaying(){return CHAR_THEMES.some(k=>{const e=document.getElementById(k);return e&&!e.paused&&!e.ended;});}
 // Play a CHARACTER theme once. It replaces the game theme (AMN); when it finishes,
@@ -1854,11 +1869,11 @@ const ACH_DEFS=[
   {id:'cine',  ic:'🎬',n:'קולנוען',          d:'הפעל מהלך קולנועי בקרב',       c:(s,x)=>!!x.cine},
   {id:'combo5',ic:'🔥',n:'קומבו לוהט',       d:'הגע לשיא קומבו 5',             c:s=>s.bc>=5},
   {id:'combo8',ic:'🌋',n:'בלתי ניתן לעצירה', d:'הגע לשיא קומבו 8',             c:s=>s.bc>=8},
-  {id:'all5',  ic:'🌍',n:'שולט בכולם',       d:'נצח את כל 5 הלוחמים',          c:s=>s.beat&&Object.keys(s.beat).length>=5},
+  {id:'all5',  ic:'🌍',n:'שולט בכולם',       d:'נצח את כל 6 הלוחמים',          c:s=>s.beat&&Object.keys(s.beat).length>=CH.length},
   {id:'tier3', ic:'🏔', n:'צייד ראשים',       d:'נצח יריב ברמת קושי 3 ומעלה',   c:(s,x)=>(x.lvl||0)>=3},
   {id:'streak3',ic:'📅',n:'מכור לזירה',      d:'שחק 3 ימים ברצף',              c:()=>{const d=loadDaily();return (d.streak||0)>=3;}},
   {id:'sc5k',  ic:'💰',n:'חמשת אלפים',       d:'צבור 5,000 נקודות',            c:s=>(s.sc||0)>=5000},
-  {id:'tour1', ic:'👑',n:'אלוף האליפות',     d:'נצח אליפות שלמה — 4 יריבים ברצף',c:s=>(s.tours||0)>=1},
+  {id:'tour1', ic:'👑',n:'אלוף האליפות',     d:'נצח אליפות שלמה — כל היריבים ברצף',c:s=>(s.tours||0)>=1},
   {id:'tour3', ic:'🏟', n:'שושלת',            d:'נצח 3 אליפויות',               c:s=>(s.tours||0)>=3},
   {id:'dch5',  ic:'🗓', n:'יומיומי',          d:'השלם 5 אתגרים יומיים',          c:s=>(s.dch||0)>=5},
   {id:'perf3', ic:'💠',n:'מושלם פי שלוש',    d:'3 ניצחונות ללא פגיעה',          c:s=>(s.perf||0)>=3}
@@ -1937,7 +1952,7 @@ function fbWorldRank(){
 function achNudge(){
   const s=loadStats(),got=loadAch();
   const prog=[['w5',s.w,5],['w15',s.w,15],['w50',s.w,50],['combo5',s.bc,5],['combo8',s.bc,8],
-    ['all5',Object.keys(s.beat||{}).length,5],['sc5k',s.sc||0,5000],['tour1',s.tours||0,1],['tour3',s.tours||0,3],
+    ['all5',Object.keys(s.beat||{}).length,CH.length],['sc5k',s.sc||0,5000],['tour1',s.tours||0,1],['tour3',s.tours||0,3],
     ['dch5',s.dch||0,5],['perf3',s.perf||0,3]]
     .filter(p=>!got[p[0]]&&p[2]-p[1]>0)
     .map(p=>({a:ACH_DEFS.find(x=>x.id===p[0]),left:p[2]-p[1],frac:p[1]/p[2]}))
@@ -2517,9 +2532,9 @@ function flashBtn(btn){const el=document.getElementById(FL_ID[btn]);if(el){el.cl
 // GUARD_*_FB = graceful fallback to the existing poses until the real photos land — see setGuard onerror.
 // r has REAL dedicated block photos; b/i/y/s point at their best existing art until
 // the user supplies {id}_blkH/{id}_blkL photos (then: add IM keys + repoint here).
-const GUARD_HI={b:'b_block',i:'i_guard',r:'r_blkH',y:'y_guard',s:'s_ready'};
-const GUARD_LOW={b:'b_low',i:'i_lowk',r:'r_blkL',y:'y_kick',s:'s_kick'};
-const GUARD_HI_FB={b:'b_block',i:'i_guard',r:'r_ready',y:'y_guard',s:'s_ready'};
+const GUARD_HI={b:'b_block',i:'i_guard',r:'r_blkH',y:'y_guard',s:'s_ready',f:'f_f'};
+const GUARD_LOW={b:'b_low',i:'i_lowk',r:'r_blkL',y:'y_kick',s:'s_kick',f:'f_low'};
+const GUARD_HI_FB={b:'b_block',i:'i_guard',r:'r_ready',y:'y_guard',s:'s_ready',f:'f_f'};
 const GUARD_LOW_FB={b:'b_low',i:'i_lowk',r:'r_kick',y:'y_kick',s:'s_kick'};
 function setGuard(g){
   if(guard1===g||busy1||mlOpen)return;
@@ -2814,6 +2829,7 @@ async function execMove(mv,isP1){
   if(dmg>0){                                                          // fighter traits (symmetric: apply by fighter, not by who controls them)
     const _atk=isP1?P1:P2,_def=isP1?P2:P1;
     if(_atk&&_atk.id==='i')dmg=Math.round(dmg*1.06);                  // 💪 T.M.R: champion's blood
+    if(_atk&&_atk.id==='f'&&mv.seq[0]==='U')dmg=Math.round(dmg*1.15); // 🥏 FRISBEE: aerial specialist
     if(_def&&_def.id==='y')dmg=Math.max(1,Math.round(dmg*0.92));      // 🧱 ישר: concrete
   }
   const isJump=mv.seq[0]==='U';
@@ -3122,18 +3138,18 @@ function endG(w,ip){
       if(ip&&tourIdx>=tourSeq.length-1){                 // 👑 CHAMPION — beat all 4
         tourOn=false;
         const ts=loadStats();ts.tours=(ts.tours||0)+1;ts.sc=(ts.sc||0)+750;saveStats(ts);renderStats();fbSubmitScore();checkAch({});
-        if(tb){tb.innerHTML='👑 אלוף אליפות TLV!<span>ניצחת את כל 4 היריבים · בונוס +750 נק׳</span>';tb.className='tourbar champ on';}
+        if(tb){tb.innerHTML='👑 אלוף אליפות TLV!<span>ניצחת את כל '+tourSeq.length+' היריבים · בונוס +750 נק׳</span>';tb.className='tourbar champ on';}
         document.getElementById('WB').textContent='◄ 👑 TOURNAMENT CHAMPION ►';
       }else if(ip){                                      // advance to the next stage
         tourAdvance=true;
-        if(tb){tb.innerHTML='🏆 שלב '+(tourIdx+2)+'/4 · היריב הבא: '+CH[tourSeq[tourIdx+1]].name;tb.className='tourbar on';}
+        if(tb){tb.innerHTML='🏆 שלב '+(tourIdx+2)+'/'+tourSeq.length+' · היריב הבא: '+CH[tourSeq[tourIdx+1]].name;tb.className='tourbar on';}
       }else{                                             // eliminated
-        if(tb){tb.innerHTML='💀 הודחת מהאליפות בשלב '+(tourIdx+1)+'/4 — נסה שוב!';tb.className='tourbar on';}
+        if(tb){tb.innerHTML='💀 הודחת מהאליפות בשלב '+(tourIdx+1)+'/'+tourSeq.length+' — נסה שוב!';tb.className='tourbar on';}
         tourOn=false;
       }
     }
     if(bre){
-      if(tourAdvance){bre.textContent='🏆 הקרב הבא ('+(tourIdx+2)+'/4)';bre.onclick=tourNext;}
+      if(tourAdvance){bre.textContent='🏆 הקרב הבא ('+(tourIdx+2)+'/'+tourSeq.length+')';bre.onclick=tourNext;}
       else{bre.textContent='🔁 קרב חוזר';bre.onclick=rematch;}
     }
     const wr=document.getElementById('WRANK');   // rank ladder progress — the "one more fight" hook
