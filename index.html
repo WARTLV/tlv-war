@@ -118,7 +118,8 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .game-logo{display:block;margin:0 auto;width:clamp(180px,54vw,310px);height:auto;
   filter:drop-shadow(0 4px 10px rgba(0,0,0,.7)) drop-shadow(0 0 22px rgba(150,185,215,.28));
   animation:logoIn .7s cubic-bezier(.2,.85,.3,1.2) both;}
-#SS .game-logo{width:clamp(118px,33vw,190px);}
+#SS .game-logo{width:clamp(80px,20vw,120px);}
+#SS .sls{font-size:clamp(11px,3.4vw,22px);}
 @keyframes logoIn{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
 .sll{font-family:'Heebo','Arial Black',system-ui,sans-serif;font-weight:900;font-size:clamp(32px,11vw,66px);letter-spacing:clamp(0px,.4vw,3px);line-height:.92;
   background:linear-gradient(180deg,#ffffff 0%,#e3e9f1 36%,#97a3b4 51%,#f4f7fb 64%,#aab5c4 100%);
@@ -150,9 +151,10 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .segf{height:100%;width:0;background:linear-gradient(90deg,#c01010,#ff5a00 55%,#ffd000);box-shadow:0 0 9px rgba(255,120,0,.55);transition:width .45s cubic-bezier(.2,.8,.3,1);}
 .segbar::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0,transparent 11px,rgba(6,8,10,.95) 11px,rgba(6,8,10,.95) 13px);pointer-events:none;}
 /* CARD STRIP — vertical roster cards, theme-tinted, selected elevated */
-.sc{position:relative;z-index:3;display:flex;flex-wrap:nowrap;gap:clamp(4px,1.4vw,9px);justify-content:center;align-items:flex-end;width:100%;flex:0 0 auto;overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;padding:clamp(8px,2.4vw,14px) clamp(5px,2vw,12px) clamp(4px,1.2vw,8px);}
+/* 6-fighter roster: 3×2 wrap grid — ALL cards always visible, bigger tap targets (no more h-scroll cut) */
+.sc{position:relative;z-index:3;display:flex;flex-wrap:wrap;gap:clamp(5px,1.6vw,10px);justify-content:center;align-items:flex-end;width:100%;flex:0 0 auto;overflow:visible;padding:clamp(6px,1.8vw,12px) clamp(5px,2vw,12px) clamp(4px,1.2vw,8px);}
 .c0{--cc:#2f86ff}.c1{--cc:#c9ced6}.c2{--cc:#ffc41f}.c3{--cc:#28e07a}.c4{--cc:#d94de0}.c5{--cc:#ff7a1a}
-.cc{flex:0 0 clamp(66px,19.5vw,112px);cursor:pointer;position:relative;border-radius:8px;overflow:hidden;background:linear-gradient(180deg,#14171d,#0a0c10);
+.cc{flex:0 0 clamp(96px,28vw,150px);cursor:pointer;position:relative;border-radius:8px;overflow:hidden;background:linear-gradient(180deg,#14171d,#0a0c10);
   border:1.5px solid rgba(255,255,255,.1);border-top:3px solid var(--cc);box-shadow:0 4px 12px rgba(0,0,0,.55);
   transition:transform .2s cubic-bezier(.2,.8,.3,1.3),box-shadow .2s,border-color .2s;}
 .cc:active{transform:scale(.96);}
@@ -160,7 +162,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .cin{padding:clamp(3px,1vw,6px) 2px;text-align:center;background:linear-gradient(180deg,rgba(30,35,44,.96),rgba(15,18,24,.96));}
 .cnm{font-family:'Heebo','Bebas Neue',system-ui,sans-serif;font-weight:800;font-size:clamp(9px,2.7vw,14px);letter-spacing:.4px;color:var(--cc);filter:brightness(1.12) saturate(.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px #000;transition:filter .15s;}
 .cc.on .cnm{filter:brightness(1.35) saturate(1.1);}
-.cim{width:100%;aspect-ratio:1/1;overflow:hidden;position:relative;background:#0a0d12;}
+.cim{width:100%;aspect-ratio:1/0.78;overflow:hidden;position:relative;background:#0a0d12;}
 .cim img{width:100%;height:100%;object-fit:cover;object-position:center 10%;display:block;transition:transform .3s,filter .2s;filter:saturate(.82) contrast(1.05) brightness(.8);}
 .cc.on .cim img{transform:scale(1.05);filter:saturate(1.18) contrast(1.1) brightness(1.02);}
 .cig{position:absolute;inset:0;background:linear-gradient(180deg,transparent 52%,rgba(8,10,14,.9));z-index:2;}
@@ -1170,10 +1172,16 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .wbtns{display:flex;gap:clamp(8px,2.4vw,12px);justify-content:center;}
 .kbh{display:none;margin-top:3px;font-family:'Heebo',system-ui,sans-serif;font-weight:700;font-size:10px;letter-spacing:.3px;color:#8f9bb0;text-shadow:0 1px 2px #000;white-space:nowrap;}
 @media (pointer:fine) and (min-width:900px){.kbh{display:block;}}
+/* FIGHT + tournament share ONE row — frees vertical space for the giant hero stage */
+.btnrow{position:relative;z-index:3;display:flex;gap:clamp(7px,2vw,12px);justify-content:center;align-items:stretch;width:min(92vw,420px);margin:clamp(4px,1.2vw,8px) auto 0;}
+.btnrow .bfi{flex:1.7;margin:0;}
+.btnrow .btour{flex:1;margin:0;display:flex;align-items:center;justify-content:center;}
+/* selected card glows in the fighter's theme color */
+.cc.on{box-shadow:0 0 0 2px var(--cc,#f5c518),0 0 18px var(--cc,#f5c518);}
 /* ── TYPE SCALE (סריף): one clamp ladder for every new-system text element ── */
 :root{--t1:clamp(30px,9vw,46px);--t2:clamp(20px,6vw,32px);--t3:clamp(13px,3.7vw,17px);--t4:clamp(11px,3.2vw,15px);--t5:clamp(10px,2.9vw,13px);--t6:clamp(9px,2.5vw,11px);}
 /* ── PLAYER CARD (פיקסל): stats + rank + daily challenge in one framed panel ── */
-.pcard{position:relative;z-index:3;width:min(88vw,360px);margin:clamp(4px,1.2vw,8px) auto 0;padding:clamp(7px,2vw,10px) clamp(10px,3vw,14px);background:linear-gradient(180deg,rgba(12,9,4,.74),rgba(4,3,2,.8));border:1px solid rgba(245,197,24,.28);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.5);}
+.pcard{position:relative;z-index:3;width:min(90vw,380px);margin:clamp(3px,.8vw,6px) auto 0;padding:clamp(4px,1.2vw,7px) clamp(9px,2.6vw,13px);background:linear-gradient(180deg,rgba(12,9,4,.74),rgba(4,3,2,.8));border:1px solid rgba(245,197,24,.28);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.5);font-size:var(--t6);}
 .pcard::before{content:"";position:absolute;top:0;left:8%;right:8%;height:2px;background:linear-gradient(90deg,transparent,var(--g),transparent);}
 .pcard .pstats{margin:0;}
 .pcard .prank{width:auto;margin:3px 0 0;}
@@ -1235,11 +1243,6 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
     <div class="sls">SELECT CHARACTER</div>
   </div>
   <div class="pgr" id="PNAME_GREET"></div>
-  <div class="pcard">
-    <div class="pstats" id="PSTATS"></div>
-    <div class="prank" id="PRANK"></div>
-    <div class="dch" id="DCH"></div>
-  </div>
   <div class="hero" id="HERO">
     <div class="hero-glow" id="HGLOW"></div>
     <img class="hero-img" id="HIMG" src="" alt=""/>
@@ -1288,8 +1291,15 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
     <div class="svsep">VS</div>
     <div class="svc"><div class="svp"><img id="SVI2" src="" alt=""/></div><div class="svn" id="SVN2">CPU</div></div>
   </div>
-  <button class="bfi" id="BFI" onclick="goFight()">⚡ FIGHT ⚡</button>
-  <button class="btour" id="BTOUR" onclick="startTour()">🏆 אליפות TLV — נצח את כולם</button>
+  <div class="btnrow">
+    <button class="bfi" id="BFI" onclick="goFight()">⚡ FIGHT ⚡</button>
+    <button class="btour" id="BTOUR" onclick="startTour()">🏆 אליפות</button>
+  </div>
+  <div class="pcard">
+    <div class="pstats" id="PSTATS"></div>
+    <div class="prank" id="PRANK"></div>
+    <div class="dch" id="DCH"></div>
+  </div>
   <div class="scf">
     <div class="scf-p" onclick="showTutorial()"><b>?</b><span>איך משחקים</span></div>
     <div class="scf-p" onclick="openLeaderboard()"><b>🏆</b><span>טבלת אלופים</span></div>
@@ -1635,7 +1645,7 @@ const LVL_M=['נמוך','בינוני','גבוה','גבוה מאוד'];     // m
 const LVL_F=['נמוכה','בינונית','גבוהה','גבוהה מאוד']; // feminine (הגנה/מהירות)
 function lvl(v){return v>=86?3:v>=70?2:v>=55?1:0;}
 // render the selected fighter big in the hero stage
-const HSC={b:1.06,r:1.08,i:1.08,y:1.08,s:1.08,f:1.06};  // per-fighter hero zoom
+const HSC={b:1.22,r:1.24,i:1.24,y:1.24,s:1.24,f:1.22};  // per-fighter hero zoom — the fighter DOMINATES the screen (.hero overflow:visible, scales past the box)
 const HHERO={b:'assets/img/b_hero.webp',s:'assets/img/s_hero.webp',f:'assets/img/f_hero.webp'};  // dedicated select-screen renders (full-body, fills the stage)
 // ── FIGHTER TRAITS: one passive identity per fighter, single isolated hook each ──
 // (defined BEFORE heroView — it runs at load for the default hero display)
@@ -2237,8 +2247,8 @@ function freeF(isP1){if(isP1){busy1=false;if(pendRegen1>0){regenE(1,pendRegen1);
 
 // ── VS-SCREEN PER-FIGHTER SCALE ── compresses the height spread so both fighters square off at similar size.
 // Two tables: PLAYER (left) and CPU (right) use different poses → different aspect ratios. Cap ~1.16 limits side-clip.
-const VSC_P={b:1.07,r:0.90,i:0.82,y:1.16,s:1.40};  // player poses: b_hook · r_vs · i_vs · y_flex · s_vs(=s_cape, dynamic fist-up; wide→bumped)
-const VSC_C={b:1.16,r:1.30,i:1.16,y:1.16,s:1.38};  // cpu poses:    b_vs  · r_punch · i_knee · y_punch · s_vsx(=standing WOOO, legs restored; wide→bumped)
+const VSC_P={b:1.07,r:0.90,i:0.82,y:1.16,s:1.40,f:1.06};  // player poses: b_hook · r_vs · i_vs · y_flex · s_vs(=s_cape) · f_vs(=f_claw)
+const VSC_C={b:1.16,r:1.30,i:1.16,y:1.16,s:1.38,f:1.10};  // cpu poses:    b_vs  · r_punch · i_knee · y_punch · s_vsx · f_vsx(=mirrored plant thrust)
 
 // ── DIFFICULTY LADDER ── auto-escalates after each player win; resets to baseline on a loss OR on page reload (re-entry).
 let diffLvl=0;            // 0 = baseline (first match). +1 per consecutive player win, back to 0 on a loss.
