@@ -1153,6 +1153,26 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .wpts{font-family:'Bebas Neue',sans-serif;font-size:clamp(20px,6vw,32px);letter-spacing:2px;color:var(--g);text-shadow:2px 2px 0 #000,0 0 16px rgba(245,197,24,.55);margin-top:clamp(4px,1.4vw,8px);min-height:1em;opacity:0;transform:scale(.7);transition:opacity .4s,transform .4s cubic-bezier(.2,.85,.3,1.4);}
 .wpts.on{opacity:1;transform:scale(1);}
 .wpts .wpx{display:block;font-family:'Heebo',system-ui,sans-serif;font-weight:700;font-size:clamp(9px,2.4vw,12px);letter-spacing:.5px;color:#cdb98a;text-shadow:0 1px 2px #000;margin-top:2px;}
+/* ── TECHNO-TLV (ניאון): sharp arcade layer — additive only, fighter keyframes untouched ── */
+.hpt{position:relative;clip-path:polygon(0 0,100% 0,calc(100% - 7px) 100%,7px 100%);}
+.hpt::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),rgba(0,0,0,.5) calc(10% - 1px) 10%);pointer-events:none;z-index:3;}
+.hs.L .hpt{box-shadow:0 0 9px rgba(0,255,225,.4),inset 0 0 4px rgba(0,255,225,.18);}
+.hs.R .hpt{box-shadow:0 0 9px rgba(255,45,85,.4),inset 0 0 4px rgba(255,45,85,.18);}
+.hs.L .ent{box-shadow:0 0 7px rgba(0,255,225,.3);}
+.hs.R .ent{box-shadow:0 0 7px rgba(255,45,85,.3);}
+.hpo{border:1px solid rgba(0,255,225,.35);clip-path:polygon(8% 0,100% 0,100% 92%,92% 100%,0 100%,0 8%);}
+.hs.R .hpo{border-color:rgba(255,45,85,.35);}
+.dmg{text-shadow:2px 0 0 rgba(255,0,90,.75),-2px 0 0 rgba(0,240,255,.75),0 2px 6px #000 !important;letter-spacing:1px;}
+@keyframes glxA{0%{transform:translate(0,0);filter:none;}25%{transform:translate(-3px,1px);filter:drop-shadow(3px 0 0 rgba(255,0,90,.6)) drop-shadow(-3px 0 0 rgba(0,240,255,.6));}60%{transform:translate(2px,-1px);filter:drop-shadow(-2px 0 0 rgba(255,0,90,.5)) drop-shadow(2px 0 0 rgba(0,240,255,.5));}100%{transform:translate(0,0);filter:none;}}
+.glx{animation:glxA .13s steps(3,end) 1;}
+#SVS::after,.wbg::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.11) 3px 4px);pointer-events:none;z-index:9;}
+.vhurt .fs img{animation:vhurtF .3s ease-out 1;}
+@keyframes vhurtF{0%{filter:brightness(2) saturate(2.2) drop-shadow(0 0 12px rgba(255,40,40,.85));}100%{filter:none;}}
+.dsh .fs img{filter:brightness(1.35) drop-shadow(-8px 0 6px rgba(0,240,255,.45));}
+.chud-mv .chb{display:inline-block;min-width:15px;text-align:center;margin:0 3px;padding:0 4px;border:1px solid rgba(0,255,225,.5);border-radius:3px;background:rgba(0,40,44,.7);color:#7dfff0;font-family:'Bebas Neue',sans-serif;}
+.chud-mv .chsep{opacity:.5;}
+.dbs,.fbs{border:1px solid rgba(0,255,225,.22)!important;box-shadow:inset 0 0 9px rgba(0,255,225,.10),0 2px 8px rgba(0,0,0,.55)!important;}
+.dC{border-color:rgba(255,45,85,.3)!important;}
 /* ── RETENTION SUITE: rank card, daily streak, achievements, rematch, kb hint ── */
 .prank,.wrank{margin:clamp(4px,1.2vw,7px) auto 0;width:min(86vw,340px);text-align:center;direction:rtl;font-family:'Heebo',system-ui,sans-serif;font-weight:800;font-size:var(--t5);color:#e8d9a8;text-shadow:0 1px 2px #000;}
 .wrank{width:min(80vw,300px);margin-bottom:clamp(6px,1.8vw,10px);color:#cdb98a;font-size:var(--t6);}
@@ -1503,7 +1523,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
      b(BIG.COM): dedicated idle on NON-blue bg.  s(האייקון): full-body idle w/ legs
      (s_f), refreshed kick (s_kick).  y(ישר)/i(T.M.R)/r(השופט): a true finisher pose.
    ════════════════════════════════════════════════════════════════════════════ */
-const IM={b_s:"assets/img/b_s.jpg",b_f:"assets/img/b_f.webp",r_s:"assets/img/r_s.jpg",r_f:"assets/img/r_f.webp",i_s:"assets/img/i_s.jpg",i_f:"assets/img/i_f.webp",i_punch:"assets/img/i_punch.webp",i_kick:"assets/img/i_kick.webp",i_belt:"assets/img/i_belt.webp",b_kick:"assets/img/b_kick.webp",b_chair:"assets/img/b_chair.webp",r_kick:"assets/img/r_kick.webp",r_redcard:"assets/img/r_redcard.webp",y_s:"assets/img/y_s.jpg",y_f:"assets/img/y_f.webp",y_kick:"assets/img/y_kick.webp",y_jump:"assets/img/y_jump.webp",y_flex:"assets/img/y_flex.webp",y_fight:"assets/img/y_fight.webp",y_tire:"assets/img/y_tire.webp",s_s:"assets/img/s_s.jpg",s_f:"assets/img/s_f.webp",s_kick:"assets/img/s_kick.webp",s_cape:"assets/img/s_cape.webp",s_jump:"assets/img/s_jump.webp",i_run:"assets/img/i_run.webp",s_run:"assets/img/s_run.webp",y_run:"assets/img/y_run.webp",s_punch:"assets/img/s_punch.webp",s_smash:"assets/img/s_smash.webp",s_hook:"assets/img/s_hook.webp",r_punch:"assets/img/r_punch.webp",r_hurt:"assets/img/r_hurt.webp",b_run:"assets/img/b_run.webp",b_up:"assets/img/b_up.webp",b_jump:"assets/img/b_jump.webp",b_kk:"assets/img/b_kk.webp",b_punch:"assets/img/b_punch.webp",b_low:"assets/img/b_low.webp",i_jump:"assets/img/i_jump.webp",i_knee:"assets/img/i_knee.webp",i_lowk:"assets/img/i_lowk.webp",i_guard:"assets/img/i_guard.webp",i_point:"assets/img/i_point.webp",r_run:"assets/img/r_run.webp",r_ready:"assets/img/r_ready.webp",r_knee:"assets/img/r_knee.webp",r_spray:"assets/img/r_spray.webp",y_punch:"assets/img/y_punch.webp",y_hurt:"assets/img/y_hurt.webp",y_guard:"assets/img/y_guard.webp",b_hurt:"assets/img/b_hurt.webp",b_ready:"assets/img/b_ready.webp",s_hurt:"assets/img/s_hurt.webp",s_ready:"assets/img/s_ready.webp",s_air:"assets/img/s_air.webp",b_block:"assets/img/b_block.webp",b_jab:"assets/img/b_jab.webp",b_hook:"assets/img/b_hook.webp",r_blkH:"assets/img/r_blkH.webp",r_blkL:"assets/img/r_blkL.webp",f_s:"assets/img/f_s.jpg",f_f:"assets/img/f_f.webp",f_punch:"assets/img/f_punch.webp",f_palm:"assets/img/f_palm.webp",f_kick:"assets/img/f_kick.webp",f_fly:"assets/img/f_fly.webp",f_low:"assets/img/f_low.webp",f_claw:"assets/img/f_claw.webp",f_jump:"assets/img/f_jump.webp",f_knee:"assets/img/f_knee.webp",f_plantj:"assets/img/f_plantj.webp",f_plant:"assets/img/f_plant.webp",f_hero:"assets/img/f_hero.webp",
+const IM={b_s:"assets/img/b_s.jpg",b_f:"assets/img/b_f.webp",r_s:"assets/img/r_s.jpg",r_f:"assets/img/r_f.webp",i_s:"assets/img/i_s.jpg",i_f:"assets/img/i_f.webp",i_punch:"assets/img/i_punch.webp",i_kick:"assets/img/i_kick.webp",i_belt:"assets/img/i_belt.webp",b_kick:"assets/img/b_kick.webp",b_chair:"assets/img/b_chair.webp",r_kick:"assets/img/r_kick.webp",r_redcard:"assets/img/r_redcard.webp",y_s:"assets/img/y_s.jpg",y_f:"assets/img/y_f.webp",y_kick:"assets/img/y_kick.webp",y_jump:"assets/img/y_jump.webp",y_flex:"assets/img/y_flex.webp",y_fight:"assets/img/y_fight.webp",y_tire:"assets/img/y_tire.webp",s_s:"assets/img/s_s.jpg",s_f:"assets/img/s_f.webp",s_kick:"assets/img/s_kick.webp",s_cape:"assets/img/s_cape.webp",s_jump:"assets/img/s_jump.webp",i_run:"assets/img/i_run.webp",s_run:"assets/img/s_run.webp",y_run:"assets/img/y_run.webp",s_punch:"assets/img/s_punch.webp",s_smash:"assets/img/s_smash.webp",s_hook:"assets/img/s_hook.webp",r_punch:"assets/img/r_punch.webp",r_hurt:"assets/img/r_hurt.webp",b_run:"assets/img/b_run.webp",b_up:"assets/img/b_up.webp",b_jump:"assets/img/b_jump.webp",b_kk:"assets/img/b_kk.webp",b_punch:"assets/img/b_punch.webp",b_low:"assets/img/b_low.webp",i_jump:"assets/img/i_jump.webp",i_knee:"assets/img/i_knee.webp",i_lowk:"assets/img/i_lowk.webp",i_guard:"assets/img/i_guard.webp",i_point:"assets/img/i_point.webp",r_run:"assets/img/r_run.webp",r_ready:"assets/img/r_ready.webp",r_knee:"assets/img/r_knee.webp",r_spray:"assets/img/r_spray.webp",y_punch:"assets/img/y_punch.webp",y_hurt:"assets/img/y_hurt.webp",y_guard:"assets/img/y_guard.webp",b_hurt:"assets/img/b_hurt.webp",b_ready:"assets/img/b_ready.webp",s_hurt:"assets/img/s_hurt.webp",s_ready:"assets/img/s_ready.webp",s_air:"assets/img/s_air.webp",b_block:"assets/img/b_block.webp",b_jab:"assets/img/b_jab.webp",b_hook:"assets/img/b_hook.webp",r_blkH:"assets/img/r_blkH.webp",r_blkL:"assets/img/r_blkL.webp",f_s:"assets/img/f_s.jpg",f_f:"assets/img/f_f.webp",f_punch:"assets/img/f_punch.webp",f_palm:"assets/img/f_palm.webp",f_kick:"assets/img/f_kick.webp",f_fly:"assets/img/f_fly.webp",f_low:"assets/img/f_low.webp",f_claw:"assets/img/f_claw.webp",f_jump:"assets/img/f_jump.webp",f_knee:"assets/img/f_knee.webp",f_plantj:"assets/img/f_plantj.webp",f_plant:"assets/img/f_plant.webp",f_hero:"assets/img/f_hero.webp",b_guard2:"assets/img/b_guard2.webp",b_flyk:"assets/img/b_flyk.webp",b_hikick:"assets/img/b_hikick.webp",b_punch2:"assets/img/b_punch2.webp",b_lunge:"assets/img/b_lunge.webp",b_taunt:"assets/img/b_taunt.webp",
 /* ── v4 studio-photo poses (clean-bg cutouts) added to enrich battle animation ── */
 b_jab2:"assets/img/b_jab2.webp",b_kick2:"assets/img/b_kick2.webp",b_jump2:"assets/img/b_jump2.webp",b_run2:"assets/img/b_run2.webp",b_money:"assets/img/b_money.webp",
 r_idle2:"assets/img/r_idle2.webp",r_ready2:"assets/img/r_ready2.webp",r_kick2:"assets/img/r_kick2.webp",r_jump:"assets/img/r_jump.webp",r_hvy:"assets/img/r_hvy.webp",
@@ -1538,9 +1558,10 @@ MVR[10]={seq:["R","S","T","X"],e:60,d:[26,36],ac:"redcard",cat:"special",redcard
 // ── T.M.R (champ): clone of the 12, own names ──
 const MVI=MVB.map(m=>({...m}));
 ["BELT BASH","CHAMP KICK","CHAMP SLAM","CHAMP HEAD","BELT DASH","CHAMP RUSH","AIR BELT","LOW SWEEP","BODY SLAM","⚡ BELT COMBO","⚡ CHAMP KO","⚡ CHAMP POWER"].forEach((nm,i)=>MVI[i].n=nm);
-const BSP={"jab":"b_jab","str":"b_hook","bb":"b_punch","upc":"b_up","flx":"b_money","kick":"b_kk","sw":"b_low","xsh":"b_kick","rsh":"b_run","tkx":"b_run","c12":"b_run","charge":"b_run","jjb":"b_jump","jkk":"b_jump","jsm":"b_jump","sjp":"b_jump","hvy":"b_chair","fin":"b_chair","dco":"b_chair","est":"b_chair","blk":"b_block"};
+// v5.6: new hi-res batch wired — flying kick for air moves, lunge for dashes, taunt for charge, guard2 for block
+const BSP={"jab":"b_jab","str":"b_punch2","bb":"b_punch","upc":"b_up","flx":"b_money","kick":"b_kk","sw":"b_low","xsh":"b_hikick","rsh":"b_run","tkx":"b_run","c12":"b_lunge","charge":"b_taunt","jjb":"b_flyk","jkk":"b_flyk","jsm":"b_flyk","sjp":"b_jump","hvy":"b_chair","fin":"b_chair","dco":"b_chair","est":"b_chair","blk":"b_guard2"};
 // FR = true frame sequences per action (array of IM pose keys played as frames during the strike). Optional; falls back to the single sp[ac] pose when absent.
-const FRB={"jab":["b_jab","b_jab2","b_punch"],"str":["b_jab","b_hook"],"hvy":["b_up","b_chair"],"kick":["b_kk","b_kick2"],"bb":["b_punch","b_jab2"],"rsh":["b_run","b_run2"],"jsm":["b_jump","b_jump2"],"dco":["b_money","b_chair","b_punch"],"fin":["b_chair","b_money"]}; // BIG.COM: 1-2 combos chained from existing + new studio poses
+const FRB={"jab":["b_jab","b_jab2","b_punch"],"str":["b_punch2","b_hook"],"hvy":["b_up","b_chair"],"kick":["b_kk","b_hikick"],"bb":["b_punch","b_jab2"],"rsh":["b_run","b_lunge"],"c12":["b_run","b_lunge"],"jsm":["b_flyk","b_jump2"],"dco":["b_money","b_chair","b_punch"],"fin":["b_chair","b_money"]}; // BIG.COM frames — v5.6 hi-res batch woven in
 const RSP={"jab":"r_punch","str":"r_punch","hvy":"r_hvy","bb":"r_punch","upc":"r_knee","kick":"r_kick","sw":"r_kick","flx":"r_spray","jjb":"r_jump","jkk":"r_jump","jsm":"r_jump","sjp":"r_jump","rsh":"r_run","tkx":"r_run","c12":"r_run","dco":"r_spray","redcard":"r_redcard","fin":"r_redcard","est":"r_redcard","charge":"r_ready2","blk":"r_ready2"};
 const ISP={"jab":"i_punch","str":"i_punch","hvy":"i_punch","bb":"i_punch","upc":"i_knee","flx":"i_mic","jjb":"i_jump","jkk":"i_jump","jsm":"i_jump","sjp":"i_jump","kick":"i_kick","sw":"i_lowk","rsh":"i_run","tkx":"i_run","c12":"i_run","charge":"i_point","dco":"i_belt","fin":"i_belt","est":"i_belt","blk":"i_guard"};
 const VD={b:"assets/video/vd_b.mp4",r:"assets/video/vd_r.mp4",i:"assets/video/vd_i.mp4",y:"assets/video/vd_y.mp4",s:"assets/video/vd_s.mp4",f:"assets/video/vd_f.mp4"};
@@ -1579,7 +1600,24 @@ const FRY={"jab":["y_punch","y_ready2","y_kick"],"str":["y_kick","y_punch"],"hvy
 const FRS={"jab":["s_punch","s_hook"],"str":["s_punch","s_smash"],"hvy":["s_smash","s_hook"],"bb":["s_punch","s_hook"],"kick":["s_kick","s_kick2"],"rsh":["s_run","s_run2"],"fin":["s_cape2","s_robe","s_smash"],"est":["s_cape2","s_smash"]};
 
 // HURT poses — shown briefly on the receiver during a heavy hit (only chars that have one)
-const HURT={r:"r_hurt",y:"y_hurt",b:"b_hurt",s:"s_hurt",i:"i_hurt"};
+const HURT={r:"r_hurt",y:"y_hurt",b:"b_hurt",s:"s_hurt",i:"i_hurt"};   // f has no hurt photo yet → class-only reaction (ask Lior for one)
+// ── HIT REACTION (פולס): EVERY landed hit swaps the victim to their HURT pose + red-hot
+// flash, with ONE disciplined guard-aware restore per victim (no stuck poses).
+let hurtT1=null,hurtT2=null;
+function hitReact(vP1,weight){
+  const vic=vP1?P1:P2, el=document.getElementById(vP1?'FI1':'FI2'), wrap=document.getElementById(vP1?'F1':'F2');
+  if(!vic||!el)return;
+  const hk=HURT[vic.id];
+  if(hk&&IM[hk])el.src=IM[hk];
+  if(wrap){wrap.classList.remove('vhurt');void wrap.offsetWidth;wrap.classList.add('vhurt');}
+  clearTimeout(vP1?hurtT1:hurtT2);
+  const t=setTimeout(()=>{
+    if(wrap)wrap.classList.remove('vhurt');
+    if(vP1&&guard1){const gk=guard1==='H'?GUARD_HI[P1.id]:GUARD_LOW[P1.id];if(gk&&IM[gk]){el.src=IM[gk];return;}}
+    rstSp(vP1);
+  },weight==='light'?150:300);
+  if(vP1)hurtT1=t;else hurtT2=t;
+}
 
 const V_REF_WIN="assets/video/ref_win.mp4";
 // ── ISHAR-vs-ICON CINEMATIC ULTIMATE ─────────────────────────────────────────
@@ -2239,6 +2277,8 @@ let tState='p1',cBuf=[],cTimer=null;
 // ── REAL-TIME ── per-fighter recovery flags replace the old global turn-lock; no "whose turn".
 let busy1=false,busy2=false,block2=null,block2T=null,cpuTick=null,suddenDeath=false;
 const CTIMEOUT=1200;
+// פריים: dynamic combo clock — landing a hit stretches it (chain-friendly), whiffing shrinks it (anti-spam)
+let ctNow=CTIMEOUT,cancelT=0,dashUntil=0,lastRTap=0;
 function CPU_PACE(){return Math.round(1750/(1+0.12*Math.min(diffLvl,DIFF_MAX)));}  // AI cadence — slowed for a readable pace; still faster at higher difficulty
 function startCpuTick(){clearInterval(cpuTick);if(!gameEnded)cpuTick=setInterval(cpuStep,CPU_PACE());}
 function stopCpuTick(){clearInterval(cpuTick);cpuTick=null;}
@@ -2542,7 +2582,7 @@ function flashBtn(btn){const el=document.getElementById(FL_ID[btn]);if(el){el.cl
 // GUARD_*_FB = graceful fallback to the existing poses until the real photos land — see setGuard onerror.
 // r has REAL dedicated block photos; b/i/y/s point at their best existing art until
 // the user supplies {id}_blkH/{id}_blkL photos (then: add IM keys + repoint here).
-const GUARD_HI={b:'b_block',i:'i_guard',r:'r_blkH',y:'y_guard',s:'s_ready',f:'f_f'};
+const GUARD_HI={b:'b_guard2',i:'i_guard',r:'r_blkH',y:'y_guard',s:'s_ready',f:'f_f'};
 const GUARD_LOW={b:'b_low',i:'i_lowk',r:'r_blkL',y:'y_kick',s:'s_kick',f:'f_low'};
 const GUARD_HI_FB={b:'b_block',i:'i_guard',r:'r_ready',y:'y_guard',s:'s_ready',f:'f_f'};
 const GUARD_LOW_FB={b:'b_low',i:'i_lowk',r:'r_kick',y:'y_kick',s:'s_kick'};
@@ -2585,7 +2625,7 @@ function pushBuf(tok){
   const exact=P1.mv.find(m=>seqEq(m.seq,cBuf));
   const longer=P1.mv.some(m=>seqSW(m.seq,cBuf)&&m.seq.length>cBuf.length);
   if(exact&&!longer){const mv=exact;cBuf=[];hideChud();execMove(mv,true);return;}
-  if(exact||longer){updChud();cTimer=setTimeout(fireCombo,CTIMEOUT);return;}
+  if(exact||longer){updChud();cTimer=setTimeout(fireCombo,ctNow);return;}
   fireCombo();   // no path forward — commit the best prefix immediately
 }
 // DIRECTION press/release (bound from pointer + keyboard).
@@ -2594,7 +2634,12 @@ function dirDown(dir){
   flashBtn(dir);
   if(dir==='U'){doJump();return;}
   if(dir==='L'){setGuard('H');return;}
-  if(dir==='R'){pushBuf('R');return;}
+  if(dir==='R'){
+    const _n=Date.now();                                  // גריפ: double-tap ► = dash (closes distance, next lunge is faster)
+    if(_n-lastRTap<260&&!busy1&&!air1){lastRTap=0;doDash();return;}
+    lastRTap=_n;
+    pushBuf('R');return;
+  }
   if(dir==='D'){
     dHeld=true;
     pushBuf('D');                       // tap path (▼▼▼ charge, ▼+button low mediums)
@@ -2627,9 +2672,10 @@ function updChud(){
   if(mvEl){
     if(exact&&longer){mvEl.textContent=exact.n+' — or add more';mvEl.className='chud-mv ready';}
     else if(exact){mvEl.textContent='⚡ '+exact.n;mvEl.className='chud-mv ready';}
-    else{const nxt=[...new Set(P1.mv.filter(m=>seqSW(m.seq,cBuf)&&m.seq.length>cBuf.length).map(m=>m.seq[cBuf.length]))];mvEl.textContent='next: '+nxt.map(b=>KEY_LBL[b]||b).join(' / ');mvEl.className='chud-mv';}
+    else{const conts=P1.mv.filter(m=>seqSW(m.seq,cBuf)&&m.seq.length>cBuf.length).slice(0,3);   // גריפ: LIVE combo hints — actual continuations with move names
+      mvEl.innerHTML=conts.map(m=>'<b class="chb">'+(KEY_LBL[m.seq[cBuf.length]]||m.seq[cBuf.length])+'</b>'+m.n).join('<span class="chsep"> · </span>');mvEl.className='chud-mv';}
   }
-  if(fill){fill.classList.remove('running');fill.style.setProperty('--cd',CTIMEOUT+'ms');void fill.offsetWidth;fill.classList.add('running');}
+  if(fill){fill.classList.remove('running');fill.style.setProperty('--cd',ctNow+'ms');void fill.offsetWidth;fill.classList.add('running');}
   el.classList.add('on');
 }
 function hideChud(){const el=document.getElementById('CHUD');if(el)el.classList.remove('on');const f=document.getElementById('CHUD_FILL');if(f)f.classList.remove('running');}
@@ -2638,6 +2684,16 @@ function fireCombo(){
   let mv=null;for(let l=cBuf.length;l>=1;l--){mv=P1.mv.find(m=>seqEq(m.seq,cBuf.slice(0,l)));if(mv)break;}
   cBuf=[];
   if(mv)execMove(mv,true);
+}
+// גריפ: dash — quick forward step; for 1.5s the next attack's lunge is much faster (distance-closer)
+function doDash(){
+  if(busy1||mlOpen)return;
+  dashUntil=Date.now()+1500;
+  const f=document.getElementById('F1');
+  if(f){f.classList.add('dsh');setTimeout(()=>f.classList.remove('dsh'),260);}
+  try{spawnAfterimage('F1',fGlow(true),2);}catch(e){}
+  moveF('F1',X1,X1+8,110,'out').then(()=>moveF('F1',X1+8,X1,150,'out'));
+  sfx('W',.5);vib(6);ann('⚡ DASH');
 }
 function seqEq(a,b){return a.length===b.length&&a.every((v,i)=>v===b[i]);}
 function seqSW(sq,pre){return pre.length<=sq.length&&pre.every((v,i)=>v===sq[i]);}
@@ -2858,7 +2914,10 @@ async function execMove(mv,isP1){
   // = LOW (block by holding ▼/crouch). Wind-up hold doubles as the telegraph + reaction
   // window (longer for bigger moves → clearer anticipation, slower readable pace).
   const ht=isJump?'H':isLow?'L':(LOWAC[mv.ac]?'L':'H');
-  await sl(mv.fin?460:mv.e>=20?320:isLow?260:230);
+  // פריים: cancel window — a landed basic lets a MEDIUM skip its windup (real combo chaining, player only)
+  const _cxl=isP1&&mv.cat==='medium'&&Date.now()<cancelT;
+  if(_cxl)cancelT=0;
+  await sl(_cxl?40:(mv.fin?460:mv.e>=20?320:isLow?260:mv.cat==='basic'?195:230));
   let defRes='hit';
   if(!isP1){
     if(guard1===ht)defRes='block';        // correct height held → blocked
@@ -2873,7 +2932,7 @@ async function execMove(mv,isP1){
   else{swSp(isP1,mv.ac);}
   // Explosive lunge: accelerate INTO the target so the blow connects at max speed
   spawnAfterimage(fId,fGlow(isP1),mv.fin?6:mv.e>=20?4:3);   // colored motion trail; bigger moves dash with a longer trail
-  await moveF(fId,hx,cx,isJump?250:118,isJump?null:'in');
+  await moveF(fId,hx,cx,isJump?250:(isP1&&Date.now()<dashUntil?76:118),isJump?null:'in');   // dash-primed player closes in noticeably faster
   await sl(mv.fin?62:26);
   // STRIKE: play a real multi-frame sequence if this move defines one (true frame animation), else a single strike pose.
   const _fr=(myC.fr&&myC.fr[mv.ac]&&myC.fr[mv.ac].every(k=>IM[k]))?myC.fr[mv.ac]:null;
@@ -2936,9 +2995,13 @@ async function execMove(mv,isP1){
     sfx(SFXM[mv.ac]||'P',mv.fin?.94:.75);
     trigA(tFsId,_w==='light'?'hit':'hith'); // heavy/finisher/special hits get a stronger recoil
     squash(tFId,_w!=='light');              // target squashes on impact (squash & stretch)
-    {const tP1=!isP1,hk=HURT[(tP1?P1:P2).id];if(hk&&IM[hk]&&_w!=='light')document.getElementById(tP1?'FI1':'FI2').src=IM[hk];} // swap to a HURT pose on heavy/special hits (if the char has one)
+    hitReact(!isP1,_w);                     // פולס: EVERY hit gets a hurt-pose reaction (light 150ms / heavy 300ms), restore handled inside
+    {const vBusy=isP1?busy2:busy1;          // flinch: a clean light hit briefly locks the victim (only if they weren't already acting)
+      if(_w==='light'&&!vBusy){if(isP1){busy2=true;setTimeout(()=>freeF(false),140);}else{busy1=true;setTimeout(()=>freeF(true),140);}}}
+    if(isP1){ctNow=1500;if(mv.cat==='basic')cancelT=Date.now()+250;}   // פריים: landed basic opens a 250ms cancel window; hits stretch the combo clock
     shake(isSpecial?'hvy':_w);
     if(_w!=='light')camPunch(mv.fin||isSpecial);   // Tekken zoom-punch on heavy / special / finisher
+    if(mv.fin||isSpecial){const _ar=document.getElementById('AR');if(_ar){_ar.classList.remove('glx');void _ar.offsetWidth;_ar.classList.add('glx');setTimeout(()=>_ar.classList.remove('glx'),150);}}   // ניאון: RGB-split glitch frame
     vib(mv.fin?[0,30,45,65]:isSpecial?[0,22,30,40]:mv.e>=20?28:14);
     hitStop(mv.fin?180:isSpecial?100:mv.e>=20?55:30);   // bigger freeze on special → reads the impact
     flashH(mv.fin||isSpecial);
@@ -2958,6 +3021,7 @@ async function execMove(mv,isP1){
       stunMs=mv.fin?900:650;
       if(isP1){busy2=true;}else{busy1=true;}        // victim can't act (CPU tick early-returns on busy2; player input gated on busy1)
       const vP1=!isP1, vHk=HURT[(vP1?P1:P2).id], vEl=document.getElementById(vP1?'FI1':'FI2');
+      clearTimeout(vP1?hurtT1:hurtT2);               // the special's stun-hold owns the pose — cancel the short hitReact restore
       if(vHk&&IM[vHk]&&vEl)vEl.src=IM[vHk];          // hold the HURT pose through the stun
       setTimeout(()=>{freeF(!isP1);rstSp(!isP1);if(!isP1&&guard1){const gk=guard1==='H'?GUARD_HI[P1.id]:GUARD_LOW[P1.id];if(gk&&IM[gk])document.getElementById('FI1').src=IM[gk];}},stunMs);
     }
@@ -2965,7 +3029,7 @@ async function execMove(mv,isP1){
   ann(mv.n);
   updH();
 
-  await sl(stunMs||(mv.fin?440:230));   // specials hold the attacker for the full victim hit-stun; others get a slightly slower readable recovery
+  await sl(stunMs||(mv.fin?440:isP1?200:230));   // specials hold the attacker for the full victim hit-stun; player recovers a touch faster (responsive feel)
   rcA(fs);fs.classList.add('rv');
   if(_w!=='light')smear(fId,false);          // follow-through: motion-smear the attacker as it pulls back out
   await moveF(fId,cx,hx,150,'out');
@@ -2988,7 +3052,8 @@ async function execMove(mv,isP1){
     endG(koP1?P2:P1,!koP1);return; // winner = the standing fighter; player wins unless P1 is down
   }
 
-  await sl(mv.fin?230:isP1?210:290);   // post-move cooldown — CPU waits a touch longer so it can't chain-spam
+  await sl(mv.fin?230:isP1?185:290);   // post-move cooldown — player snappier, CPU waits longer so it can't chain-spam
+  if(isP1&&dmg<=0)ctNow=900;           // פריים: whiffed/blocked player move shrinks the combo clock (anti-spam)
   freeF(isP1);
 }
 
