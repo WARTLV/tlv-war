@@ -1153,6 +1153,19 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .wpts{font-family:'Bebas Neue',sans-serif;font-size:clamp(20px,6vw,32px);letter-spacing:2px;color:var(--g);text-shadow:2px 2px 0 #000,0 0 16px rgba(245,197,24,.55);margin-top:clamp(4px,1.4vw,8px);min-height:1em;opacity:0;transform:scale(.7);transition:opacity .4s,transform .4s cubic-bezier(.2,.85,.3,1.4);}
 .wpts.on{opacity:1;transform:scale(1);}
 .wpts .wpx{display:block;font-family:'Heebo',system-ui,sans-serif;font-weight:700;font-size:clamp(9px,2.4vw,12px);letter-spacing:.5px;color:#cdb98a;text-shadow:0 1px 2px #000;margin-top:2px;}
+/* ── TECHNO-TLV ARENA (ניאון v5.7): bold synthwave layer behind the fighters ── */
+.tgrid{position:absolute;left:-20%;right:-20%;bottom:0;height:46%;z-index:0;pointer-events:none;opacity:.55;
+  background-image:repeating-linear-gradient(90deg,transparent 0 calc(6.25% - 1.5px),rgba(0,240,255,.75) calc(6.25% - 1.5px) 6.25%),repeating-linear-gradient(0deg,transparent 0 calc(11% - 1.5px),rgba(255,45,140,.6) calc(11% - 1.5px) 11%);
+  transform:perspective(320px) rotateX(66deg);transform-origin:bottom center;
+  mask-image:linear-gradient(180deg,transparent,#000 55%);-webkit-mask-image:linear-gradient(180deg,transparent,#000 55%);
+  animation:tgridRun 1.6s linear infinite;}
+@keyframes tgridRun{from{background-position:0 0,0 0;}to{background-position:0 0,0 11%;}}
+.thz{position:absolute;left:0;right:0;bottom:44%;height:2px;z-index:0;pointer-events:none;background:linear-gradient(90deg,transparent,#00f0ff 20%,#ff2d8c 80%,transparent);box-shadow:0 0 16px 3px rgba(0,240,255,.55),0 0 34px 6px rgba(255,45,140,.35);opacity:.8;}
+.tscan{position:absolute;inset:0;z-index:0;pointer-events:none;mix-blend-mode:screen;opacity:.5;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,240,255,.045) 2px 3px);}
+.tscan::after{content:"";position:absolute;left:0;right:0;height:26%;background:linear-gradient(180deg,transparent,rgba(0,240,255,.10),transparent);animation:tscanSweep 4.2s linear infinite;}
+@keyframes tscanSweep{from{top:-30%;}to{top:100%;}}
+#AR.slowmo .tgrid{opacity:.85;filter:saturate(1.6) brightness(1.3);}
 /* ── TECHNO-TLV (ניאון): sharp arcade layer — additive only, fighter keyframes untouched ── */
 .hpt{position:relative;clip-path:polygon(0 0,100% 0,calc(100% - 7px) 100%,7px 100%);}
 .hpt::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),rgba(0,0,0,.5) calc(10% - 1px) 10%);pointer-events:none;z-index:3;}
@@ -1352,6 +1365,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
     <div class="bg-far"  id="BG_FAR"></div>
     <div class="bg-mid"  id="BG_MID"></div>
     <div class="bg-near" id="BG_NEAR"></div>
+    <div class="tgrid"></div><div class="thz"></div><div class="tscan"></div>
     <div class="abgo"></div>
     <div class="acr"></div>
     <div class="arena-cam" id="AR_CAM">
