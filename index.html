@@ -1153,14 +1153,30 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .wpts{font-family:'Bebas Neue',sans-serif;font-size:clamp(20px,6vw,32px);letter-spacing:2px;color:var(--g);text-shadow:2px 2px 0 #000,0 0 16px rgba(245,197,24,.55);margin-top:clamp(4px,1.4vw,8px);min-height:1em;opacity:0;transform:scale(.7);transition:opacity .4s,transform .4s cubic-bezier(.2,.85,.3,1.4);}
 .wpts.on{opacity:1;transform:scale(1);}
 .wpts .wpx{display:block;font-family:'Heebo',system-ui,sans-serif;font-weight:700;font-size:clamp(9px,2.4vw,12px);letter-spacing:.5px;color:#cdb98a;text-shadow:0 1px 2px #000;margin-top:2px;}
+/* ── ARCADE HUD v5.8 (early-2000s fighter: glossy chrome bars, sheen sweep, punch) ── */
+.hpw{padding:2px;background:linear-gradient(180deg,#3a3f4a,#0c0e13 45%,#05060a);border:1px solid rgba(0,0,0,.9);border-radius:3px;box-shadow:0 1px 0 rgba(255,255,255,.12),0 2px 5px rgba(0,0,0,.7)!important;}
+.hpt{height:clamp(11px,3.3vw,16px)!important;background:#04040c!important;border:1px solid rgba(0,0,0,.85)!important;box-shadow:inset 0 2px 5px rgba(0,0,0,.9)!important;}
+.hpb{background:linear-gradient(180deg,#7dffb0 0%,#16d24a 22%,#059a30 60%,#0b6a24 100%)!important;}
+.hs.R .hpb{background:linear-gradient(180deg,#ffd27d 0%,#ff8a2a 22%,#e8560f 60%,#a83b0a 100%)!important;}
+.hpb::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.55) 47%,transparent 60%);background-size:220% 100%;animation:hpSheen 3.4s ease-in-out infinite;}
+@keyframes hpSheen{0%,72%{background-position:180% 0;}100%{background-position:-40% 0;}}
+.enw{padding:1.5px;background:linear-gradient(180deg,#33270a,#0a0803);border-radius:3px;box-shadow:inset 0 1px 2px rgba(0,0,0,.7);}
+.ent{height:clamp(5.5px,1.8vw,8px)!important;background:#0a0803!important;}
+.enb{background:linear-gradient(180deg,#fff1b0,#ffcc22 40%,#c98a08)!important;box-shadow:0 0 6px rgba(255,204,34,.55)!important;}
+.enb.lo{background:linear-gradient(180deg,#ffb060,#ff5500 50%,#a02f00)!important;}
+.cbn{-webkit-text-stroke:2px #000;text-shadow:3px 3px 0 #000,0 0 20px var(--g),0 0 40px var(--g)!important;font-style:italic;transform:skewX(-6deg);}
+.cbt{font-style:italic;transform:skewX(-6deg);}
 /* ── TECHNO-TLV ARENA (ניאון v5.7): bold synthwave layer behind the fighters ── */
-.tgrid{position:absolute;left:-20%;right:-20%;bottom:0;height:46%;z-index:0;pointer-events:none;opacity:.55;
+.tgrid{position:absolute;left:-20%;right:-20%;bottom:0;height:42%;z-index:0;pointer-events:none;opacity:.3;
   background-image:repeating-linear-gradient(90deg,transparent 0 calc(6.25% - 1.5px),rgba(0,240,255,.75) calc(6.25% - 1.5px) 6.25%),repeating-linear-gradient(0deg,transparent 0 calc(11% - 1.5px),rgba(255,45,140,.6) calc(11% - 1.5px) 11%);
   transform:perspective(320px) rotateX(66deg);transform-origin:bottom center;
   mask-image:linear-gradient(180deg,transparent,#000 55%);-webkit-mask-image:linear-gradient(180deg,transparent,#000 55%);
   animation:tgridRun 1.6s linear infinite;}
 @keyframes tgridRun{from{background-position:0 0,0 0;}to{background-position:0 0,0 11%;}}
-.thz{position:absolute;left:0;right:0;bottom:44%;height:2px;z-index:0;pointer-events:none;background:linear-gradient(90deg,transparent,#00f0ff 20%,#ff2d8c 80%,transparent);box-shadow:0 0 16px 3px rgba(0,240,255,.55),0 0 34px 6px rgba(255,45,140,.35);opacity:.8;}
+.thz{position:absolute;left:0;right:0;bottom:42%;height:2px;z-index:0;pointer-events:none;background:linear-gradient(90deg,transparent,#00f0ff 25%,#ff2d8c 75%,transparent);box-shadow:0 0 14px 2px rgba(0,240,255,.4),0 0 28px 5px rgba(255,45,140,.22);opacity:.6;}
+/* stage bloom + depth: a soft arena glow above the horizon + deeper corner vignette (early-2000s stage feel) */
+.tbloom{position:absolute;left:0;right:0;top:0;bottom:38%;z-index:0;pointer-events:none;background:radial-gradient(120% 90% at 50% 30%,rgba(70,90,150,.16),transparent 62%);mix-blend-mode:screen;}
+.tvig{position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(130% 120% at 50% 42%,transparent 52%,rgba(0,0,8,.55) 100%);}
 .tscan{position:absolute;inset:0;z-index:0;pointer-events:none;mix-blend-mode:screen;opacity:.5;
   background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,240,255,.045) 2px 3px);}
 .tscan::after{content:"";position:absolute;left:0;right:0;height:26%;background:linear-gradient(180deg,transparent,rgba(0,240,255,.10),transparent);animation:tscanSweep 4.2s linear infinite;}
@@ -1365,7 +1381,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
     <div class="bg-far"  id="BG_FAR"></div>
     <div class="bg-mid"  id="BG_MID"></div>
     <div class="bg-near" id="BG_NEAR"></div>
-    <div class="tgrid"></div><div class="thz"></div><div class="tscan"></div>
+    <div class="tbloom"></div><div class="tgrid"></div><div class="thz"></div><div class="tscan"></div><div class="tvig"></div>
     <div class="abgo"></div>
     <div class="acr"></div>
     <div class="arena-cam" id="AR_CAM">
@@ -3014,10 +3030,10 @@ async function execMove(mv,isP1){
       if(_w==='light'&&!vBusy){if(isP1){busy2=true;setTimeout(()=>freeF(false),140);}else{busy1=true;setTimeout(()=>freeF(true),140);}}}
     if(isP1){ctNow=1500;if(mv.cat==='basic')cancelT=Date.now()+250;}   // פריים: landed basic opens a 250ms cancel window; hits stretch the combo clock
     shake(isSpecial?'hvy':_w);
-    if(_w!=='light')camPunch(mv.fin||isSpecial);   // Tekken zoom-punch on heavy / special / finisher
+    camPunch(mv.fin||isSpecial);                   // Tekken zoom-punch — EVERY hit now (light = the subtle variant); heavy/special = big
     if(mv.fin||isSpecial){const _ar=document.getElementById('AR');if(_ar){_ar.classList.remove('glx');void _ar.offsetWidth;_ar.classList.add('glx');setTimeout(()=>_ar.classList.remove('glx'),150);}}   // ניאון: RGB-split glitch frame
     vib(mv.fin?[0,30,45,65]:isSpecial?[0,22,30,40]:mv.e>=20?28:14);
-    hitStop(mv.fin?180:isSpecial?100:mv.e>=20?55:30);   // bigger freeze on special → reads the impact
+    hitStop(mv.fin?190:isSpecial?110:mv.e>=20?70:44);   // weightier freeze — sells every impact (early-2000s arcade punch)
     flashH(mv.fin||isSpecial);
     if(_w!=='light'){flashCol(fGlow(isP1),mv.fin);spawnRing(!isP1,fGlow(isP1),mv.fin||isSpecial);} // attacker-color flash + shockwave on heavy/special/fin
     if(mv.fin)slowmo(900);                   // cinematic slow-mo on the finishing blow
