@@ -2405,6 +2405,7 @@ function initBattle(){
   document.getElementById('PT2').src=IM[P2.iS];
   document.getElementById('FI1').src=IM[P1.iF];
   document.getElementById('FI2').src=IM[P2.iF];
+  preloadFighter(P1);preloadFighter(P2);   // decode EVERY pose up-front so mid-combo src swaps never flash blank ("מרצד")
   applyFighterColors();
   document.getElementById('RND').textContent='R1';
   buildML(P1);setPos();updH();updE();hcmb(1);hcmb(2);clrLog();
@@ -2745,6 +2746,16 @@ async function playFrames(isP1,keys,totalMs){
   }
 }
 function rstSp(isP1){const ch=isP1?P1:P2;const el=document.getElementById(isP1?'FI1':'FI2');if(el)el.src=IM[ch.iF];}
+// Preload+decode every pose a fighter can show (sp map, frame combos, wu/ap/hurt/guard) so
+// swapping img.src during a fast combo is instant — never a blank flash. Cached across battles.
+const _preloaded={};
+function preloadFighter(ch){
+  if(!ch)return;
+  const keys=new Set([ch.iF,ch.wu,ch.ap,HURT[ch.id],GUARD_HI[ch.id],GUARD_LOW[ch.id]]);
+  if(ch.sp)Object.values(ch.sp).forEach(k=>keys.add(k));
+  if(ch.fr)Object.values(ch.fr).forEach(a=>a.forEach(k=>keys.add(k)));
+  keys.forEach(k=>{if(k&&IM[k]&&!_preloaded[k]){const im=new Image();im.src=IM[k];_preloaded[k]=im;}});
+}
 
 const ICOL={jab:'#ffcc00',kick:'#00aaff',str:'#ff8800',hvy:'#ff4400',jjb:'#aaddff',jkk:'#00ccff',jsm:'#ff66aa',bb:'#00cc44',sw:'#00cc44',upc:'#ffff00',dsh:'#ff8800',rsh:'#00aaff',flx:'#ff3300',c12:'#ff6600',tkx:'#00aaff',xsh:'#cc00ff',dco:'#cc00ff',est:'#cc00ff',sjp:'#cc00ff',fin:'#ffffff',redcard:'#ff0000',blk:'#4499ff',charge:'#f5c518'};
 const SFXM={jab:'P',kick:'K',str:'P',hvy:'H',jjb:'P',jkk:'K',jsm:'H',bb:'K',sw:'K',upc:'H',dsh:'P',rsh:'K',flx:'S',c12:'P',tkx:'K',xsh:'H',dco:'S',est:'S',sjp:'S',fin:'F',redcard:'RC',blk:'B',charge:'W'};
@@ -3147,7 +3158,7 @@ const ALL_A=['su','jab','kick','str','hvy','jjb','jkk','jsm','bb','sw','upc','ds
 function rcA(el){if(el)ALL_A.forEach(a=>el.classList.remove(a));}
 function trigA(id,cls){const e=document.getElementById(id);if(!e)return;rcA(e);void e.offsetWidth;e.classList.add(cls);setTimeout(()=>e.classList.remove(cls),cls==='hith'?580:cls==='hit'?460:370);}
 function shake(){const a=document.getElementById('AR');a.classList.remove('shk');void a.offsetWidth;a.classList.add('shk');setTimeout(()=>a.classList.remove('shk'),300);}
-function flashH(big){const h=document.getElementById('HFL');if(!h)return;h.style.background=big?'rgba(255,200,0,.28)':'rgba(255,255,255,.16)';h.classList.add('on');setTimeout(()=>h.classList.remove('on'),80);}
+function flashH(){}   // DISABLED (Lior): no full-screen flash on hits — graphics stay steady
 // ── ANIMATION POLISH: afterimage trail · squash&stretch · color flash · slow-mo ──
 function fGlow(isP1){const ch=isP1?P1:P2,f=FS[ch.id]||{};return f.glow||f.col||'#ffffff';}
 function spawnAfterimage(fId,col,n){
@@ -3169,7 +3180,7 @@ function spawnAfterimage(fId,col,n){
 function squash(fId,heavy){const img=document.querySelector('#'+fId+' .fs img');if(!img)return;img.classList.remove('sqh','sqhH');void img.offsetWidth;img.classList.add(heavy?'sqhH':'sqh');setTimeout(()=>{img.classList.remove('sqh','sqhH');},heavy?440:300);}
 // SMEAR: 1-shot motion-stretch on the ATTACKER's sprite the instant the strike fires (sells speed). Procedural — no new art.
 function smear(fId,heavy){const img=document.querySelector('#'+fId+' .fs img');if(!img)return;img.classList.remove('smr','smrH');void img.offsetWidth;img.classList.add(heavy?'smrH':'smr');setTimeout(()=>{img.classList.remove('smr','smrH');},heavy?140:110);}
-function flashCol(col,big){const h=document.getElementById('HFL');if(!h)return;h.style.background=hexA(col,big?0.32:0.18);h.classList.add('on');setTimeout(()=>h.classList.remove('on'),big?130:80);}
+function flashCol(){}   // DISABLED (Lior): no color screen-flash on hits
 function spawnRing(isTgtP1,col,big){
   const cam=document.getElementById('AR_CAM');if(!cam)return;
   const tgt=document.getElementById(isTgtP1?'F1':'F2');
