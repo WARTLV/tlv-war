@@ -3031,7 +3031,7 @@ async function execMove(mv,isP1){
     if(isP1){ctNow=1500;if(mv.cat==='basic')cancelT=Date.now()+250;}   // פריים: landed basic opens a 250ms cancel window; hits stretch the combo clock
     shake(isSpecial?'hvy':_w);
     if(_w!=='light')camPunch(mv.fin||isSpecial);   // zoom-punch on heavy/special ONLY — light hits stay calm (no screen jitter)
-    if(mv.fin){const _ar=document.getElementById('AR');if(_ar){_ar.classList.remove('glx');void _ar.offsetWidth;_ar.classList.add('glx');setTimeout(()=>_ar.classList.remove('glx'),150);}}   // RGB glitch ONLY on the finisher (was every special → too flickery)
+    // (screen glitch removed — combat must not jolt the graphics)
     vib(mv.fin?[0,30,45,65]:isSpecial?[0,22,30,40]:mv.e>=20?28:14);
     hitStop(mv.fin?170:isSpecial?95:mv.e>=20?52:26);   // readable freeze without a stutter
     flashH(mv.fin||isSpecial);
@@ -3181,7 +3181,7 @@ function spawnRing(isTgtP1,col,big){
 function slowmo(ms){const ar=document.getElementById('AR');if(!ar)return;ar.classList.add('slowmo');setTimeout(()=>ar.classList.remove('slowmo'),ms);}
 // Tekken-style zoom-punch: brief scale-in on the camera for heavy/finisher impacts.
 // The CSS keyframe overrides the rAF-driven inline transform for its duration, then control returns to updateCamera.
-function camPunch(isFin){const cam=document.getElementById('AR_CAM');if(!cam)return;cam.classList.remove('zpunch','zpunch-f');void cam.offsetWidth;cam.classList.add(isFin?'zpunch-f':'zpunch');setTimeout(()=>cam.classList.remove('zpunch','zpunch-f'),isFin?600:420);}
+function camPunch(){}   // DISABLED (Lior): no camera zoom-punch on hits — graphics stay stable
 function spawnImpact(isL,ac,isJ,col,isFin){
   const a=document.getElementById('AR'),W=a.offsetWidth||380,H=a.offsetHeight||220;
   const isLow=(ac==='sw'||ac==='bb');
@@ -3419,24 +3419,11 @@ function updateParallax(){
 }
 
 // ── HIT STOP (animation freeze) ──
-function hitStop(ms){
-  const ar=document.getElementById('AR');
-  if(!ar)return;
-  ar.classList.add('hitstop');
-  setTimeout(()=>ar.classList.remove('hitstop'),ms);
-}
+function hitStop(){}   // DISABLED (Lior): no freeze-frame — keep the game readable & graphics steady
 
-// ── ENHANCED SHAKE by move weight ──
-function shake(weight){
-  const ar=document.getElementById('AR');if(!ar)return;
-  ar.classList.remove('shk','shk-l','shk-h','shk-f');
-  void ar.offsetWidth;
-  if(weight==='fin')     {ar.classList.add('shk-f');}
-  else if(weight==='hvy'){ar.classList.add('shk-h');}
-  else                   {ar.classList.add('shk-l');}
-  const dur=weight==='fin'?440:weight==='hvy'?320:220;
-  setTimeout(()=>ar.classList.remove('shk-l','shk-h','shk-f'),dur);
-}
+// ── SCREEN SHAKE — DISABLED (Lior): combat must NOT move the camera/graphics.
+// Impact still reads via the hurt-pose swap, damage numbers, sparks, sound & vibration.
+function shake(){}
 
 // ── SPARK + SPEED LINES on Canvas ──
 function drawSparks(cx,cy,col,count,isFin){
