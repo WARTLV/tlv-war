@@ -136,18 +136,18 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .hero-glow{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);width:min(78%,300px);height:80%;border-radius:50%;filter:blur(48px);opacity:.55;transition:background .35s;z-index:1;pointer-events:none;}
 .hero-img{position:relative;z-index:2;height:100%;max-width:100%;object-fit:contain;object-position:center bottom;transform-origin:center bottom;transform:scale(var(--hsc,1.06));filter:drop-shadow(0 14px 30px rgba(0,0,0,.85)) drop-shadow(0 0 14px rgba(0,0,0,.5));transition:opacity .18s,transform .3s cubic-bezier(.2,.8,.3,1);}
 .hero-name,.hero-role{display:none;}
-/* glass stat panel (bottom-left overlay) */
-.hstat{position:absolute;bottom:clamp(6px,2vw,18px);left:clamp(6px,2.5vw,20px);z-index:4;width:clamp(142px,45vw,236px);direction:rtl;text-align:right;
-  background:linear-gradient(158deg,rgba(16,20,27,.74),rgba(8,11,15,.66));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:clamp(8px,2.4vw,14px) clamp(10px,2.8vw,15px);
-  box-shadow:0 8px 26px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.09);}
-.hst-style{margin-bottom:clamp(6px,1.8vw,11px);}
-.hst-l{display:block;font-family:'Heebo',system-ui,sans-serif;font-size:clamp(8px,2.2vw,11px);color:#8fa0b5;letter-spacing:.3px;font-weight:600;}
-.hst-v{font-family:'Heebo',system-ui,sans-serif;font-weight:800;font-size:clamp(13px,3.7vw,19px);color:#fff;line-height:1.12;text-shadow:0 1px 3px #000;}
-.hst-row{display:flex;justify-content:space-between;align-items:baseline;margin-top:clamp(5px,1.5vw,9px);}
-.hst-rl{font-family:'Heebo',system-ui,sans-serif;font-size:clamp(9px,2.5vw,12px);color:#9fb0c4;font-weight:700;}
-.hst-rv{font-family:'Heebo',system-ui,sans-serif;font-weight:800;font-size:clamp(11px,3vw,15px);color:#fff;text-shadow:0 1px 2px #000;}
-.segbar{height:clamp(7px,2vw,11px);margin-top:3px;border-radius:2px;background:rgba(255,255,255,.07);overflow:hidden;position:relative;transform:skewX(-18deg);border:1px solid rgba(0,0,0,.45);}
+/* glass stat panel (bottom-left overlay) — COMPACT so the fighter is the star */
+.hstat{position:absolute;bottom:clamp(5px,1.6vw,14px);left:clamp(5px,2vw,16px);z-index:4;width:clamp(116px,34vw,168px);direction:rtl;text-align:right;
+  background:linear-gradient(158deg,rgba(16,20,27,.68),rgba(8,11,15,.58));backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  border:1px solid rgba(255,255,255,.13);border-radius:8px;padding:clamp(6px,1.7vw,9px) clamp(7px,2vw,11px);
+  box-shadow:0 6px 20px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08);}
+.hst-style{margin-bottom:clamp(4px,1.2vw,7px);}
+.hst-l{display:block;font-family:'Heebo',system-ui,sans-serif;font-size:clamp(7px,1.8vw,9px);color:#8fa0b5;letter-spacing:.3px;font-weight:600;}
+.hst-v{font-family:'Heebo',system-ui,sans-serif;font-weight:800;font-size:clamp(11px,3vw,14px);color:#fff;line-height:1.1;text-shadow:0 1px 3px #000;}
+.hst-row{display:flex;justify-content:space-between;align-items:baseline;margin-top:clamp(3px,1vw,5px);}
+.hst-rl{font-family:'Heebo',system-ui,sans-serif;font-size:clamp(8px,2vw,10px);color:#9fb0c4;font-weight:700;}
+.hst-rv{font-family:'Heebo',system-ui,sans-serif;font-weight:800;font-size:clamp(9px,2.4vw,12px);color:#fff;text-shadow:0 1px 2px #000;}
+.segbar{height:clamp(5px,1.5vw,8px);margin-top:2px;border-radius:2px;background:rgba(255,255,255,.07);overflow:hidden;position:relative;transform:skewX(-18deg);border:1px solid rgba(0,0,0,.45);}
 .segf{height:100%;width:0;background:linear-gradient(90deg,#c01010,#ff5a00 55%,#ffd000);box-shadow:0 0 9px rgba(255,120,0,.55);transition:width .45s cubic-bezier(.2,.8,.3,1);}
 .segbar::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0,transparent 11px,rgba(6,8,10,.95) 11px,rgba(6,8,10,.95) 13px);pointer-events:none;}
 /* CARD STRIP — vertical roster cards, theme-tinted, selected elevated */
@@ -1195,8 +1195,8 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 @keyframes glxA{0%{transform:translate(0,0);filter:none;}25%{transform:translate(-3px,1px);filter:drop-shadow(3px 0 0 rgba(255,0,90,.6)) drop-shadow(-3px 0 0 rgba(0,240,255,.6));}60%{transform:translate(2px,-1px);filter:drop-shadow(-2px 0 0 rgba(255,0,90,.5)) drop-shadow(2px 0 0 rgba(0,240,255,.5));}100%{transform:translate(0,0);filter:none;}}
 .glx{animation:glxA .13s steps(3,end) 1;}
 #SVS::after,.wbg::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.11) 3px 4px);pointer-events:none;z-index:9;}
-.vhurt .fs img{animation:vhurtF .3s ease-out 1;}
-@keyframes vhurtF{0%{filter:brightness(2) saturate(2.2) drop-shadow(0 0 12px rgba(255,40,40,.85));}100%{filter:none;}}
+.vhurt .fs img{animation:vhurtF .26s ease-out 1;}
+@keyframes vhurtF{0%{filter:brightness(1.35) saturate(1.4) drop-shadow(0 0 9px rgba(255,60,60,.6));}100%{filter:none;}}
 .dsh .fs img{filter:brightness(1.35) drop-shadow(-8px 0 6px rgba(0,240,255,.45));}
 .chud-mv .chb{display:inline-block;min-width:15px;text-align:center;margin:0 3px;padding:0 4px;border:1px solid rgba(0,255,225,.5);border-radius:3px;background:rgba(0,40,44,.7);color:#7dfff0;font-family:'Bebas Neue',sans-serif;}
 .chud-mv .chsep{opacity:.5;}
@@ -1713,7 +1713,7 @@ const LVL_M=['נמוך','בינוני','גבוה','גבוה מאוד'];     // m
 const LVL_F=['נמוכה','בינונית','גבוהה','גבוהה מאוד']; // feminine (הגנה/מהירות)
 function lvl(v){return v>=86?3:v>=70?2:v>=55?1:0;}
 // render the selected fighter big in the hero stage
-const HSC={b:1.22,r:1.24,i:1.24,y:1.24,s:1.24,f:1.22};  // per-fighter hero zoom — the fighter DOMINATES the screen (.hero overflow:visible, scales past the box)
+const HSC={b:1.40,r:1.42,i:1.42,y:1.42,s:1.42,f:1.40};  // per-fighter hero zoom — the fighter is the STAR, dominates the select screen (.hero overflow:visible)
 const HHERO={b:'assets/img/b_hero.webp',s:'assets/img/s_hero.webp',f:'assets/img/f_hero.webp'};  // dedicated select-screen renders (full-body, fills the stage)
 // ── FIGHTER TRAITS: one passive identity per fighter, single isolated hook each ──
 // (defined BEFORE heroView — it runs at load for the default hero display)
@@ -3030,10 +3030,10 @@ async function execMove(mv,isP1){
       if(_w==='light'&&!vBusy){if(isP1){busy2=true;setTimeout(()=>freeF(false),140);}else{busy1=true;setTimeout(()=>freeF(true),140);}}}
     if(isP1){ctNow=1500;if(mv.cat==='basic')cancelT=Date.now()+250;}   // פריים: landed basic opens a 250ms cancel window; hits stretch the combo clock
     shake(isSpecial?'hvy':_w);
-    camPunch(mv.fin||isSpecial);                   // Tekken zoom-punch — EVERY hit now (light = the subtle variant); heavy/special = big
-    if(mv.fin||isSpecial){const _ar=document.getElementById('AR');if(_ar){_ar.classList.remove('glx');void _ar.offsetWidth;_ar.classList.add('glx');setTimeout(()=>_ar.classList.remove('glx'),150);}}   // ניאון: RGB-split glitch frame
+    if(_w!=='light')camPunch(mv.fin||isSpecial);   // zoom-punch on heavy/special ONLY — light hits stay calm (no screen jitter)
+    if(mv.fin){const _ar=document.getElementById('AR');if(_ar){_ar.classList.remove('glx');void _ar.offsetWidth;_ar.classList.add('glx');setTimeout(()=>_ar.classList.remove('glx'),150);}}   // RGB glitch ONLY on the finisher (was every special → too flickery)
     vib(mv.fin?[0,30,45,65]:isSpecial?[0,22,30,40]:mv.e>=20?28:14);
-    hitStop(mv.fin?190:isSpecial?110:mv.e>=20?70:44);   // weightier freeze — sells every impact (early-2000s arcade punch)
+    hitStop(mv.fin?170:isSpecial?95:mv.e>=20?52:26);   // readable freeze without a stutter
     flashH(mv.fin||isSpecial);
     if(_w!=='light'){flashCol(fGlow(isP1),mv.fin);spawnRing(!isP1,fGlow(isP1),mv.fin||isSpecial);} // attacker-color flash + shockwave on heavy/special/fin
     if(mv.fin)slowmo(900);                   // cinematic slow-mo on the finishing blow
