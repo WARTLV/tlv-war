@@ -178,7 +178,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .bfi.on{display:block;}.bfi:active{transform:scale(.97);}
 @keyframes bfiPulse{0%,100%{box-shadow:0 4px 16px rgba(200,15,18,.5),inset 0 1px 0 rgba(255,255,255,.25)}50%{box-shadow:0 4px 22px rgba(255,58,42,.85),inset 0 1px 0 rgba(255,255,255,.3)}}
 /* console-style footer prompts */
-.scf{position:relative;z-index:3;display:flex;justify-content:center;gap:clamp(10px,4vw,26px);padding:clamp(3px,1vw,6px) 0 clamp(5px,1.6vw,9px);font-family:'Heebo',system-ui,sans-serif;}
+.scf{position:relative;z-index:3;display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(10px,4vw,26px);padding:clamp(3px,1vw,6px) 0 clamp(5px,1.6vw,9px);font-family:'Heebo',system-ui,sans-serif;}
 .scf-p{display:flex;align-items:center;gap:5px;font-size:clamp(8px,2.2vw,11px);color:#aeb8c6;letter-spacing:.3px;cursor:pointer;opacity:.85;}
 .scf-p:active{opacity:.5;}
 .scf-p b{display:inline-flex;align-items:center;justify-content:center;width:clamp(15px,4.4vw,21px);height:clamp(15px,4.4vw,21px);border-radius:50%;border:1.5px solid rgba(255,255,255,.4);font-size:clamp(8px,2.2vw,11px);font-weight:700;color:#fff;}
@@ -1353,6 +1353,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
   <div class="scf">
     <div class="scf-p" onclick="showTutorial()"><b>?</b><span>איך משחקים</span></div>
     <div class="scf-p" onclick="openLeaderboard()"><b>🏆</b><span>טבלת אלופים</span></div>
+    <div class="scf-p" onclick="window.open('portfolio/','_blank','noopener')"><b>🎨</b><span>תיק עבודות</span></div>
     <div class="scf-p" onclick="openAch()"><b>🎖</b><span>הישגים</span></div>
     <div class="scf-p" onclick="toggleSound()"><b>♪</b><span>צליל</span></div>
     <div class="scf-p" onclick="openGCount()"><b>🌐</b><span>שחקנים</span></div>
