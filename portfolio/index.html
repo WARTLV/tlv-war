@@ -593,6 +593,9 @@
   window.addEventListener('resize',fit);
   window.addEventListener('orientationchange',fit);
   window.addEventListener('load',fit);
+  /* never let the screen zoom leak into print/PDF */
+  window.addEventListener('beforeprint',function(){document.querySelectorAll('.page').forEach(function(p){p.style.zoom='';});});
+  window.addEventListener('afterprint',fit);
   fit();
 })();
 /* reveal pages on scroll (progressive; start-state applied only via .js) */
