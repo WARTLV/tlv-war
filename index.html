@@ -373,8 +373,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 @keyframes ajmp{0%{transform:translateY(0)}30%{transform:translateY(-70px)}58%{transform:translateY(-54px)}100%{transform:translateY(0)}}
 .ftr.ko{animation:ako .65s ease-in forwards !important;}
 @keyframes ako{0%{transform:translateY(0) rotate(0);opacity:1}50%{transform:translateY(15px) rotate(14deg);opacity:.78}100%{transform:translateY(28px) rotate(22deg);opacity:.2}}
-@keyframes cshk{0%,100%{transform:translate(0,0)}18%{transform:translate(-6px,4px)}38%{transform:translate(6px,-4px)}58%{transform:translate(-4px,3px)}78%{transform:translate(4px,-3px)}}
-.arena.shk{animation:cshk .3s ease-out !important;}
+/* old .arena.shk/cshk keyframes REMOVED — dead, shake() is a permanent no-op */
 /* Red card */
 .rcf{position:absolute;inset:0;z-index:55;background:rgba(200,0,0,.88);opacity:0;pointer-events:none;display:flex;align-items:center;justify-content:center;}
 .rcf.on{animation:rcfl 2s ease-out forwards;}
@@ -839,10 +838,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
   will-change:transform;
 }
 /* Zoom-punch on heavy / finisher hits (toggled from JS) */
-.arena-cam.zpunch{animation:camZPunch .42s cubic-bezier(.2,.8,.3,1);}
-.arena-cam.zpunch-f{animation:camZPunchF .6s cubic-bezier(.2,.8,.3,1);}
-@keyframes camZPunch{0%{transform:scale(1);}28%{transform:scale(1.07);}100%{transform:scale(1);}}
-@keyframes camZPunchF{0%{transform:scale(1);}22%{transform:scale(1.13) translateY(-1.5%);}60%{transform:scale(1.05);}100%{transform:scale(1);}}
+/* zoom-punch keyframes REMOVED (Lior, final round): camPunch() is a permanent no-op — camera never zooms on hits */
 
 /* ═══════════════════════════════════════
    M4 — STAGE / LIGHTING (Tekken arena feel)
@@ -928,37 +924,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
   animation-play-state:paused !important;
 }
 
-/* ── ENHANCED SCREEN SHAKE ── */
-@keyframes shk_light{
-  0%,100%{transform:translate(0,0)}
-  16%{transform:translate(-4px,3px) rotate(.3deg)}
-  33%{transform:translate(5px,-3px) rotate(-.2deg)}
-  50%{transform:translate(-3px,2px)}
-  66%{transform:translate(3px,-2px) rotate(.1deg)}
-  83%{transform:translate(-2px,1px)}
-}
-@keyframes shk_heavy{
-  0%,100%{transform:translate(0,0)}
-  10%{transform:translate(-10px,7px) rotate(.8deg)}
-  25%{transform:translate(12px,-8px) rotate(-.6deg)}
-  40%{transform:translate(-8px,6px) rotate(.4deg)}
-  55%{transform:translate(9px,-5px) rotate(-.3deg)}
-  70%{transform:translate(-5px,4px) rotate(.2deg)}
-  85%{transform:translate(4px,-2px)}
-}
-@keyframes shk_fin{
-  0%,100%{transform:translate(0,0)}
-  8% {transform:translate(-14px,10px) rotate(1.2deg)}
-  20%{transform:translate(16px,-12px) rotate(-.9deg)}
-  32%{transform:translate(-12px,8px) rotate(.7deg)}
-  44%{transform:translate(14px,-9px) rotate(-.5deg)}
-  56%{transform:translate(-8px,6px) rotate(.3deg)}
-  68%{transform:translate(10px,-6px) rotate(-.2deg)}
-  80%{transform:translate(-5px,3px)}
-}
-.arena.shk-l{animation:shk_light .22s ease-out !important;}
-.arena.shk-h{animation:shk_heavy .32s ease-out !important;}
-.arena.shk-f{animation:shk_fin  .44s ease-out !important;}
+/* screen-shake keyframes REMOVED (Lior, final round): combat must never move the camera/arena — shake() is a permanent no-op */
 
 /* ── KO SLOW MOTION + HIGH CONTRAST ── */
 @keyframes ko_flash{
@@ -2319,8 +2285,14 @@ function freeF(isP1){if(isP1){busy1=false;if(pendRegen1>0){regenE(1,pendRegen1);
 
 // ── VS-SCREEN PER-FIGHTER SCALE ── compresses the height spread so both fighters square off at similar size.
 // Two tables: PLAYER (left) and CPU (right) use different poses → different aspect ratios. Cap ~1.16 limits side-clip.
-const VSC_P={b:1.07,r:0.90,i:0.82,y:1.16,s:1.40,f:1.06};  // player poses: b_hook · r_vs · i_vs · y_flex · s_vs(=s_cape) · f_vs(=f_claw)
-const VSC_C={b:1.16,r:1.30,i:1.16,y:1.16,s:1.38,f:1.10};  // cpu poses:    b_vs  · r_punch · i_knee · y_punch · s_vsx · f_vsx(=mirrored plant thrust)
+// v5.9: recalibrated from MEASURED content-bbox/width ratios of the actual {id}_vs.webp /
+// {id}_vsx.webp files (PIL bbox height ÷ natural width — the ratio that drives apparent
+// on-screen body height under width:100%+object-fit:contain), blended 50/50 with the prior
+// hand-tuned values and clamped to a safe render range (no overflow/clipping risk in the
+// overflow:hidden .vs-s box). Old values were ad-hoc guesses with up to 1.7x spread between
+// fighters — this is now a documented, reproducible starting point. CONFIRM ON DEVICE.
+const VSC_P={b:0.98,r:0.81,i:0.75,y:1.12,s:1.37,f:1.50};  // left/player side — {id}_vs.webp
+const VSC_C={b:1.07,r:1.32,i:1.06,y:1.12,s:1.33,f:1.55};  // right/cpu side — {id}_vsx.webp
 
 // ── DIFFICULTY LADDER ── auto-escalates after each player win; resets to baseline on a loss OR on page reload (re-entry).
 let diffLvl=0;            // 0 = baseline (first match). +1 per consecutive player win, back to 0 on a loss.
@@ -3159,7 +3131,6 @@ async function cpuAtk(){
 const ALL_A=['su','jab','kick','str','hvy','jjb','jkk','jsm','bb','sw','upc','dsh','rsh','flx','c12','tkx','xsh','dco','est','sjp','fin','rv','blk','hit','hith','wnd','charge'];
 function rcA(el){if(el)ALL_A.forEach(a=>el.classList.remove(a));}
 function trigA(id,cls){const e=document.getElementById(id);if(!e)return;rcA(e);void e.offsetWidth;e.classList.add(cls);setTimeout(()=>e.classList.remove(cls),cls==='hith'?580:cls==='hit'?460:370);}
-function shake(){const a=document.getElementById('AR');a.classList.remove('shk');void a.offsetWidth;a.classList.add('shk');setTimeout(()=>a.classList.remove('shk'),300);}
 function flashH(){}   // DISABLED (Lior): no full-screen flash on hits — graphics stay steady
 // ── ANIMATION POLISH: afterimage trail · squash&stretch · color flash · slow-mo ──
 function fGlow(isP1){const ch=isP1?P1:P2,f=FS[ch.id]||{};return f.glow||f.col||'#ffffff';}
@@ -3392,43 +3363,23 @@ function updH(){
 
 // ── DYNAMIC CAMERA ──
 let _camZoom=1, _camX=0;
-function updateCamera(){
-  const W=GW();
-  const f1x=x1/100*W, f2x=x2/100*W;
-  const dist=Math.abs(f2x-f1x);
-  const midX=(f1x+f2x)/2;
-  const centerOff=(midX-W/2)/(W/2); // -1 to 1
-  // Zoom: closer fighters = zoom in
-  const minDist=W*0.25, maxDist=W*0.65;
-  const t=Math.max(0,Math.min(1,(dist-minDist)/(maxDist-minDist)));
-  const targetZoom=1.12-t*0.10; // 1.12 when close, 1.02 when far
-  const targetX=-centerOff*W*0.04; // slight pan toward center of action
-  _camZoom+=(targetZoom-_camZoom)*0.08;
-  _camX+=(targetX-_camX)*0.08;
-  const cam=document.getElementById('AR_CAM');
-  if(cam)cam.style.transform=`scale(${_camZoom.toFixed(4)}) translateX(${_camX.toFixed(1)}px)`;
-}
+// DISABLED (Lior, final round): the camera used to continuously breathe zoom/pan on
+// #AR_CAM based on live fighter distance — since fighters lunge on every attack, this
+// made the graphics visibly "jump" throughout the fight. Combat must never move the
+// camera. #AR_CAM now stays at a fixed identity transform for the whole battle.
+function updateCamera(){}
 let _camRAF=null;
-function startCamera(){
-  if(_camRAF)return;
-  function loop(){_camRAF=requestAnimationFrame(loop);updateCamera();}
-  loop();
-}
-function stopCamera(){if(_camRAF){cancelAnimationFrame(_camRAF);_camRAF=null;}}
+function startCamera(){const cam=document.getElementById('AR_CAM');if(cam)cam.style.transform='';}
+function stopCamera(){}
 
-// ── PARALLAX BG ──
+// ── PARALLAX BG — DISABLED (Lior): background layers must not shift during combat ──
 function updateParallax(){
-  const W=GW();
-  const midX=(x1+x2)/2; // 0-100
-  const offset=(midX-50)/50; // -1 to 1
-  const bgUrl=document.getElementById('ABG')?.style.backgroundImage||
-              document.getElementById('BG_FAR')?.style.backgroundImage||'';
   const far =document.getElementById('BG_FAR');
   const mid =document.getElementById('BG_MID');
   const near=document.getElementById('BG_NEAR');
-  if(far) far.style.transform =`translateX(${offset*-12}px)`;
-  if(mid) mid.style.transform =`translateX(${offset*-24}px)`;
-  if(near)near.style.transform=`translateX(${offset*-40}px)`;
+  if(far) far.style.transform ='';
+  if(mid) mid.style.transform ='';
+  if(near)near.style.transform='';
 }
 
 // ── HIT STOP (animation freeze) ──
