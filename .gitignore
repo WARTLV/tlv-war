@@ -6,6 +6,11 @@ _preview_leaderboard.html
 
 # Raw source images — not referenced by index.html
 assets/img/_orig/
+assets/img/_src/
+
+# v6.0 canvas-rewrite safety checkpoint (git tag pre-canvas-v5.9 + this dir
+# are the two return points) — not deploy content
+_backup_pre_canvas/
 
 # OS / editor junk
 .DS_Store

@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="assets/img/icon-192.png"/>
 <link rel="icon" type="image/png" href="assets/img/icon-192.png"/>
 <title>W·O·W — TLV WAR</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@600;700&family=Heebo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;touch-action:manipulation;}
 .db,.fb{touch-action:none;}
@@ -69,7 +69,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .vs-s.R .vn{color:var(--scR,#ff4444);}
 .vrole{font-family:'Heebo',system-ui,sans-serif;font-weight:700;font-size:clamp(8px,2.3vw,12px);letter-spacing:.5px;color:#aeb8c6;text-shadow:0 1px 3px #000;}
 .vs-m{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);z-index:6;display:flex;align-items:center;justify-content:center;}
-.vs-t{font-family:'Heebo','Arial Black',system-ui,sans-serif;font-weight:900;font-size:clamp(42px,16vw,92px);letter-spacing:-2px;line-height:1;
+.vs-t{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(48px,18vw,100px);letter-spacing:2px;line-height:1;-webkit-text-stroke:1.5px rgba(255,255,255,.5);
   background:linear-gradient(180deg,#ffffff 0%,#dfe5ee 46%,#8b93a2 52%,#eef2f7 70%,#b6bdc9);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
   filter:drop-shadow(0 3px 2px #000) drop-shadow(0 0 18px rgba(255,210,90,.55));}
 .vs-seam{position:absolute;left:50%;top:-12%;height:124%;width:clamp(4px,1.4vw,9px);transform:translateX(-50%) skewX(-9deg);z-index:3;
@@ -118,7 +118,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .game-logo{display:block;margin:0 auto;width:clamp(180px,54vw,310px);height:auto;
   filter:drop-shadow(0 4px 10px rgba(0,0,0,.7)) drop-shadow(0 0 22px rgba(150,185,215,.28));
   animation:logoIn .7s cubic-bezier(.2,.85,.3,1.2) both;}
-#SS .game-logo{width:clamp(80px,20vw,120px);}
+#SS .game-logo{width:clamp(60px,15vw,92px);}   /* compact — vertical budget goes to the fighters, not the logo */
 #SS .sls{font-size:clamp(11px,3.4vw,22px);}
 @keyframes logoIn{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
 .sll{font-family:'Heebo','Arial Black',system-ui,sans-serif;font-weight:900;font-size:clamp(32px,11vw,66px);letter-spacing:clamp(0px,.4vw,3px);line-height:.92;
@@ -131,11 +131,32 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
   filter:drop-shadow(0 1px 1px rgba(0,0,0,.8));}
 .sp{display:none;}
 .pgr,.pstats{display:none;}
-/* HERO STAGE — big render of the selected fighter */
-.hero{position:relative;z-index:3;flex:1;min-height:0;width:100%;display:flex;align-items:flex-end;justify-content:center;overflow:visible;}
+/* HERO STAGE — modern select-screen composition: theme-colored diagonal
+   slashes + vertical light beam behind the fighter, GIANT name type layered
+   BEHIND the render, glowing floor ellipse under the feet. Theme color flows
+   through --hc (set per selection by heroView). */
+/* overflow MUST stay visible: the fighter render scales 1.4-1.5× upward from
+   the floor (--hsc, origin bottom) — hidden would decapitate every character */
+.hero{position:relative;z-index:3;flex:1;min-height:0;width:100%;display:flex;align-items:flex-end;justify-content:center;overflow:visible;--hc:#1565c0;}
+.hero-slash{position:absolute;top:0;bottom:-6%;width:clamp(46px,15vw,110px);transform:skewX(-16deg);opacity:.16;pointer-events:none;z-index:0;transition:background .4s;}
+.hero-slash.s1{left:6%;background:linear-gradient(180deg,var(--hc),transparent 82%);}
+.hero-slash.s2{right:8%;width:clamp(26px,8vw,60px);opacity:.10;background:linear-gradient(180deg,var(--hc),transparent 70%);}
+.hero-beam{position:absolute;top:0;bottom:8%;left:50%;transform:translateX(-50%);width:clamp(120px,42vw,260px);z-index:0;pointer-events:none;transition:background .4s;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--hc) 26%,transparent),transparent 78%);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 25%,#000 75%,transparent);mask-image:linear-gradient(90deg,transparent,#000 25%,#000 75%,transparent);}
 .hero-glow{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);width:min(78%,300px);height:80%;border-radius:50%;filter:blur(48px);opacity:.55;transition:background .35s;z-index:1;pointer-events:none;}
-.hero-img{position:relative;z-index:2;height:100%;max-width:100%;object-fit:contain;object-position:center bottom;transform-origin:center bottom;transform:scale(var(--hsc,1.06));filter:drop-shadow(0 14px 30px rgba(0,0,0,.85)) drop-shadow(0 0 14px rgba(0,0,0,.5));transition:opacity .18s,transform .3s cubic-bezier(.2,.8,.3,1);}
-.hero-name,.hero-role{display:none;}
+.hero-img{position:relative;z-index:3;height:100%;max-width:100%;object-fit:contain;object-position:center bottom;transform-origin:center bottom;transform:scale(var(--hsc,1.06));filter:drop-shadow(0 14px 30px rgba(0,0,0,.85)) drop-shadow(0 0 14px rgba(0,0,0,.5));transition:opacity .18s;}
+.hero-img.swap{animation:heroSwap .34s cubic-bezier(.2,.8,.3,1) both;}
+@keyframes heroSwap{0%{transform:scale(var(--hsc,1.06)) translateX(26px);opacity:0;}100%{transform:scale(var(--hsc,1.06)) translateX(0);opacity:1;}}
+.hero-floor{position:absolute;bottom:clamp(-6px,-1vw,-2px);left:50%;transform:translateX(-50%);width:min(72%,290px);height:clamp(14px,4vw,26px);z-index:2;pointer-events:none;transition:background .4s;
+  background:radial-gradient(ellipse at 50% 50%,color-mix(in srgb,var(--hc) 55%,transparent),transparent 68%);filter:blur(6px);opacity:.8;}
+.hero-role{display:none;}   /* role text — already covered by .hst-style in the glass panel below */
+/* GIANT name — layered BEHIND the fighter render (z2 vs img z3), outline+fill
+   in the character's theme color: the modern "type as scenery" treatment */
+.hero-name{position:absolute;top:clamp(4px,2vw,18px);left:50%;transform:translateX(-50%);z-index:2;
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,15vw,88px);letter-spacing:clamp(2px,1.4vw,7px);line-height:1;
+  opacity:.92;-webkit-text-stroke:1px rgba(255,255,255,.28);
+  text-shadow:0 3px 10px rgba(0,0,0,.85),0 0 34px currentColor;white-space:nowrap;pointer-events:none;}
 /* glass stat panel (bottom-left overlay) — COMPACT so the fighter is the star */
 .hstat{position:absolute;bottom:clamp(5px,1.6vw,14px);left:clamp(5px,2vw,16px);z-index:4;width:clamp(116px,34vw,168px);direction:rtl;text-align:right;
   background:linear-gradient(158deg,rgba(16,20,27,.68),rgba(8,11,15,.58));backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
@@ -143,39 +164,70 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
   box-shadow:0 6px 20px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08);}
 .hst-style{margin-bottom:clamp(4px,1.2vw,7px);}
 .hst-l{display:block;font-family:'Heebo',system-ui,sans-serif;font-size:clamp(7px,1.8vw,9px);color:#8fa0b5;letter-spacing:.3px;font-weight:600;}
-.hst-v{font-family:'Heebo',system-ui,sans-serif;font-weight:800;font-size:clamp(11px,3vw,14px);color:#fff;line-height:1.1;text-shadow:0 1px 3px #000;}
+.hst-v{font-family:'Heebo',system-ui,sans-serif;font-weight:700;font-size:clamp(11px,3vw,14px);color:#fff;line-height:1.1;text-shadow:0 1px 2px #000;}
 .hst-row{display:flex;justify-content:space-between;align-items:baseline;margin-top:clamp(3px,1vw,5px);}
-.hst-rl{font-family:'Heebo',system-ui,sans-serif;font-size:clamp(8px,2vw,10px);color:#9fb0c4;font-weight:700;}
-.hst-rv{font-family:'Heebo',system-ui,sans-serif;font-weight:800;font-size:clamp(9px,2.4vw,12px);color:#fff;text-shadow:0 1px 2px #000;}
+.hst-rl{font-family:'Heebo',system-ui,sans-serif;font-size:clamp(8px,2vw,10px);color:#9fb0c4;font-weight:600;}
+.hst-rv{font-family:'Heebo',system-ui,sans-serif;font-weight:700;font-size:clamp(9px,2.4vw,12px);color:#fff;text-shadow:0 1px 2px #000;}
 .segbar{height:clamp(5px,1.5vw,8px);margin-top:2px;border-radius:2px;background:rgba(255,255,255,.07);overflow:hidden;position:relative;transform:skewX(-18deg);border:1px solid rgba(0,0,0,.45);}
 .segf{height:100%;width:0;background:linear-gradient(90deg,#c01010,#ff5a00 55%,#ffd000);box-shadow:0 0 9px rgba(255,120,0,.55);transition:width .45s cubic-bezier(.2,.8,.3,1);}
 .segbar::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0,transparent 11px,rgba(6,8,10,.95) 11px,rgba(6,8,10,.95) 13px);pointer-events:none;}
 /* CARD STRIP — vertical roster cards, theme-tinted, selected elevated */
 /* 6-fighter roster: 3×2 wrap grid — ALL cards always visible, bigger tap targets (no more h-scroll cut) */
-.sc{position:relative;z-index:3;display:flex;flex-wrap:wrap;gap:clamp(5px,1.6vw,10px);justify-content:center;align-items:flex-end;width:100%;flex:0 0 auto;overflow:visible;padding:clamp(6px,1.8vw,12px) clamp(5px,2vw,12px) clamp(4px,1.2vw,8px);}
+.sc{position:relative;z-index:3;display:flex;flex-wrap:wrap;gap:clamp(3px,1vw,6px);justify-content:center;align-items:flex-end;width:100%;flex:0 0 auto;overflow:visible;padding:clamp(5px,1.5vw,10px) clamp(4px,1.5vw,10px) clamp(3px,1vw,7px);}
 .c0{--cc:#2f86ff}.c1{--cc:#c9ced6}.c2{--cc:#ffc41f}.c3{--cc:#28e07a}.c4{--cc:#d94de0}.c5{--cc:#ff7a1a}
-.cc{flex:0 0 clamp(96px,28vw,150px);cursor:pointer;position:relative;border-radius:8px;overflow:hidden;background:linear-gradient(180deg,#14171d,#0a0c10);
-  border:1.5px solid rgba(255,255,255,.1);border-top:3px solid var(--cc);box-shadow:0 4px 12px rgba(0,0,0,.55);
+/* SF2-ARCADE roster cards (Lior: "look-and-feel closer to the downloaded
+   game", "characters bigger"): BIG square portraits in a tight grid, chunky
+   double border, and the reference's signature BLINKING selection cursor.
+   flex-direction:column-reverse puts the portrait on top and the name bar
+   below it (arcade layout) without touching the HTML. */
+.cc{flex:0 0 clamp(106px,30.5vw,172px);cursor:pointer;position:relative;overflow:hidden;background:#0a0c10;
+  display:flex;flex-direction:column-reverse;
+  border:3px solid #232a38;box-shadow:0 4px 12px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.07);
   transition:transform .2s cubic-bezier(.2,.8,.3,1.3),box-shadow .2s,border-color .2s;}
 .cc:active{transform:scale(.96);}
-.cc.on{transform:translateY(-10px) scale(1.06);z-index:5;border-color:var(--cc);box-shadow:0 0 0 1px var(--cc),0 0 20px var(--cc),0 10px 26px rgba(0,0,0,.6);}
-.cin{padding:clamp(3px,1vw,6px) 2px;text-align:center;background:linear-gradient(180deg,rgba(30,35,44,.96),rgba(15,18,24,.96));}
-.cnm{font-family:'Heebo','Bebas Neue',system-ui,sans-serif;font-weight:800;font-size:clamp(9px,2.7vw,14px);letter-spacing:.4px;color:var(--cc);filter:brightness(1.12) saturate(.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px #000;transition:filter .15s;}
-.cc.on .cnm{filter:brightness(1.35) saturate(1.1);}
-.cim{width:100%;aspect-ratio:1/0.78;overflow:hidden;position:relative;background:#0a0d12;}
-.cim img{width:100%;height:100%;object-fit:cover;object-position:center 10%;display:block;transition:transform .3s,filter .2s;filter:saturate(.82) contrast(1.05) brightness(.8);}
-.cc.on .cim img{transform:scale(1.05);filter:saturate(1.18) contrast(1.1) brightness(1.02);}
-.cig{position:absolute;inset:0;background:linear-gradient(180deg,transparent 52%,rgba(8,10,14,.9));z-index:2;}
+.cc.on{transform:translateY(-8px) scale(1.05);z-index:5;
+  animation:ccPick .32s cubic-bezier(.2,.85,.3,1.3) 1,sf2blink .55s steps(2,jump-none) infinite;}
+@keyframes ccPick{0%{transform:translateY(-8px) scale(1.05);}45%{transform:translateY(-11px) scale(1.1);}100%{transform:translateY(-8px) scale(1.05);}}
+/* the SF2 select-cursor flash: border snaps white↔theme, glow pulses with it */
+@keyframes sf2blink{
+  0%{border-color:#fff;box-shadow:0 0 0 1px #fff,0 0 22px var(--cc),0 10px 26px rgba(0,0,0,.65);}
+  100%{border-color:var(--cc);box-shadow:0 0 0 1px var(--cc),0 0 34px var(--cc),0 10px 26px rgba(0,0,0,.65);}}
+/* arcade roster numbering 01-06 — small Bebas badge over the portrait */
+.cc::after{position:absolute;top:2px;right:5px;z-index:5;font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(9px,2.6vw,13px);letter-spacing:1px;color:var(--cc);opacity:.6;text-shadow:0 1px 2px #000;pointer-events:none;}
+.cc.on::after{opacity:1;color:#fff;text-shadow:0 1px 2px #000,0 0 8px var(--cc);}
+.c0::after{content:'01';}.c1::after{content:'02';}.c2::after{content:'03';}
+.c3::after{content:'04';}.c4::after{content:'05';}.c5::after{content:'06';}
+.cin{padding:clamp(2px,.8vw,5px) 2px;text-align:center;background:linear-gradient(90deg,var(--cc) 0,transparent 3px),linear-gradient(180deg,#1c2230,#0d1118);position:relative;border-top:1px solid rgba(255,255,255,.10);}
+.cnm{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(11px,3.3vw,17px);letter-spacing:1.4px;color:#e9eef6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px #000;transition:color .15s,text-shadow .2s;}
+.cc.on .cnm{color:#fff;text-shadow:0 1px 2px #000,0 0 12px var(--cc);}
+/* portrait crop — the source stance photos (b_s/r_s/i_s/…) are native 380×506
+   (~3/4, genuinely portrait). The old 1/1 square cropped off a real quarter
+   of every character's body for no reason; matching the source ratio here
+   shows the WHOLE photographed fighter instead of an arbitrary slice of it
+   ("bigger and centered", Lior's ask), then a small extra img-scale pushes
+   past the frame edges slightly so there's no dead margin around them. */
+.cim{width:100%;aspect-ratio:3/4;overflow:hidden;position:relative;background:#0a0d12;}
+.cim img{width:100%;height:100%;object-fit:cover;object-position:center 8%;display:block;transform:scale(1.12);transform-origin:center 15%;transition:transform .3s,filter .2s;filter:saturate(.85) contrast(1.06) brightness(.82);}
+.cc.on .cim img{transform:scale(1.2);filter:saturate(1.18) contrast(1.1) brightness(1.03);}
+.cig{position:absolute;inset:0;background:linear-gradient(180deg,transparent 62%,rgba(8,10,14,.85));z-index:2;}
+.cig::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--cc) 0%,transparent 22%);opacity:0;transition:opacity .2s;}
+.cc.on .cig::after{opacity:.14;}
 .cln{display:none;}
 /* VS preview row hidden on the select screen (clean reference look) */
 .svs{display:none!important;}
-/* premium FIGHT button */
-.bfi{position:relative;z-index:3;font-family:'Heebo','Bebas Neue',system-ui,sans-serif;font-weight:900;font-size:clamp(13px,4vw,20px);letter-spacing:clamp(2px,1.6vw,6px);
+/* premium FIGHT button — primary CTA: Bebas display type, slight skew,
+   travelling shine sweep on top of the existing pulse */
+.bfi{position:relative;z-index:3;font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(17px,5vw,25px);letter-spacing:clamp(3px,1.8vw,7px);
   color:#fff;border:1px solid rgba(255,255,255,.22);background:linear-gradient(180deg,#ff3a2a,#c80f12);
-  padding:clamp(8px,2.4vw,12px) clamp(26px,9vw,60px);cursor:pointer;border-radius:8px;display:none;margin:clamp(2px,.8vw,5px) auto clamp(3px,1vw,6px);
-  box-shadow:0 4px 16px rgba(200,15,18,.5),inset 0 1px 0 rgba(255,255,255,.25);-webkit-appearance:none;text-shadow:0 1px 3px rgba(0,0,0,.5);
+  padding:clamp(8px,2.4vw,12px) clamp(26px,9vw,60px);cursor:pointer;border-radius:4px;display:none;margin:clamp(2px,.8vw,5px) auto clamp(3px,1vw,6px);
+  transform:skewX(-4deg);overflow:hidden;
+  box-shadow:0 4px 16px rgba(200,15,18,.5),inset 0 1px 0 rgba(255,255,255,.25);-webkit-appearance:none;text-shadow:0 2px 4px rgba(0,0,0,.55);
   animation:bfiPulse 1.6s ease-in-out infinite;}
-.bfi.on{display:block;}.bfi:active{transform:scale(.97);}
+.bfi::after{content:'';position:absolute;top:-30%;bottom:-30%;width:34%;left:-45%;transform:skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.34),transparent);animation:bfiShine 2.6s ease-in-out infinite;}
+@keyframes bfiShine{0%,55%{left:-45%;}90%,100%{left:120%;}}
+.bfi.on{display:block;}.bfi:active{transform:skewX(-4deg) scale(.97);}
 @keyframes bfiPulse{0%,100%{box-shadow:0 4px 16px rgba(200,15,18,.5),inset 0 1px 0 rgba(255,255,255,.25)}50%{box-shadow:0 4px 22px rgba(255,58,42,.85),inset 0 1px 0 rgba(255,255,255,.3)}}
 /* console-style footer prompts */
 .scf{position:relative;z-index:3;display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(10px,4vw,26px);padding:clamp(3px,1vw,6px) 0 clamp(5px,1.6vw,9px);font-family:'Heebo',system-ui,sans-serif;}
@@ -575,7 +627,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .win{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(1px,.6vw,5px);max-height:100%;padding:clamp(8px,2.6vw,16px) clamp(11px,3.6vw,20px) max(12px,var(--sb));}
 .wkk{font-family:'Bebas Neue';font-size:clamp(14px,4.4vw,22px);letter-spacing:clamp(3px,2.6vw,10px);color:var(--r);text-shadow:0 0 18px var(--r);line-height:1;animation:wkg 1.8s ease-in-out infinite;}
 @keyframes wkg{0%,100%{text-shadow:0 0 16px var(--r)}50%{text-shadow:0 0 36px var(--r),0 0 80px rgba(232,0,15,.7)}}
-.wttl{font-family:'Heebo','Arial Black',system-ui,sans-serif;font-weight:900;font-size:clamp(34px,12.5vw,72px);letter-spacing:clamp(1px,1vw,6px);line-height:.9;margin-top:2px;
+.wttl{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(38px,14vw,80px);letter-spacing:clamp(2px,1.4vw,7px);line-height:.9;margin-top:2px;-webkit-text-stroke:1px rgba(255,255,255,.45);
   background:linear-gradient(180deg,#fff6df 0%,#ffe7a0 32%,#c79f37 52%,#fff2cf 66%,#d6ae49 100%);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
   filter:drop-shadow(0 2px 1px rgba(0,0,0,.8)) drop-shadow(0 0 22px rgba(255,196,80,.42));}
@@ -1162,6 +1214,12 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .glx{animation:glxA .13s steps(3,end) 1;}
 #SVS::after,.wbg::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.11) 3px 4px);pointer-events:none;z-index:9;}
 .vhurt .fs img{animation:vhurtF .26s ease-out 1;}
+/* v6.0 canvas-engine first slice: the new <canvas> draws the fighters; hide
+   the old DOM sprites (but keep .ftr wrappers so vhurt/aura/CSS FX classes
+   that some functions still toggle keep working harmlessly in the background) */
+#CANVAS_STAGE{position:absolute;inset:0;width:100%;height:100%;z-index:14;pointer-events:none;display:none;}
+.arena-cam.canvas-mode #CANVAS_STAGE{display:block;}
+.arena-cam.canvas-mode .fs{opacity:0;}
 @keyframes vhurtF{0%{filter:brightness(1.35) saturate(1.4) drop-shadow(0 0 9px rgba(255,60,60,.6));}100%{filter:none;}}
 .dsh .fs img{filter:brightness(1.35) drop-shadow(-8px 0 6px rgba(0,240,255,.45));}
 .chud-mv .chb{display:inline-block;min-width:15px;text-align:center;margin:0 3px;padding:0 4px;border:1px solid rgba(0,255,225,.5);border-radius:3px;background:rgba(0,40,44,.7);color:#7dfff0;font-family:'Bebas Neue',sans-serif;}
@@ -1191,8 +1249,9 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 .btnrow{position:relative;z-index:3;display:flex;gap:clamp(7px,2vw,12px);justify-content:center;align-items:stretch;width:min(92vw,420px);margin:clamp(4px,1.2vw,8px) auto 0;}
 .btnrow .bfi{flex:1.7;margin:0;}
 .btnrow .btour{flex:1;margin:0;display:flex;align-items:center;justify-content:center;}
-/* selected card glows in the fighter's theme color */
-.cc.on{box-shadow:0 0 0 2px var(--cc,#f5c518),0 0 18px var(--cc,#f5c518);}
+/* (stale duplicate .cc.on glow rule removed — the SF2 blink animation defined
+   with .cc above now owns the selected border/glow; a static box-shadow here
+   would fight it) */
 /* ── TYPE SCALE (סריף): one clamp ladder for every new-system text element ── */
 :root{--t1:clamp(30px,9vw,46px);--t2:clamp(20px,6vw,32px);--t3:clamp(13px,3.7vw,17px);--t4:clamp(11px,3.2vw,15px);--t5:clamp(10px,2.9vw,13px);--t6:clamp(9px,2.5vw,11px);}
 /* ── PLAYER CARD (פיקסל): stats + rank + daily challenge in one framed panel ── */
@@ -1206,7 +1265,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 /* ── SPRINT 2: fighter traits, tournament mode, world rank, near-miss nudge ── */
 .htr{margin-top:clamp(5px,1.6vw,8px);padding-top:clamp(4px,1.2vw,6px);border-top:1px solid rgba(255,255,255,.14);font-size:clamp(8px,2.3vw,11px);color:#ffd98a;line-height:1.35;}
 .htr b{color:#fff;}
-.btour{display:block;margin:clamp(6px,1.8vw,10px) auto 0;font-family:'Bebas Neue','Heebo',sans-serif;font-weight:900;font-size:clamp(13px,3.8vw,18px);letter-spacing:clamp(1px,.8vw,3px);padding:clamp(7px,2vw,10px) clamp(16px,5vw,26px);border:1px solid rgba(245,197,24,.55);border-radius:6px;background:linear-gradient(180deg,#8a6508,#4a3404);color:#ffe9a8;text-shadow:0 1px 3px rgba(0,0,0,.6);box-shadow:0 4px 14px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,236,160,.25);cursor:pointer;}
+.btour{display:block;margin:clamp(6px,1.8vw,10px) auto 0;font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(14px,4.2vw,19px);letter-spacing:clamp(1.5px,1vw,4px);padding:clamp(7px,2vw,10px) clamp(16px,5vw,26px);border:1px solid rgba(245,197,24,.55);border-radius:4px;background:linear-gradient(180deg,#8a6508,#4a3404);color:#ffe9a8;text-shadow:0 1px 2px #000;box-shadow:0 4px 14px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,236,160,.25);cursor:pointer;}
 .btour:active{transform:scale(.97);}
 .tourbar{display:none;direction:rtl;margin:clamp(4px,1.2vw,7px) auto;padding:clamp(6px,1.8vw,9px) clamp(12px,3.6vw,18px);width:fit-content;max-width:88vw;border:1px solid rgba(245,197,24,.5);border-radius:6px;background:linear-gradient(180deg,rgba(60,44,6,.85),rgba(24,17,2,.9));font-family:'Heebo',system-ui,sans-serif;font-weight:900;font-size:var(--t4);color:#ffe9a8;text-shadow:0 1px 2px #000;}
 .tourbar.on{display:block;}
@@ -1253,6 +1312,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
   <div class="topctl">
     <button class="tcb" id="SND_BTN" onclick="toggleSound()" aria-label="sound">🔊</button>
     <button class="tcb" onclick="showTutorial()" aria-label="help">?</button>
+    <button class="tcb tcb-back" onclick="stopChar();SS('SN')" aria-label="back">‹</button>
   </div>
   <div class="slg">
     <img class="game-logo" src="assets/img/logo.png" alt="TLV WAR"/>
@@ -1260,9 +1320,13 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
   </div>
   <div class="pgr" id="PNAME_GREET"></div>
   <div class="hero" id="HERO">
+    <div class="hero-slash s1"></div>
+    <div class="hero-slash s2"></div>
+    <div class="hero-beam"></div>
     <div class="hero-glow" id="HGLOW"></div>
-    <img class="hero-img" id="HIMG" src="" alt=""/>
     <div class="hero-name" id="HNAME"></div>
+    <img class="hero-img" id="HIMG" src="" alt=""/>
+    <div class="hero-floor"></div>
     <div class="hero-role" id="HROLE"></div>
     <div class="hstat">
       <div class="hst-style"><span class="hst-l">סגנון לחימה</span><span class="hst-v" id="HSTYLE"></span></div>
@@ -1356,6 +1420,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
     <div class="arps"><div class="arp arp1"></div><div class="arp arp2"></div><div class="arp arp3"></div></div>
     <div class="apo L"></div><div class="apo R"></div>
     <div class="afl"></div><div class="asc"></div><div class="avg"></div>
+    <canvas id="CANVAS_STAGE"></canvas>
     <div class="cbo" id="CB1" style="right:5px;top:29%"><div class="cbn" id="CN1">0</div><div class="cbt">HIT COMBO</div></div>
     <div class="cbo" id="CB2" style="left:5px;top:29%"><div class="cbn" id="CN2">0</div><div class="cbt">HIT COMBO</div></div>
     <!-- Fighter 1 with aura elements -->
@@ -1496,6 +1561,13 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Ra
 </div>
 <div class="acht" id="ACHT"></div>
 </div>
+<!-- v6.0 canvas engine — DYNAMIC cache-bust during active development (a static
+     ?v= string silently serves a stale cached copy after every edit, which cost
+     real debugging time more than once). Before a real deploy, swap this back to
+     a fixed ?v=<release> per file so returning players get normal HTTP caching. -->
+<script>['tlvfight','roster','gamebridge'].forEach(function(f){
+  document.write('<script src="js/'+f+'.js?v='+Date.now()+'"><\/script>');
+});</script>
 <script>
 /* ════════════════════════════════════════════════════════════════════════════
    SPRITE PIPELINE — how to add new fight poses (repeatable, reuses _build/chromakey.py)
@@ -1681,7 +1753,7 @@ const LVL_M=['נמוך','בינוני','גבוה','גבוה מאוד'];     // m
 const LVL_F=['נמוכה','בינונית','גבוהה','גבוהה מאוד']; // feminine (הגנה/מהירות)
 function lvl(v){return v>=86?3:v>=70?2:v>=55?1:0;}
 // render the selected fighter big in the hero stage
-const HSC={b:1.40,r:1.42,i:1.42,y:1.42,s:1.42,f:1.40};  // per-fighter hero zoom — the fighter is the STAR, dominates the select screen (.hero overflow:visible)
+const HSC={b:1.48,r:1.50,i:1.50,y:1.50,s:1.50,f:1.48};  // per-fighter hero zoom — the fighter is the STAR, dominates the select screen (.hero overflow:visible; bumped +0.08 in the SF2-look pass)
 const HHERO={b:'assets/img/b_hero.webp',s:'assets/img/s_hero.webp',f:'assets/img/f_hero.webp'};  // dedicated select-screen renders (full-body, fills the stage)
 // ── FIGHTER TRAITS: one passive identity per fighter, single isolated hook each ──
 // (defined BEFORE heroView — it runs at load for the default hero display)
@@ -1697,8 +1769,9 @@ function heroView(i){
   const ch=CH[i],f=FS[ch.id];
   const img=document.getElementById('HIMG');
   img.style.setProperty('--hsc',HSC[ch.id]||1.06);
+  document.getElementById('HERO').style.setProperty('--hc',f.col);   // theme color → slashes/beam/floor
   const src=HHERO[ch.id]||IM[ch.iF];
-  if(img.src.indexOf(src)<0){img.style.opacity=0;setTimeout(()=>{img.src=src;img.style.opacity=1;},120);}
+  if(img.src.indexOf(src)<0){img.style.opacity=0;setTimeout(()=>{img.src=src;img.style.opacity=1;img.classList.remove('swap');void img.offsetWidth;img.classList.add('swap');},120);}
   document.getElementById('HNAME').textContent=ch.name;
   document.getElementById('HNAME').style.color=f.col;
   document.getElementById('HROLE').textContent=f.role;
@@ -1934,7 +2007,7 @@ function _achNext(){
   _achShowing=true;
   t.innerHTML='<b>'+nx[0]+'</b><span>'+nx[1]+'</span>';
   t.classList.remove('on');void t.offsetWidth;t.classList.add('on');
-  try{sfx('B',.5);}catch(e){}
+  try{sfx('AB',.5);}catch(e){}
   setTimeout(()=>{t.classList.remove('on');setTimeout(_achNext,380);},2600);
 }
 function checkAch(x){
@@ -2390,6 +2463,7 @@ function initBattle(){
     else if(mercyMode)log('💪 קדימה, אתה יכול! זה הקרב שלך.','sy');
     sT();
     startRealtime();
+    if(window.startCanvasBattle){startCanvasBattle();stopCpuTick();}   // v6.0: canvas engine owns movement/hits/CPU while active — old cpuTick/execMove stay dormant
     musCH(P1.mus);
   },1500);
 }
@@ -2605,7 +2679,7 @@ function setGuard(g){
   }else if(el&&fb&&IM[fb]){el.src=IM[fb];}
   const f=document.getElementById('F1');if(f){f.classList.add('guarding');f.classList.toggle('crouch',g==='L');}
   // NOTE: no def-fl flash just for holding guard — the block pose is the cue. The shield glow only fires on an actual blocked hit.
-  sfx('B',.3);
+  sfx('AB',.3);
 }
 function clearGuard(){
   if(!guard1)return;guard1=null;
@@ -2617,7 +2691,7 @@ function doJump(){
   if(busy1||air1||mlOpen)return;
   air1=true;
   const f=document.getElementById('F1');if(f)f.classList.add('jmp');
-  swSp(true,'jkk');sfx('W',.4);vib(8);
+  swSp(true,'jkk');sfx('AW',.4);vib(8);
   clearTimeout(airT);
   airT=setTimeout(()=>{air1=false;if(f)f.classList.remove('jmp');if(!guard1&&!busy1)rstSp(true);},560);
 }
@@ -2661,7 +2735,7 @@ function inp(btn){
   if(busy1||mlOpen)return;   // real-time: player acts whenever not in own recovery
   // Direction "buttons" arriving here (legacy callers) route to the direction handler.
   if(btn==='U'||btn==='D'||btn==='L'||btn==='R'){dirDown(btn);return;}
-  flashBtn(btn);sfx('W',.38);vib(7);
+  flashBtn(btn);sfx('AW',.38);vib(7);
   // ── AIR MEDIUM ── (▲ isn't a buffer token, so airborne+button fires its ["U",btn] move)
   if(air1){const a=P1.mv.find(m=>seqEq(m.seq,['U',btn]));if(a){air1=false;clearTimeout(airT);cBuf=[];hideChud();execMove(a,true);return;}}
   pushBuf(btn);
@@ -2698,7 +2772,7 @@ function doDash(){
   if(f){f.classList.add('dsh');setTimeout(()=>f.classList.remove('dsh'),260);}
   try{spawnAfterimage('F1',fGlow(true),2);}catch(e){}
   moveF('F1',X1,X1+8,110,'out').then(()=>moveF('F1',X1+8,X1,150,'out'));
-  sfx('W',.5);vib(6);ann('⚡ DASH');
+  sfx('AW',.5);vib(6);ann('⚡ DASH');
 }
 function seqEq(a,b){return a.length===b.length&&a.every((v,i)=>v===b[i]);}
 function seqSW(sq,pre){return pre.length<=sq.length&&pre.every((v,i)=>v===sq[i]);}
@@ -2732,7 +2806,14 @@ function preloadFighter(ch){
 }
 
 const ICOL={jab:'#ffcc00',kick:'#00aaff',str:'#ff8800',hvy:'#ff4400',jjb:'#aaddff',jkk:'#00ccff',jsm:'#ff66aa',bb:'#00cc44',sw:'#00cc44',upc:'#ffff00',dsh:'#ff8800',rsh:'#00aaff',flx:'#ff3300',c12:'#ff6600',tkx:'#00aaff',xsh:'#cc00ff',dco:'#cc00ff',est:'#cc00ff',sjp:'#cc00ff',fin:'#ffffff',redcard:'#ff0000',blk:'#4499ff',charge:'#f5c518'};
-const SFXM={jab:'P',kick:'K',str:'P',hvy:'H',jjb:'P',jkk:'K',jsm:'H',bb:'K',sw:'K',upc:'H',dsh:'P',rsh:'K',flx:'S',c12:'P',tkx:'K',xsh:'H',dco:'S',est:'S',sjp:'S',fin:'F',redcard:'RC',blk:'B',charge:'W'};
+// v6.0 fix: these values used to be bare 'P'/'K'/'H'/... but every <audio id>
+// in the DOM (@1019-1026) is A-prefixed (AP/AK/AH/AS/AF/AB/AW/ARC) — the bare
+// ids never matched anything, so sfx(SFXM[ac]) was a silent no-op for EVERY
+// combat sound in the game (confirmed: getElementById('P') etc. always
+// returned null). Real pre-existing bug, unrelated to the canvas rewrite —
+// fixed here so both the legacy DOM combat AND gamebridge.js's canvas hits
+// (which reads this same SFXM) get real audio.
+const SFXM={jab:'AP',kick:'AK',str:'AP',hvy:'AH',jjb:'AP',jkk:'AK',jsm:'AH',bb:'AK',sw:'AK',upc:'AH',dsh:'AP',rsh:'AK',flx:'AS',c12:'AP',tkx:'AK',xsh:'AH',dco:'AS',est:'AS',sjp:'AS',fin:'AF',redcard:'ARC',blk:'AB',charge:'AW'};
 // LOW attacks → must guard LOW (kicks/sweeps/body/ground). Everything else guards HIGH. Drives the high/low read.
 const LOWAC={kick:1,sw:1,bb:1,est:1,rsh:1,tkx:1};
 
@@ -2839,7 +2920,7 @@ async function execMove(mv,isP1){
     // expanding gold aura ring
     const aw=document.getElementById(isP1?'AW1':'AW2');
     if(aw){aw.classList.remove('on');void aw.offsetWidth;aw.classList.add('on');setTimeout(()=>aw.classList.remove('on'),1400);}
-    sfx('W',.5);
+    sfx('AW',.5);
     // sustained spark + shockwave build-up around the charging fighter
     const ar=document.getElementById('AR');const arW=ar?(ar.offsetWidth||380):380, arH=ar?(ar.offsetHeight||220):220;
     const scx=isP1?arW*.26:arW*.74, scy=arH*.5;
@@ -2867,7 +2948,7 @@ async function execMove(mv,isP1){
     rcA(fs);fs.classList.add('blk');
     const df=document.getElementById(isP1?'DF1':'DF2');
     if(df){df.classList.remove('on');void df.offsetWidth;df.classList.add('on');setTimeout(()=>df.classList.remove('on'),700);}
-    sfx('B',.7);
+    sfx('AB',.7);
     if(isP1)pendRegen1+=(mv.regen||10);else pendRegen2+=(mv.regen||10);
     const dmgD=mv.d[1]>0?ri(mv.d[0],mv.d[1]):0;
     if(dmgD>0){if(isP1)h2=Math.max(0,h2-dmgD);else h1=Math.max(0,h1-dmgD);updH();}
@@ -2880,7 +2961,7 @@ async function execMove(mv,isP1){
 
   // ── RED CARD ──
   if(mv.redcard){
-    swSp(isP1,mv.ac);sfx('RC',1);ann('🟥 RED CARD!');
+    swSp(isP1,mv.ac);sfx('ARC',1);ann('🟥 RED CARD!');
     const rcf=document.getElementById('RCF');rcf.classList.remove('on');void rcf.offsetWidth;rcf.classList.add('on');
     const tEl=document.getElementById(tFId);
     tEl.style.transition='transform .44s ease-in,opacity .44s';
@@ -2922,7 +3003,7 @@ async function execMove(mv,isP1){
   if(isJump)document.getElementById(fId).classList.add('jmp');
   // Anticipation: coil back before the strike (low moves crouch into their own pose)
   rcA(fs);fs.classList.add(isLow?mv.ac:'wnd');
-  sfx('W',.44);
+  sfx('AW',.44);
 
   // ── HELD-GUARD DEFENSE: the player must HOLD the right stance BEFORE impact ──
   // jumps/aerials & head strikes = HIGH (block by holding ◄); kicks/sweeps/body/ground
@@ -2971,7 +3052,7 @@ async function execMove(mv,isP1){
   if(cpuBlk){
     dmg=Math.max(1,Math.round(dmg*0.25));
     block2=null;clearTimeout(block2T);
-    sfx('B',.6);vib(10);
+    sfx('AB',.6);vib(10);
     trigA(tFsId,'blk');
     const df2=document.getElementById(isP1?'DF2':'DF1');
     if(df2){df2.classList.remove('on');void df2.offsetWidth;df2.classList.add('on');setTimeout(()=>df2.classList.remove('on'),700);}
@@ -2984,7 +3065,7 @@ async function execMove(mv,isP1){
   }else if(defRes==='block'){
     // CORRECT GUARD HELD — chip damage only, player gains energy
     dmg=Math.max(1,Math.round(dmg*0.22));
-    sfx('B',.75);vib(14);
+    sfx('AB',.75);vib(14);
     regenE(1,14);
     const df=document.getElementById('DF1');
     if(df){df.classList.remove('on');void df.offsetWidth;df.classList.add('on');setTimeout(()=>df.classList.remove('on'),700);}
@@ -2996,7 +3077,7 @@ async function execMove(mv,isP1){
   }else if(defRes==='graze'){
     // WRONG-HEIGHT GUARD — partial mitigation, still takes a hit
     dmg=Math.max(1,Math.round(dmg*0.55));
-    sfx('B',.5);vib(18);
+    sfx('AB',.5);vib(18);
     trigA(tFsId,'hit');
     const df=document.getElementById('DF1');
     if(df){df.classList.remove('on');void df.offsetWidth;df.classList.add('on');setTimeout(()=>df.classList.remove('on'),500);}
@@ -3194,7 +3275,7 @@ function showRF(t){const rf=document.getElementById('RF'),rt=document.getElement
 function showKO(){const k=document.getElementById('KB');if(!k)return;k.classList.remove('on');void k.offsetWidth;k.classList.add('on');stT();}
 function log(t,c){const l=document.getElementById('LG');if(!l)return;const d=document.createElement('div');d.className='ll '+c;d.textContent='› '+t;l.appendChild(d);l.scrollTop=l.scrollHeight;}
 function clrLog(){const l=document.getElementById('LG');if(l)l.innerHTML='';}
-function exitBattle(){stopCpuTick();clearTimeout(turnTimer);clearTimeout(cTimer);stT();stopCamera();resetKODrama();stopChar();tourOn=false;playAMN();SS('SS');}
+function exitBattle(){stopCpuTick();if(window.stopCanvasBattle)stopCanvasBattle();clearTimeout(turnTimer);clearTimeout(cTimer);stT();stopCamera();resetKODrama();stopChar();tourOn=false;playAMN();SS('SS');}
 
 function endG(w,ip){
   if(gameEnded)return;          // record the result + end the match exactly once
