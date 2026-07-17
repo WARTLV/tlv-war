@@ -88,9 +88,13 @@
     fin: ['b_chair', 'b_flykick', 'b_smash2']
   };
 
-  // ── the other 5 fighters — 100% original legacy pose maps/frames ──
-  const RSP = { jab: 'r_punch', str: 'r_punch', hvy: 'r_hvy', bb: 'r_punch', kick: 'r_kick', sw: 'r_kick', c12: 'r_run', rsh: 'r_run', jsm: 'r_jump', dco: 'r_spray', redcard: 'r_redcard', fin: 'r_redcard', charge: 'r_ready2' };
-  const FRR = { jab: ['r_punch', 'r_knee'], str: ['r_punch', 'r_kick2'], hvy: ['r_hvy', 'r_punch'], bb: ['r_punch', 'r_kick2'], kick: ['r_kick', 'r_kick2'], fin: ['r_punch', 'r_redcard'] };
+  // ── השופט ('r') — upgraded with the new hi-res studio batch (r2_*, sliced
+  // from Lior's 4×3 sheet, Sprint 7C). Crisp cells (rows 1-2 of the sheet)
+  // became primary poses; legacy r_* art stays for low kicks / run / the
+  // iconic RED CARD & spray. r2_11 (edge-cut fist) and the two most motion-
+  // blurred cells were rejected in visual QA. ──
+  const RSP = { jab: 'r2_jab', str: 'r2_punch', hvy: 'r2_upper', bb: 'r2_cross', kick: 'r2_kick', sw: 'r_kick', c12: 'r_run', rsh: 'r_run', jsm: 'r2_jumpk', dco: 'r_spray', redcard: 'r_redcard', fin: 'r_redcard', charge: 'r_ready2' };
+  const FRR = { jab: ['r2_jab', 'r2_punch'], str: ['r2_jab', 'r2_punch'], hvy: ['r2_stance', 'r2_upper'], bb: ['r2_cross', 'r2_punch'], kick: ['r2_kick', 'r_kick2'], jsm: ['r2_jumpj', 'r2_jumpk'], fin: ['r2_punch', 'r_redcard'] };
 
   const ISP = { jab: 'i_punch', str: 'i_punch', hvy: 'i_punch', bb: 'i_punch', kick: 'i_kick', sw: 'i_lowk', c12: 'i_run', rsh: 'i_run', jsm: 'i_jump', charge: 'i_point', dco: 'i_belt', fin: 'i_belt' };
   const FRI = { jab: ['i_punch', 'i_fight2', 'i_knee'], str: ['i_punch', 'i_kick'], hvy: ['i_fightG', 'i_punch'], bb: ['i_punch', 'i_knee'], kick: ['i_lowk', 'i_kick'], fin: ['i_point', 'i_mic', 'i_belt'] };
@@ -119,7 +123,7 @@
       sp: BSP_B, fr: FRB_B },
     { id: 'r', name: 'השופט', hp: 120, dm: 0.95, em: 0.92, auraColor: '#9aa0aa',
       names: ['COUNT PUNCH', 'REF KICK', 'COUNT SMASH', 'TUNNEL HEAD', 'RUSH DQ', 'REF RUSH', 'AIR DQ', 'LOW SWEEP', 'BODY COUNT', '⚡ DOUBLE DQ', '🟥 RED CARD', '⚡ REF POWER'],
-      idle: 'r_idle2', walk: 'r_run', jump: 'r_jump', crouch: 'r_kick', guardHiFallback: 'r_ready2',
+      idle: 'r2_stance', walk: 'r_run', jump: 'r_jump', crouch: 'r_kick', guardHiFallback: 'r_ready2',
       sp: RSP, fr: FRR, redcard: { seq: ['R', 'S', 'T', 'X'], e: 60, d: [26, 36], ac: 'redcard', special: true, fin: true, n: '🟥 RED CARD' } },
     { id: 'i', name: 'T.M.R', hp: 130, dm: 1.08, em: 1.12, auraColor: '#c19300',
       names: ['BELT BASH', 'CHAMP KICK', 'CHAMP SLAM', 'CHAMP HEAD', 'BELT DASH', 'CHAMP RUSH', 'AIR BELT', 'LOW SWEEP', 'BODY SLAM', '⚡ BELT COMBO', '⚡ CHAMP KO', '⚡ CHAMP POWER'],

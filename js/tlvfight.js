@@ -115,6 +115,103 @@
     ctx.restore();
   }
 
+  // ── Hit-spark / dust — procedural impact FX in the reference game's spirit
+  // (SF2 white-hot star bursts on hit, softer blue flash on block, dust puff
+  // on landing) but 100% our own drawing — no ripped assets. Each fx item is
+  // {type:'spark'|'guard'|'dust', x,y (logical), color, born (tick)} and lives
+  // ~10 ticks; Battle owns the list and draws after the fighters. ───────────
+  const FX_LIFE = { spark: 9, guard: 8, dust: 14 };
+  function drawFxItem(ctx, item, age, sx, sy, sc) {
+    const lifeFrac = 1 - age / FX_LIFE[item.type];
+    if (lifeFrac <= 0) return;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    if (item.type === 'spark' || item.type === 'guard') {
+      const [r, g, b] = hexToRgb(item.type === 'guard' ? '#7fb8ff' : item.color);
+      const rays = item.type === 'guard' ? 5 : 8;
+      const len = (item.type === 'guard' ? 16 : 26) * sc * (0.5 + 0.7 * (1 - lifeFrac));
+      ctx.strokeStyle = `rgba(${r},${g},${b},${0.85 * lifeFrac})`;
+      ctx.lineWidth = Math.max(1.5, 2.6 * sc * lifeFrac);
+      ctx.beginPath();
+      for (let i = 0; i < rays; i++) {
+        const ang = (i / rays) * Math.PI * 2 + item.seed;
+        ctx.moveTo(sx + Math.cos(ang) * len * 0.25, sy + Math.sin(ang) * len * 0.25);
+        ctx.lineTo(sx + Math.cos(ang) * len, sy + Math.sin(ang) * len);
+      }
+      ctx.stroke();
+      // white-hot core flash, biggest on frame 1
+      const core = ctx.createRadialGradient(sx, sy, 0, sx, sy, 14 * sc * lifeFrac);
+      core.addColorStop(0, `rgba(255,255,255,${0.9 * lifeFrac})`);
+      core.addColorStop(0.5, `rgba(${r},${g},${b},${0.5 * lifeFrac})`);
+      core.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = core;
+      ctx.beginPath(); ctx.arc(sx, sy, 14 * sc * lifeFrac, 0, Math.PI * 2); ctx.fill();
+    } else { // dust — little grey puffs drifting out+up from the feet
+      for (let i = 0; i < 5; i++) {
+        const ang = Math.PI + (i / 4) * Math.PI; // fan across the ground
+        const d = age * 1.6 * sc * (0.6 + (i % 3) * 0.3);
+        const px = sx + Math.cos(ang + item.seed) * d;
+        const py = sy - age * 0.7 * sc * (0.4 + (i % 2) * 0.4);
+        ctx.fillStyle = `rgba(180,170,160,${0.30 * lifeFrac})`;
+        ctx.beginPath(); ctx.arc(px, py, (3 + i) * sc * 0.8, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
+  // ── Projectile — the "energy leaves the character" special (Lior's ask),
+  // architecture inspired by the reference's Fireball (spawn on a specific
+  // attack frame, travel, own hitbox, despawn on hit/edge) but drawn fully
+  // procedurally in the fighter's own auraColor — same visual language as
+  // drawAura. One per dco special; the finisher stays a heavy melee hit. ───
+  class Projectile {
+    constructor(owner, dmg, color, name, ac) {
+      this.owner = owner;
+      this.dir = owner.facing;
+      this.x = owner.x + this.dir * 55;
+      this.yMid = FIGHTER_H * 0.62 + owner.y;  // launch at chest height
+      this.vx = 6.2 * this.dir;
+      this.dmg = dmg; this.color = color; this.name = name; this.ac = ac;
+      this.alive = true;
+      this.age = 0;
+      this.r = 22; // logical radius of the hit zone
+    }
+    update() {
+      this.x += this.vx; this.age++;
+      if (this.x < -40 || this.x > STAGE_W + 40) this.alive = false;
+    }
+    box() { return { x: this.x - this.r, y: this.yMid - this.r, w: this.r * 2, h: this.r * 2, h_level: 'high' }; }
+    draw(ctx, cam, view) {
+      const sc = cam.scale;
+      const sx = (this.x - cam.x) * sc;
+      const sy = view.h * FLOOR_SCREEN_FRAC - this.yMid * sc;
+      const [r, g, b] = hexToRgb(this.color);
+      const R = this.r * sc;
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      // trailing particles behind the ball
+      for (let i = 1; i <= 4; i++) {
+        const tx = sx - this.vx * sc * i * 1.6;
+        const ty = sy + Math.sin(this.age * 0.5 + i) * 3 * sc;
+        const ta = 0.30 / i;
+        const tg = ctx.createRadialGradient(tx, ty, 0, tx, ty, R * (1 - i * 0.15));
+        tg.addColorStop(0, `rgba(${r},${g},${b},${ta})`);
+        tg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = tg;
+        ctx.beginPath(); ctx.arc(tx, ty, R * (1 - i * 0.15), 0, Math.PI * 2); ctx.fill();
+      }
+      // core: white-hot center wrapped in theme color, pulsing slightly
+      const pulse = 1 + Math.sin(this.age * 0.6) * 0.12;
+      const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, R * pulse);
+      grad.addColorStop(0, 'rgba(255,255,255,0.95)');
+      grad.addColorStop(0.35, `rgba(${r},${g},${b},0.9)`);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(sx, sy, R * pulse, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+  }
+
   // ── Image cache ─────────────────────────────────────────────────────────────
   const IMG = Object.create(null);
   function loadImg(src) {
@@ -147,11 +244,23 @@
     constructor(moves, opts) {
       opts = opts || {};
       this.moves = moves;
-      this.comboWindow = opts.comboWindow || 900;
+      // comboWindow is a ROLLING per-press window, matching the original
+      // game's pushBuf/CTIMEOUT semantics (index.html @2700): the clock
+      // restarts on EVERY press, so a 4-input special needs each press
+      // within `comboWindow` of the previous one — not the whole sequence
+      // inside one fixed window from the first press (the old behavior,
+      // which made specials nearly impossible on a touch screen).
+      // setWindow() lets the bridge stretch/shrink it live the way the
+      // original does after hits/whiffs (1500ms / 900ms).
+      this.comboWindow = opts.comboWindow || 1200;
       this.graceMs = opts.graceMs != null ? opts.graceMs : 220;
       this.buf = [];       // [{tok,t}]
       this.pending = null; // {move, t} best exact match seen, awaiting grace
+      this.onBufferChange = opts.onBufferChange || null; // (tokens[]) → HUD hook
     }
+    setWindow(ms) { this.comboWindow = ms; }
+    _lastT() { return this.buf.length ? this.buf[this.buf.length - 1].t : 0; }
+    _notify() { if (this.onBufferChange) this.onBufferChange(this._toks()); }
     _now(now) { return now || (typeof performance !== 'undefined' ? performance.now() : Date.now()); }
     _toks() { return this.buf.map(b => b.tok); }
     _isPrefixOf(seq) {
@@ -176,34 +285,36 @@
     }
     push(tok, now) {
       now = this._now(now);
-      if (this.buf.length && now - this.buf[0].t > this.comboWindow) { this.buf = []; this.pending = null; }
+      // rolling window: stale means "too long since the LAST press", like the original
+      if (this.buf.length && now - this._lastT() > this.comboWindow) { this.buf = []; this.pending = null; }
       this.buf.push({ tok, t: now });
       // dead-end buffer (matches nothing, extends nothing) → restart fresh from this token
       if (!this._canExtend() && !this._bestExact()) this.buf = [{ tok, t: now }];
       const exact = this._bestExact();
       if (exact) {
-        if (this._canExtend()) { this.pending = { move: exact, t: now }; return null; } // could still grow
-        this.buf = []; this.pending = null; return exact; // nothing longer possible — fire now
+        if (this._canExtend()) { this.pending = { move: exact, t: now }; this._notify(); return null; } // could still grow
+        this.buf = []; this.pending = null; this._notify(); return exact; // nothing longer possible — fire now
       }
       this.pending = null;
+      this._notify();
       return null;
     }
     // call every tick; returns a move if a pending/timed-out buffer resolves this frame
     poll(now) {
       now = this._now(now);
       if (this.pending && now - this.pending.t >= this.graceMs) {
-        const mv = this.pending.move; this.buf = []; this.pending = null; return mv;
+        const mv = this.pending.move; this.buf = []; this.pending = null; this._notify(); return mv;
       }
-      if (this.buf.length && now - this.buf[0].t > this.comboWindow) {
+      if (this.buf.length && now - this._lastT() > this.comboWindow) {
         // timed out with no exact match ever recorded — fall back to a plain
         // basic matching just the last token, if one exists, else drop it
         const last = this.buf[this.buf.length - 1].tok;
-        this.buf = []; this.pending = null;
+        this.buf = []; this.pending = null; this._notify();
         return this.moves.find(mv => mv.seq.length === 1 && mv.seq[0] === last) || null;
       }
       return null;
     }
-    clear() { this.buf = []; this.pending = null; }
+    clear() { this.buf = []; this.pending = null; this._notify(); }
   }
 
   // ── Camera: SF2-style — FIXED scale (no zoom pumping), side-scrolls to keep
@@ -293,8 +404,12 @@
           dmg, reach: def.reach || 96, boxY: def.boxY || [40, 160],
           h: def.h || 'high', energy: cost,
           special: !!(def.special || def.fin || def.cat === 'special'),
-          charge
+          charge,
+          // dco = each fighter's ⚡ combo-special → fires an energy projectile
+          // (Battle spawns it at the end of startup) instead of a melee hitbox
+          projectile: def.ac === 'dco'
         };
+        this._projSpawned = false;
         this.customFrames = def.frames || null;
         this.moveName = name;
         this.moveCine = def.cine || null;
@@ -335,6 +450,7 @@
     hitBox() {
       if (!this.attack) return null;
       const a = this.attack;
+      if (a.projectile) return null; // the projectile carries the hit, not the body
       const activeStart = a.startup, activeEnd = a.startup + a.active;
       if (this.frameT < activeStart || this.frameT >= activeEnd) return null;
       const w = a.reach - 30;
@@ -375,7 +491,10 @@
       // jump physics
       if (!this.grounded()) {
         this._applyGravity();
-        if (this.grounded()) this.changeStateForce(ST.IDLE);
+        if (this.grounded()) {
+          this.changeStateForce(ST.IDLE);
+          if (this.fxHook) this.fxHook('dust', this.x, 0); // landing puff
+        }
         return;
       }
 
@@ -484,6 +603,16 @@
       this._raf = null;
       this._last = 0;
       this._acc = 0;
+      this.projectiles = [];
+      this.fx = [];       // sparks / dust — {type,x,y,color,seed,born}
+      this.tickN = 0;
+      const spawnFx = this.spawnFx.bind(this);
+      this.f1.fxHook = spawnFx; this.f2.fxHook = spawnFx;
+    }
+
+    spawnFx(type, x, y, color) {
+      this.fx.push({ type, x, y, color: color || '#ffcc55', seed: Math.random() * Math.PI * 2, born: this.tickN });
+      if (this.fx.length > 40) this.fx.shift();
     }
 
     start() { this.running = true; this._last = performance.now(); this._loop(this._last); }
@@ -513,16 +642,53 @@
     }
 
     tick() {
+      this.tickN++;
       this.f1.update();
       this.f2.update();
       this._separate();
       this._resolveHits(this.f1, this.f2);
       this._resolveHits(this.f2, this.f1);
+      this._spawnProjectiles(this.f1);
+      this._spawnProjectiles(this.f2);
+      this._updateProjectiles();
+      // expire dead fx
+      this.fx = this.fx.filter(i => this.tickN - i.born <= FX_LIFE[i.type]);
       this.cam.update(this.f1, this.f2);
       if (!this.koFired && (this.f1.hp <= 0 || this.f2.hp <= 0)) {
         this.koFired = true;
         this.onKO(this.f1.hp <= 0 ? this.f2 : this.f1);
       }
+    }
+
+    _spawnProjectiles(f) {
+      const a = f.attack;
+      if (!a || !a.projectile || f._projSpawned) return;
+      if (f.frameT < a.startup) return;
+      f._projSpawned = true;
+      const dmg = ri(a.dmg[0], a.dmg[1]);
+      const color = (f.def && f.def.auraColor) || '#ffaa33';
+      this.projectiles.push(new Projectile(f, dmg, color, f.moveName, f.lastAc || 'dco'));
+      if (this.projectiles.length > 6) this.projectiles.shift();
+    }
+
+    _updateProjectiles() {
+      for (const p of this.projectiles) {
+        if (!p.alive) continue;
+        p.update();
+        const vic = p.owner.opponent;
+        if (!vic || vic.state === ST.KO || vic.hp <= 0) continue;
+        const box = p.box();
+        if (!aabb(box, vic.hurtBox())) continue;
+        p.alive = false;
+        const guarding = (vic.state === ST.GUARD_HI || vic.state === ST.GUARD_LO);
+        const correct = guarding && vic.state === ST.GUARD_HI; // energy ball flies high
+        let dmg = p.dmg;
+        if (guarding) dmg = Math.max(1, Math.round(dmg * (correct ? 0.22 : 0.55)));
+        vic.takeHit(dmg, 'heavy');
+        this.spawnFx(correct ? 'guard' : 'spark', p.x, p.yMid, p.color);
+        this.onHit({ attacker: p.owner, victim: vic, dmg, guarded: correct, weight: 'heavy', special: true, ac: p.ac, moveName: p.name });
+      }
+      this.projectiles = this.projectiles.filter(p => p.alive);
     }
 
     _separate() {
@@ -556,6 +722,10 @@
       if (guarding) { dmg = Math.max(1, Math.round(dmg * (correct ? 0.22 : 0.55))); }
       vic.takeHit(dmg, weight);
       if (!a.energy) att.grantEnergy(4); // free basics trickle energy back, like the original
+      // impact spark at the center of the hitbox/hurtbox overlap
+      const ix = (Math.max(hb.x, vb.x) + Math.min(hb.x + hb.w, vb.x + vb.w)) / 2;
+      const iy = (Math.max(hb.y, vb.y) + Math.min(hb.y + hb.h, vb.y + vb.h)) / 2;
+      this.spawnFx(guarding && correct ? 'guard' : 'spark', ix, iy, (att.def && att.def.auraColor) || '#ffcc55');
       this.onHit({ attacker: att, victim: vic, dmg, guarded: guarding && correct, weight, special: !!a.special });
     }
 
@@ -571,6 +741,16 @@
       // draw far fighter first (depth by y)
       const order = [this.f1, this.f2];
       order.forEach(f => f.draw(ctx, this.cam, view));
+      // energy projectiles fly over the fighters
+      this.projectiles.forEach(p => p.draw(ctx, this.cam, view));
+      // impact sparks / guard flashes / dust on top of everything
+      const sc = this.cam.scale, floorY = view.h * FLOOR_SCREEN_FRAC;
+      for (const item of this.fx) {
+        const age = this.tickN - item.born;
+        const sx = (item.x - this.cam.x) * sc;
+        const sy = floorY - item.y * sc;
+        drawFxItem(ctx, item, age, sx, sy, sc);
+      }
     }
   }
 

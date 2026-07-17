@@ -97,7 +97,21 @@
       onKO: onEngineKO
     });
     battle.f1.energy = e1; battle.f2.energy = e2;
-    resP1 = new T.MoveResolver(p1cfg.moves.filter(m => CANVAS_SAFE_ACS.indexOf(m.ac) >= 0), { comboWindow: 900, graceMs: 220 });
+    // comboWindow 1200 = the original game's CTIMEOUT — a ROLLING per-press
+    // clock (see MoveResolver). onBufferChange feeds the original's own combo
+    // HUD (#CHUD): we mirror the resolver buffer into the global cBuf/ctNow
+    // that updChud() already reads, so the player gets the same live hints +
+    // countdown bar the DOM game had — zero new UI.
+    resP1 = new T.MoveResolver(p1cfg.moves.filter(m => CANVAS_SAFE_ACS.indexOf(m.ac) >= 0), {
+      comboWindow: 1200, graceMs: 220,
+      onBufferChange: function (tokens) {
+        try {
+          cBuf = tokens.slice();
+          ctNow = resP1.comboWindow;
+          if (tokens.length) updChud(); else hideChud();
+        } catch (e) {}
+      }
+    });
     const canvasMoves = p2cfg.moves.filter(m => CANVAS_SAFE_ACS.indexOf(m.ac) >= 0);
     const chargeMove = p2cfg.moves.find(m => m.ac === 'charge'); // has no hitbox → safe on canvas even though it's not in CANVAS_SAFE_ACS
     let cpuNextMoveAt = performance.now() + 900;
@@ -116,7 +130,12 @@
       // clobbered real backward-walk and made holding ▼ never actually guard.)
       if (!canvasBattleActive()) return;
       try { driveCpu(f1, f2, canvasMoves); } catch (e) { console.error('driveCpu error (recovered):', e); }
+      // whiff detection for the combo clock: player's swing ended without
+      // touching anyone → shrink the window (original's anti-spam @3152)
+      const wasSwinging = isAttackState(f1.state) && !f1.attack?.charge;
+      const hadLanded = f1.attackDone;
       origTick();
+      if (wasSwinging && !isAttackState(f1.state) && !hadLanded && resP1) resP1.setWindow(900);
       // sync HP/energy back into the game's own globals so the existing HUD/
       // win-flow/tournament/Firebase code (which all read h1/h2/e1/e2) works untouched
       h1 = Math.round(f1.hp); h2 = Math.round(f2.hp);
@@ -208,7 +227,10 @@
   // ── hit → existing FX/HUD/audio pipeline ────────────────────────────────
   function onEngineHit(e) {
     const isP1atk = e.attacker === battle.f1;
-    const ac = e.attacker.lastAc || 'jab';
+    const ac = e.ac || e.attacker.lastAc || 'jab'; // projectile hits carry their own ac
+    // original combo-clock feel (index.html @3097/@3152): landing a hit
+    // stretches the player's next-press window, getting blocked shrinks it
+    if (isP1atk && resP1) resP1.setWindow(e.guarded || e.dmg <= 0 ? 900 : 1500);
     // NOTE: ICOL/SFXM are declared `const` at the top level of the main
     // script — that does NOT attach them to `window` in a classic script
     // (only `var`/function declarations do), so `window.ICOL`/`window.SFXM`
@@ -228,7 +250,7 @@
       window.vib(e.special ? [0, 30, 45, 65] : e.weight === 'heavy' ? 28 : 14);
       window.hitReact && window.hitReact(!isP1atk, e.weight);
       if (e.dmg > 0 && !e.guarded) window.addC(isP1atk ? 1 : 2);
-      const name = e.attacker.moveName;
+      const name = e.moveName || e.attacker.moveName;
       if (name) {
         window.ann(name);
         window.log((isP1atk ? P1.name : P2.name) + ': ' + name + ' [-' + e.dmg + 'HP]', e.special ? 'sp' : (isP1atk ? 'p1' : 'p2'));
