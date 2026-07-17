@@ -501,11 +501,13 @@
         while (this._acc >= step && guard++ < 5) { this.tick(); this._acc -= step; }
         this.draw();
       } catch (e) {
-        this.running = false;
-        if (typeof window !== 'undefined' && window.onerror) {
-          window.onerror('Battle loop threw: ' + e.message, 'tlvfight.js', 0, 0, e);
-        }
-        throw e;
+        // A single bad frame (e.g. a stray null-deref in a hit/CPU callback)
+        // must never permanently freeze a real match — that reads to the
+        // player as "the game is broken" with zero feedback. Log once and
+        // keep the loop alive; drop the accumulator so we don't try to
+        // replay a poison frame forever.
+        this._acc = 0;
+        if (typeof console !== 'undefined' && console.error) console.error('Battle tick error (recovered):', e);
       }
       this._raf = requestAnimationFrame(this._loop.bind(this));
     }

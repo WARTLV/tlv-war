@@ -115,7 +115,7 @@
       // overwrote controls.down/guard from guard1 every tick, which silently
       // clobbered real backward-walk and made holding ▼ never actually guard.)
       if (!canvasBattleActive()) return;
-      driveCpu(f1, f2, canvasMoves);
+      try { driveCpu(f1, f2, canvasMoves); } catch (e) { console.error('driveCpu error (recovered):', e); }
       origTick();
       // sync HP/energy back into the game's own globals so the existing HUD/
       // win-flow/tournament/Firebase code (which all read h1/h2/e1/e2) works untouched
