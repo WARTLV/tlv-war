@@ -64,21 +64,31 @@
   .hero .kick{position:relative;font-size:clamp(11px,1.6vw,14px);font-weight:700;letter-spacing:.34em;color:var(--syn1);text-transform:uppercase}
   .hero h1{position:relative;font-size:clamp(3rem,11.5vw,8.6rem);font-weight:900;line-height:1.02;letter-spacing:-.02em;margin-top:14px}
   .hero .hen{position:relative;font-family:'Archivo Black';font-size:clamp(.95rem,2.6vw,1.9rem);letter-spacing:.22em;color:var(--ink2);margin-top:14px}
-  .hero .htag{position:relative;font-size:clamp(1.02rem,2.4vw,1.5rem);font-weight:500;color:var(--ink2);margin-top:26px;max-width:34em;line-height:1.55}
-  .hero .htag b{color:#fff;font-weight:800}
-  .peeks{position:relative;margin-top:52px;display:flex;gap:clamp(10px,2.4vw,26px);perspective:900px}
-  .peek{width:clamp(96px,17vw,190px);aspect-ratio:3/4.2;border-radius:12px;overflow:hidden;
-    box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.09)}
-  .peek img{width:100%;height:100%;object-fit:cover}
-  .peek:nth-child(1){transform:rotate(-7deg) translateY(14px)}
-  .peek:nth-child(2){transform:rotate(2.5deg) translateY(-8px);z-index:2}
-  .peek:nth-child(3){transform:rotate(7deg) translateY(12px)}
+  /* cinematic identity-wall backdrop */
+  .hero-bg{position:absolute;inset:0;z-index:0;background:url(_docimg/hero_wall.jpg) center/cover no-repeat;transform:scale(1.05);
+    animation:heroZoom 24s ease-in-out infinite alternate}
+  @keyframes heroZoom{from{transform:scale(1.05)}to{transform:scale(1.14)}}
+  .hero-scrim{position:absolute;inset:0;z-index:1;background:
+    radial-gradient(95% 72% at 50% -8%,rgba(255,120,40,.32),transparent 60%),
+    radial-gradient(60% 50% at 50% 118%,rgba(255,45,155,.14),transparent 60%),
+    linear-gradient(180deg,rgba(12,10,9,.5) 0%,rgba(12,10,9,.6) 40%,rgba(12,10,9,.9) 78%,#0c0a09 100%)}
+  .hero .grain{z-index:1;opacity:.34}
+  .hero-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 4px}
+  .hconcept{position:relative;font-size:clamp(1.05rem,2.3vw,1.48rem);font-weight:500;color:var(--ink2);margin-top:26px;max-width:30em;line-height:1.55}
+  .hconcept b{color:#fff;font-weight:800}
+  .hconcept .cen{display:block;font-family:'Archivo';font-size:clamp(.72rem,1.4vw,.9rem);color:var(--ink3);letter-spacing:.01em;margin-top:13px;direction:ltr;line-height:1.5}
+  .marquee{position:absolute;z-index:2;bottom:62px;left:0;right:0;direction:ltr;overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+  .marquee .mrow{display:inline-block;white-space:nowrap;font-family:'Archivo';font-weight:700;font-size:12px;letter-spacing:.26em;color:var(--ink3);animation:marq 28s linear infinite}
+  .marquee .mrow s{text-decoration:none;padding:0 20px}
+  .marquee .mrow s b{color:var(--syn1);font-weight:700}
+  @keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
   .scrollcue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);font-family:'Archivo';font-size:10.5px;letter-spacing:.3em;color:var(--ink3);display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none}
   .scrollcue::after{content:"";width:1px;height:34px;background:linear-gradient(180deg,var(--syn1),transparent);animation:cue 1.8s ease-in-out infinite}
   @keyframes cue{0%,100%{opacity:.25;transform:scaleY(.6);transform-origin:top}50%{opacity:1;transform:scaleY(1)}}
   /* hero entrance */
-  .js .hero .kick,.js .hero h1,.js .hero .hen,.js .hero .htag,.js .peeks{opacity:0;transform:translateY(26px);animation:up .9s cubic-bezier(.2,.75,.25,1) forwards}
-  .js .hero h1{animation-delay:.12s}.js .hero .hen{animation-delay:.24s}.js .hero .htag{animation-delay:.38s}.js .peeks{animation-delay:.55s}
+  .js .hero .kick,.js .hero h1,.js .hero .hen,.js .hconcept{opacity:0;transform:translateY(26px);animation:up .9s cubic-bezier(.2,.75,.25,1) forwards}
+  .js .hero h1{animation-delay:.12s}.js .hero .hen{animation-delay:.24s}.js .hconcept{animation-delay:.4s}
   @keyframes up{to{opacity:1;transform:none}}
 
   /* ═══ WORLD SECTIONS — shared bones ═══ */
@@ -235,14 +245,15 @@
     nav .links{display:none}
   }
   @media (max-width:520px){
-    .peeks{margin-top:40px}
     .bigrow{grid-template-columns:repeat(3,1fr)}
     .warrow{gap:9px}
+    .marquee{bottom:52px}
   }
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation:none!important;transition:none!important}
     html{scroll-behavior:auto}
-    .js .rv,.js .hero .kick,.js .hero h1,.js .hero .hen,.js .hero .htag,.js .peeks{opacity:1;transform:none}
+    .js .rv,.js .hero .kick,.js .hero h1,.js .hero .hen,.js .hconcept{opacity:1;transform:none}
+    .marquee .mrow,.hero-bg{animation:none}
   }
 </style>
 </head>
@@ -263,16 +274,20 @@
 
 <!-- ═══════════ HERO ═══════════ -->
 <header class="hero" id="top">
-  <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
-  <div class="kick">Hyper-Synthetic Pop · Portfolio 2026</div>
-  <h1>מעבדה של <span class="syn">זהויות</span></h1>
-  <div class="hen">A LABORATORY OF IDENTITIES</div>
-  <div class="htag">אני לא מייצר תמונות — <b>אני מייצר זהויות שאי אפשר לשכוח.</b><br>קונספט, מיתוג ועולמות שלמים, שנבנים ב-AI ביד אחת.</div>
-  <div class="peeks">
-    <div class="peek"><img src="_docimg/pala_hero.jpg" alt="PALA PUNK"></div>
-    <div class="peek"><img src="_docimg/war_vs.jpg" alt="WAR TLV"></div>
-    <div class="peek"><img src="_docimg/oy_hero.jpg" alt="OY VEY"></div>
+  <div class="hero-bg"></div>
+  <div class="hero-scrim"></div>
+  <div class="grain"></div>
+  <div class="hero-inner">
+    <div class="kick">מיתוג · AI · תרבות מחתרת</div>
+    <h1>מעבדה של <span class="syn">זהויות</span></h1>
+    <div class="hen">A LABORATORY OF IDENTITIES</div>
+    <div class="hconcept">על התפר שבין מיתוג לתרבות מחתרת — <b>אני לוקח טכנולוגיה חדשה ומקצין אותה, עד שנולדת זהות שאי אפשר לשכוח.</b>
+      <span class="cen">On the seam of branding and underground culture — I push new technology to the edge until an identity is born.</span>
+    </div>
   </div>
+  <div class="marquee" aria-hidden="true"><div class="mrow">
+    <s><b>BIG.COM</b></s>·<s>WAR TLV</s>·<s><b>PALA PUNK</b></s>·<s>OY VEY</s>·<s><b>ניצ ופלדוס</b></s>·<s>ATRO</s>·<s><b>BIG.COM</b></s>·<s>WAR TLV</s>·<s><b>PALA PUNK</b></s>·<s>OY VEY</s>·<s><b>ניצ ופלדוס</b></s>·<s>ATRO</s>·
+  </div></div>
   <a class="scrollcue" href="#big">SCROLL</a>
 </header>
 
