@@ -120,16 +120,30 @@
   // on landing) but 100% our own drawing — no ripped assets. Each fx item is
   // {type:'spark'|'guard'|'dust', x,y (logical), color, born (tick)} and lives
   // ~10 ticks; Battle owns the list and draws after the fighters. ───────────
-  const FX_LIFE = { spark: 9, guard: 8, dust: 14 };
+  const FX_LIFE = { spark: 9, guard: 8, dust: 14, nova: 16 };
   function drawFxItem(ctx, item, age, sx, sy, sc) {
     const lifeFrac = 1 - age / FX_LIFE[item.type];
     if (lifeFrac <= 0) return;
+    const mag = item.mag || 1; // strength tier: light ≈0.7, heavy ≈1.2 (reference's 3 spark sizes)
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
+    if (item.type === 'nova') {
+      // finisher nova — an expanding energy ring bursting out of the body
+      const [r, g, b] = hexToRgb(item.color);
+      const R = (10 + age * 5.5) * sc;
+      ctx.strokeStyle = `rgba(${r},${g},${b},${0.8 * lifeFrac})`;
+      ctx.lineWidth = Math.max(2, 7 * sc * lifeFrac);
+      ctx.beginPath(); ctx.arc(sx, sy, R, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = `rgba(255,255,255,${0.5 * lifeFrac})`;
+      ctx.lineWidth = Math.max(1, 2.5 * sc * lifeFrac);
+      ctx.beginPath(); ctx.arc(sx, sy, R * 0.82, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+      return;
+    }
     if (item.type === 'spark' || item.type === 'guard') {
       const [r, g, b] = hexToRgb(item.type === 'guard' ? '#7fb8ff' : item.color);
       const rays = item.type === 'guard' ? 5 : 8;
-      const len = (item.type === 'guard' ? 16 : 26) * sc * (0.5 + 0.7 * (1 - lifeFrac));
+      const len = (item.type === 'guard' ? 16 : 26) * mag * sc * (0.5 + 0.7 * (1 - lifeFrac));
       ctx.strokeStyle = `rgba(${r},${g},${b},${0.85 * lifeFrac})`;
       ctx.lineWidth = Math.max(1.5, 2.6 * sc * lifeFrac);
       ctx.beginPath();
@@ -175,13 +189,50 @@
       this.alive = true;
       this.age = 0;
       this.r = 22; // logical radius of the hit zone
+      this.state = 'active'; // 'active' | 'collided' (burst)
+      this.burstAge = 0;
+    }
+    // reference finding: fireballs have a two-state life — ACTIVE flight, then
+    // a COLLIDED burst animation (velocity damped ×0.33 on hit / ×0.1 on a
+    // fireball-vs-fireball clash) instead of vanishing. collide() enters the
+    // burst; the projectile dies when the burst finishes (~12 ticks).
+    collide(clash) {
+      if (this.state === 'collided') return;
+      this.state = 'collided';
+      this.vx *= clash ? 0.1 : 0.33;
+      this.burstAge = 0;
     }
     update() {
       this.x += this.vx; this.age++;
+      if (this.state === 'collided') {
+        this.burstAge++;
+        if (this.burstAge > 12) this.alive = false;
+        return;
+      }
       if (this.x < -40 || this.x > STAGE_W + 40) this.alive = false;
     }
     box() { return { x: this.x - this.r, y: this.yMid - this.r, w: this.r * 2, h: this.r * 2, h_level: 'high' }; }
     draw(ctx, cam, view) {
+      if (this.state === 'collided') {
+        // 3-beat burst: expand → white flash → fade (reference's COLLIDED anim)
+        const sc = cam.scale;
+        const sx = (this.x - cam.x) * sc;
+        const sy = view.h * FLOOR_SCREEN_FRAC - this.yMid * sc;
+        const [r, g, b] = hexToRgb(this.color);
+        const t = this.burstAge / 12;
+        const R = this.r * sc * (0.9 + t * 1.6);
+        const alpha = (1 - t);
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, R);
+        grad.addColorStop(0, `rgba(255,255,255,${0.9 * alpha})`);
+        grad.addColorStop(0.4, `rgba(${r},${g},${b},${0.75 * alpha})`);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(sx, sy, R, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+        return;
+      }
       const sc = cam.scale;
       const sx = (this.x - cam.x) * sc;
       const sy = view.h * FLOOR_SCREEN_FRAC - this.yMid * sc;
@@ -404,6 +455,7 @@
           dmg, reach: def.reach || 96, boxY: def.boxY || [40, 160],
           h: def.h || 'high', energy: cost,
           special: !!(def.special || def.fin || def.cat === 'special'),
+          fin: !!def.fin,
           charge,
           // dco = each fighter's ⚡ combo-special → fires an energy projectile
           // (Battle spawns it at the end of startup) instead of a melee hitbox
@@ -436,8 +488,9 @@
       if (this.hp <= 0) { this.state = ST.KO; this.frameT = 0; this.attack = null; return; }
       this.state = ST.HURT; this.frameT = 0; this.attack = null;
       this.hurtT = weight === 'heavy' ? 22 : 12;
-      // small knockback
-      this.vx += -this.facing * (weight === 'heavy' ? 4 : 2);
+      // strength-tiered slide pushback (reference: light 12/600, heavy 22/800 —
+      // heavier hits shove harder but stop sharper via the existing 0.8 decay)
+      this.vx += -this.facing * (weight === 'heavy' ? 5.5 : 3.2);
     }
 
     // logical boxes ------------------------------------------------------------
@@ -491,7 +544,9 @@
       // jump physics
       if (!this.grounded()) {
         this._applyGravity();
+        this.x = clamp(this.x, PUSH_W, STAGE_W - PUSH_W);
         if (this.grounded()) {
+          this.vx = 0; // no residual slide after a diagonal jump
           this.changeStateForce(ST.IDLE);
           if (this.fxHook) this.fxHook('dust', this.x, 0); // landing puff
         }
@@ -499,14 +554,23 @@
       }
 
       // grounded movement / stance
-      if (c.up) { this.vy = JUMP_V; this.changeStateForce(ST.JUMP); this._applyGravity(); return; }
+      if (c.up) {
+        this.vy = JUMP_V;
+        // diagonal jumps (reference: jumpForwards 168 / jumpBackwards 180 u/s) —
+        // hold ◄/► while jumping to arc that way
+        this.vx = c.right ? 2.8 : c.left ? -2.8 : 0;
+        this.changeStateForce(ST.JUMP); this._applyGravity(); return;
+      }
       if (c.guard) { this.changeStateForce(c.down ? ST.GUARD_LO : ST.GUARD_HI); return; }
       if (c.down) { this.changeStateForce(ST.CROUCH); return; }
 
       const fwd = this.opponent && this.opponent.x >= this.x ? DIR.RIGHT : DIR.LEFT;
       if (c.right || c.left) {
         const dir = c.right ? DIR.RIGHT : DIR.LEFT;
-        this.x = clamp(this.x + dir * WALK_SPEED, PUSH_W, STAGE_W - PUSH_W);
+        // reference finding: backward walk is slower than forward (120 vs 180
+        // units/s ≈ ×0.67) — retreating is safe but costs ground. Adopted.
+        const spd = dir === fwd ? WALK_SPEED : WALK_SPEED * 0.7;
+        this.x = clamp(this.x + dir * spd, PUSH_W, STAGE_W - PUSH_W);
         this.changeStateForce(dir === fwd ? ST.WALK_F : ST.WALK_B);
       } else {
         this.changeStateForce(ST.IDLE);
@@ -549,25 +613,39 @@
       const im = loadImg(src);
       const sc = cam.scale;
       // world→screen: x maps around camera; feet anchored to the SF2-style low floor line
-      const sx = (this.x - cam.x) * sc;
+      let sx = (this.x - cam.x) * sc;
+      // hurt-shake (reference: defender jitters ±2px for ~15 frames on hit) —
+      // draw-only body jitter, physics position untouched, decays halfway in
+      if (this.state === ST.HURT) {
+        const mag = (this.hurtT > 6 ? 2.2 : 1.1) * sc;
+        sx += (this.frameT % 2 ? 1 : -1) * mag;
+      }
       const floorScreenY = view.h * FLOOR_SCREEN_FRAC;
       const feetY = floorScreenY - (this.y * sc);
       const h = FIGHTER_H * sc;
       let w = h * 0.62; // fallback aspect
       if (im && im.complete && im.naturalWidth) w = h * (im.naturalWidth / im.naturalHeight);
 
-      // shadow
+      // shadow — shrinks with jump height (reference: 1.2 − height/300),
+      // the cheap altitude cue that sells the arc of a jump
+      const shScale = clamp(1 - this.y / 300, 0.55, 1);
       ctx.save();
       ctx.globalAlpha = 0.32 * clamp(1 - this.y / 220, 0.2, 1);
       ctx.fillStyle = '#000';
       ctx.beginPath();
-      ctx.ellipse(sx, floorScreenY, w * 0.42, Math.max(6, 10 * sc), 0, 0, Math.PI * 2);
+      ctx.ellipse(sx, floorScreenY, w * 0.42 * shScale, Math.max(6, 10 * sc) * shScale, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
 
-      // energy aura — only during a special/finisher's startup (windup) window,
-      // ramping up as the strike approaches so it reads as "charging"
-      if (this.attack && this.attack.special && this.frameT < this.attack.startup) {
+      // energy aura — special/finisher windup ramps up toward the strike;
+      // the D,D,D charge gets the full-body "power stance" treatment for its
+      // whole duration: pulsing gold (the original game's charge color) over
+      // the fighter's own theme color
+      if (this.attack && this.attack.charge) {
+        const pulse = 0.7 + 0.3 * Math.sin(performance.now() * 0.02);
+        drawAura(ctx, sx, feetY, h * 1.1, w, '#f5c518', pulse);
+        drawAura(ctx, sx, feetY, h, w * 0.8, (this.def && this.def.auraColor) || '#ffaa33', pulse * 0.55);
+      } else if (this.attack && this.attack.special && this.frameT < this.attack.startup) {
         const intensity = clamp((this.frameT + 1) / Math.max(1, this.attack.startup), 0.15, 1);
         drawAura(ctx, sx, feetY, h, w, (this.def && this.def.auraColor) || '#ffaa33', intensity);
       }
@@ -610,8 +688,12 @@
       this.f1.fxHook = spawnFx; this.f2.fxHook = spawnFx;
     }
 
-    spawnFx(type, x, y, color) {
-      this.fx.push({ type, x, y, color: color || '#ffcc55', seed: Math.random() * Math.PI * 2, born: this.tickN });
+    spawnFx(type, x, y, color, mag) {
+      // ±5 logical-unit jitter at the contact point (reference's
+      // HIT_SPLASH_RANDOMNESS=10) so repeated hits never look stamped
+      const jx = type === 'spark' || type === 'guard' ? (Math.random() - 0.5) * 10 : 0;
+      const jy = type === 'spark' || type === 'guard' ? (Math.random() - 0.5) * 10 : 0;
+      this.fx.push({ type, x: x + jx, y: y + jy, color: color || '#ffcc55', mag: mag || 1, seed: Math.random() * Math.PI * 2, born: this.tickN });
       if (this.fx.length > 40) this.fx.shift();
     }
 
@@ -672,20 +754,35 @@
     }
 
     _updateProjectiles() {
+      // fireball-vs-fireball clash (reference signature move): two live enemy
+      // projectiles that touch both stop dead and burst in place
+      for (let i = 0; i < this.projectiles.length; i++) {
+        for (let j = i + 1; j < this.projectiles.length; j++) {
+          const a = this.projectiles[i], b = this.projectiles[j];
+          if (!a.alive || !b.alive || a.state !== 'active' || b.state !== 'active') continue;
+          if (a.owner === b.owner) continue;
+          if (aabb(a.box(), b.box())) {
+            a.collide(true); b.collide(true);
+            this.spawnFx('spark', a.x, a.yMid, a.color, 1.25);
+            this.spawnFx('spark', b.x, b.yMid, b.color, 1.25);
+          }
+        }
+      }
       for (const p of this.projectiles) {
         if (!p.alive) continue;
         p.update();
+        if (p.state !== 'active') continue; // bursting — no more hits
         const vic = p.owner.opponent;
         if (!vic || vic.state === ST.KO || vic.hp <= 0) continue;
         const box = p.box();
         if (!aabb(box, vic.hurtBox())) continue;
-        p.alive = false;
         const guarding = (vic.state === ST.GUARD_HI || vic.state === ST.GUARD_LO);
         const correct = guarding && vic.state === ST.GUARD_HI; // energy ball flies high
         let dmg = p.dmg;
         if (guarding) dmg = Math.max(1, Math.round(dmg * (correct ? 0.22 : 0.55)));
         vic.takeHit(dmg, 'heavy');
-        this.spawnFx(correct ? 'guard' : 'spark', p.x, p.yMid, p.color);
+        p.collide(false); // burst on the body instead of vanishing
+        this.spawnFx(correct ? 'guard' : 'spark', p.x, p.yMid, p.color, 1.25);
         this.onHit({ attacker: p.owner, victim: vic, dmg, guarded: correct, weight: 'heavy', special: true, ac: p.ac, moveName: p.name });
       }
       this.projectiles = this.projectiles.filter(p => p.alive);
@@ -722,10 +819,18 @@
       if (guarding) { dmg = Math.max(1, Math.round(dmg * (correct ? 0.22 : 0.55))); }
       vic.takeHit(dmg, weight);
       if (!a.energy) att.grantEnergy(4); // free basics trickle energy back, like the original
-      // impact spark at the center of the hitbox/hurtbox overlap
+      // impact spark at the center of the hitbox/hurtbox overlap, sized by strength
       const ix = (Math.max(hb.x, vb.x) + Math.min(hb.x + hb.w, vb.x + vb.w)) / 2;
       const iy = (Math.max(hb.y, vb.y) + Math.min(hb.y + hb.h, vb.y + vb.h)) / 2;
-      this.spawnFx(guarding && correct ? 'guard' : 'spark', ix, iy, (att.def && att.def.auraColor) || '#ffcc55');
+      const col = (att.def && att.def.auraColor) || '#ffcc55';
+      this.spawnFx(guarding && correct ? 'guard' : 'spark', ix, iy, col, weight === 'heavy' ? 1.25 : 0.75);
+      // finisher connects clean → energy nova bursting out of the impact
+      if (a.fin && !(guarding && correct)) this.spawnFx('nova', ix, iy, col);
+      // corner-transfer (reference: pushback against a cornered victim shoves
+      // the ATTACKER back instead, keeping corner pressure honest)
+      if (vic.x <= PUSH_W + 2 || vic.x >= STAGE_W - PUSH_W - 2) {
+        att.x = clamp(att.x - att.facing * 7, PUSH_W, STAGE_W - PUSH_W);
+      }
       this.onHit({ attacker: att, victim: vic, dmg, guarded: guarding && correct, weight, special: !!a.special });
     }
 
