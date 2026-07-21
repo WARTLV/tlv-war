@@ -59,8 +59,11 @@
   .card:hover,.card:focus-visible{transform:translateY(-4px);border-color:var(--magenta-hot);
     box-shadow:0 10px 34px rgba(194,74,138,.30);outline:none}
   .portrait{position:relative;aspect-ratio:9/16;width:100%;
-    background:linear-gradient(180deg,#e6eefb,var(--powder));background-size:cover;background-position:center top;
+    background:linear-gradient(180deg,#e6eefb,var(--powder));
     display:flex;align-items:center;justify-content:center}
+  .portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    object-position:center top;display:block}
+  .card.noimg .portrait img{display:none}
   .card.noimg .portrait::before{content:attr(data-icon);font-size:clamp(48px,14vw,96px);
     filter:drop-shadow(0 4px 10px rgba(27,42,74,.4));opacity:.55}
   .card.noimg .portrait::after{content:"portrait pending";position:absolute;bottom:34%;
@@ -88,8 +91,11 @@
   .sheet-inner{max-width:960px;margin:0 auto;min-height:100dvh;display:grid;
     grid-template-columns:1fr;gap:0}
   @media(min-width:760px){.sheet-inner{grid-template-columns:minmax(280px,40%) 1fr;align-items:stretch}}
-  .sheet-portrait{position:relative;background:var(--powder);min-height:52vh;
-    background-size:cover;background-position:center top;display:flex;align-items:center;justify-content:center}
+  .sheet-portrait{position:relative;background:var(--powder);min-height:52vh;overflow:hidden;
+    display:flex;align-items:center;justify-content:center}
+  .sheet-portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    object-position:center top;display:block}
+  .sheet-portrait.noimg img{display:none}
   .sheet-portrait.noimg::before{content:attr(data-icon);font-size:120px;opacity:.5}
   .sheet-body{padding:22px 20px 40px;direction:ltr}
   .sheet-body .heb{direction:rtl;text-align:right}
@@ -173,7 +179,7 @@
 <div class="sheet" id="sheet" role="dialog" aria-modal="true">
   <button class="close" id="closeBtn" aria-label="close">✕</button>
   <div class="sheet-inner">
-    <div class="sheet-portrait" id="shPortrait"></div>
+    <div class="sheet-portrait" id="shPortrait"><img id="shPortraitImg" alt=""></div>
     <div class="sheet-body">
       <p class="s-cls" id="shCls"></p>
       <h2 class="s-name" id="shName"></h2>
@@ -233,15 +239,16 @@ CAST.forEach((c,i)=>{
     <span class="idx">${String(i+1).padStart(2,'0')}</span>
     <span class="badge">✓</span>
     <div class="portrait" data-icon="${c.icon}">
+      <img alt="${c.name}" loading="eager" decoding="async">
       <div class="plate">
         <div class="nm">${c.name}</div>
         <div class="cl">${c.cls}</div>
       </div>
     </div>`;
-  // try to load branded portrait; keep placeholder if missing
-  const p = card.querySelector('.portrait');
-  const im = new Image();
-  im.onload = ()=>{ p.style.backgroundImage = `url("branded/${c.id}.jpg")`; card.classList.remove('noimg'); };
+  // single real <img> fetch (was: probe Image() + duplicate CSS background-image fetch —
+  // doubled data/time on slow mobile networks). onerror keeps the placeholder.
+  const im = card.querySelector('.portrait img');
+  im.onload = ()=>{ card.classList.remove('noimg'); };
   im.onerror = ()=>{/* stay placeholder */};
   im.src = `branded/${c.id}.jpg`;
   card.addEventListener('click', ()=>openSheet(c.id));
@@ -256,9 +263,9 @@ function openSheet(id){
   const port = document.getElementById('shPortrait');
   port.className = 'sheet-portrait noimg';
   port.setAttribute('data-icon', c.icon);
-  port.style.backgroundImage = '';
-  const im = new Image();
-  im.onload = ()=>{ port.style.backgroundImage=`url("branded/${c.id}.jpg")`; port.classList.remove('noimg'); };
+  const im = document.getElementById('shPortraitImg');
+  im.onload = ()=>{ port.classList.remove('noimg'); };
+  im.alt = c.name;
   im.src = `branded/${c.id}.jpg`;
 
   document.getElementById('shCls').textContent = c.cls;
