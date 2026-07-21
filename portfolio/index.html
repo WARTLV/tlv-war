@@ -312,13 +312,11 @@
 <!-- ═══════════ HERO ═══════════ -->
 <header class="hero" id="top">
   <div class="hero-stage" id="STAGE">
-    <div class="slide active"><video src="_media/pala_court_bg.mp4" poster="_docimg/pala_court_poster.jpg" muted loop playsinline preload="metadata"></video></div>
-    <div class="slide"><video src="_media/big_dogwalk_bg.mp4" poster="_docimg/big_dogwalk_poster.jpg" muted loop playsinline preload="none"></video></div>
-    <div class="slide"><video src="_media/big_frisbee_bg.mp4" poster="_docimg/big_frisbee_poster.jpg" muted loop playsinline preload="none"></video></div>
+    <div class="slide active"><video src="_media/big_dogwalk_bg.mp4" poster="_docimg/big_dogwalk_poster.jpg" muted loop playsinline preload="metadata"></video></div>
+    <div class="slide"><img src="_docimg/war_vs.jpg" alt=""></div>
+    <div class="slide"><video src="_media/pala_court_bg.mp4" poster="_docimg/pala_court_poster.jpg" muted loop playsinline preload="none"></video></div>
     <div class="slide"><video src="_media/oy_queen_bg.mp4" poster="_docimg/oy_queen_poster.jpg" muted loop playsinline preload="none"></video></div>
-    <div class="slide"><video src="_media/big_office_bg.mp4" poster="_docimg/big_office_poster.jpg" muted loop playsinline preload="none"></video></div>
-    <div class="slide"><video src="_media/pala_dobie_bg.mp4" poster="_docimg/pala_dobie_poster.jpg" muted loop playsinline preload="none"></video></div>
-    <div class="slide"><video src="_media/fairy_bg.mp4" poster="_docimg/fairy_poster.jpg" muted loop playsinline preload="none"></video></div>
+    <div class="slide"><video src="_media/comics_bg.mp4" poster="_docimg/comics_bg_poster.jpg" muted loop playsinline preload="none"></video></div>
   </div>
   <div class="hero-veil"></div>
   <div class="grain"></div>
@@ -747,6 +745,10 @@
     if(/_v1\.mp4$/.test(s))return s.replace(/_v1\.mp4$/,'_v1_src.mp4');
     return s;
   }
+  var lastFocus=null;
+  function focusables(){
+    return [].slice.call(lb.querySelectorAll('button,[href],video,img,[tabindex]')).filter(function(el){return el.offsetParent!==null;});
+  }
   function open(node){
     inner.innerHTML='';
     var el;
@@ -757,12 +759,22 @@
       el=document.createElement('img'); el.src=node.dataset.full||node.currentSrc||node.src; el.alt=node.alt||'';
     }
     inner.appendChild(el);
+    lastFocus=document.activeElement;
     lb.classList.add('open'); lb.setAttribute('aria-hidden','false');
     document.body.style.overflow='hidden';
+    x.focus();
   }
   function close(){
     lb.classList.remove('open'); lb.setAttribute('aria-hidden','true');
     inner.innerHTML=''; document.body.style.overflow='';
+    if(lastFocus&&lastFocus.focus)lastFocus.focus();
+  }
+  function trapTab(e){
+    if(e.key!=='Tab'||!lb.classList.contains('open'))return;
+    var f=focusables(); if(!f.length)return;
+    var first=f[0], last=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
   }
   var nodes=[].slice.call(document.querySelectorAll('.world img,.world video'));
   nodes.forEach(function(n){
@@ -771,7 +783,11 @@
   });
   x.addEventListener('click',close);
   lb.addEventListener('click',function(e){if(e.target===lb)close();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lb.classList.contains('open'))close();});
+  document.addEventListener('keydown',function(e){
+    if(!lb.classList.contains('open'))return;
+    if(e.key==='Escape')close();
+    else trapTab(e);
+  });
 })();
 </script>
 </body>
