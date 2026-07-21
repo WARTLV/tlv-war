@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OY VEY · CHOOSE YOUR FIGHTER</title>
+<meta name="theme-color" content="#08070c">
+<meta property="og:title" content="OY VEY — CHOOSE YOUR FIGHTER">
+<meta property="og:description" content="BLOODY ROTHSCHILD · pick your character for the night">
+<style>
+  :root{
+    --bg:#08070c; --bg2:#0e0b16; --ink:#ece7f5; --muted:#9a8fb0;
+    --magenta:#C24A8A; --magenta-hot:#ff4fa3; --cyan:#4fd6e0; --violet:#8a5cff;
+    --navy:#1B2A4A; --powder:#cfe0f2;
+    --card-r:16px;
+    --disp:"Bebas Neue","Oswald","Arial Narrow","Roboto Condensed",Impact,sans-serif;
+    --body:"Segoe UI",system-ui,-apple-system,"Assistant",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased}
+  body{overflow-x:hidden;min-height:100dvh;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(194,74,138,.20), transparent 60%),
+      radial-gradient(1000px 700px at -10% 20%, rgba(79,214,224,.12), transparent 55%),
+      radial-gradient(900px 900px at 50% 120%, rgba(138,92,255,.16), transparent 60%),
+      var(--bg);
+    background-attachment:fixed;}
+  /* film grain + scanlines */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.06;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:59;opacity:.35;
+    background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.18) 2px 3px);}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 16px 64px}
+
+  /* ---------- header ---------- */
+  header{padding:34px 0 18px;text-align:center;position:relative}
+  .kicker{font-family:var(--disp);letter-spacing:.42em;font-size:13px;color:var(--cyan);
+    text-transform:uppercase;margin:0 0 6px;opacity:.9;padding-inline-start:.42em}
+  .wordmark{font-family:var(--disp);font-size:clamp(52px,15vw,120px);line-height:.86;margin:0;
+    letter-spacing:.02em;color:#fff;
+    text-shadow:0 0 1px var(--magenta-hot), 0 0 22px rgba(255,79,163,.55), 0 0 60px rgba(194,74,138,.35);}
+  .sub{font-family:var(--disp);font-size:clamp(18px,5vw,30px);letter-spacing:.30em;margin:8px 0 0;
+    color:var(--magenta-hot);text-transform:uppercase;padding-inline-start:.30em}
+  .cta{font-family:var(--disp);letter-spacing:.5em;font-size:15px;margin:18px 0 2px;color:#fff;
+    text-transform:uppercase;padding-inline-start:.5em;animation:flick 5s infinite}
+  @keyframes flick{0%,97%,100%{opacity:1}98%{opacity:.35}}
+  .help{color:var(--muted);font-size:14px;margin:6px 0 0;line-height:1.6}
+  .rule{height:1px;margin:22px auto 26px;max-width:520px;
+    background:linear-gradient(90deg,transparent,var(--magenta),transparent)}
+
+  /* ---------- roster grid ---------- */
+  .roster{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  @media(min-width:620px){.roster{grid-template-columns:repeat(3,1fr);gap:18px}}
+  .card{position:relative;border-radius:var(--card-r);overflow:hidden;cursor:pointer;
+    background:#141019;border:1px solid #241a30;isolation:isolate;
+    transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    direction:ltr}
+  .card:hover,.card:focus-visible{transform:translateY(-4px);border-color:var(--magenta-hot);
+    box-shadow:0 10px 34px rgba(194,74,138,.30);outline:none}
+  .portrait{position:relative;aspect-ratio:9/16;width:100%;
+    background:linear-gradient(180deg,#e6eefb,var(--powder));background-size:cover;background-position:center top;
+    display:flex;align-items:center;justify-content:center}
+  .card.noimg .portrait::before{content:attr(data-icon);font-size:clamp(48px,14vw,96px);
+    filter:drop-shadow(0 4px 10px rgba(27,42,74,.4));opacity:.55}
+  .card.noimg .portrait::after{content:"portrait pending";position:absolute;bottom:34%;
+    font:600 11px/1 var(--body);letter-spacing:.12em;color:#5b6f92;text-transform:uppercase}
+  /* nameplate baked onto the powder-blue lower band */
+  .plate{position:absolute;left:0;right:0;bottom:0;padding:34% 8px 10px;text-align:center;
+    background:linear-gradient(180deg,transparent, rgba(207,224,242,.0) 30%, var(--powder) 78%);
+    font-family:var(--disp)}
+  .plate .nm{color:var(--navy);font-size:clamp(20px,6.4vw,30px);letter-spacing:.10em;line-height:1}
+  .plate .cl{color:var(--magenta);font-size:clamp(10px,3vw,13px);letter-spacing:.18em;margin-top:3px}
+  .plate .cl::before,.plate .cl::after{content:"·";margin:0 .5em;color:var(--magenta);opacity:.6}
+  .badge{position:absolute;top:10px;inset-inline-start:10px;z-index:3;width:30px;height:30px;border-radius:50%;
+    background:var(--magenta-hot);color:#fff;display:none;align-items:center;justify-content:center;font-size:16px;
+    box-shadow:0 0 0 3px rgba(255,79,163,.25)}
+  .card.picked{border-color:var(--magenta-hot);box-shadow:0 0 0 2px var(--magenta-hot),0 10px 30px rgba(255,79,163,.3)}
+  .card.picked .badge{display:flex}
+  .idx{position:absolute;top:8px;inset-inline-end:11px;z-index:3;font-family:var(--disp);
+    font-size:14px;letter-spacing:.1em;color:rgba(255,255,255,.55)}
+
+  /* ---------- character sheet overlay ---------- */
+  .sheet{position:fixed;inset:0;z-index:80;display:none;padding:0;
+    background:rgba(6,5,10,.82);backdrop-filter:blur(6px);overflow:auto}
+  .sheet.open{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sheet-inner{max-width:960px;margin:0 auto;min-height:100dvh;display:grid;
+    grid-template-columns:1fr;gap:0}
+  @media(min-width:760px){.sheet-inner{grid-template-columns:minmax(280px,40%) 1fr;align-items:stretch}}
+  .sheet-portrait{position:relative;background:var(--powder);min-height:52vh;
+    background-size:cover;background-position:center top;display:flex;align-items:center;justify-content:center}
+  .sheet-portrait.noimg::before{content:attr(data-icon);font-size:120px;opacity:.5}
+  .sheet-body{padding:22px 20px 40px;direction:ltr}
+  .sheet-body .heb{direction:rtl;text-align:right}
+  .s-cls{font-family:var(--disp);letter-spacing:.28em;font-size:14px;color:var(--accent,#C24A8A);
+    text-transform:uppercase;margin:2px 0 0}
+  .s-name{font-family:var(--disp);font-size:clamp(44px,12vw,74px);line-height:.9;margin:2px 0 0;color:#fff;
+    text-shadow:0 0 18px rgba(255,79,163,.35)}
+  .s-sheet{font:600 11px/1.4 var(--body);letter-spacing:.06em;color:#b9aecb;margin:8px 0 0;
+    text-transform:uppercase}
+  .s-sheet:empty{display:none}
+  .s-one{color:var(--muted);font-size:15px;font-style:italic;margin:8px 0 6px}
+  .s-appearance{color:#7c7191;font-size:12px;letter-spacing:.04em;margin:0 0 16px}
+  .s-appearance:empty{display:none}
+  .stats{display:grid;gap:9px;margin:0 0 20px}
+  .stat{display:grid;grid-template-columns:76px 1fr 26px;align-items:center;gap:10px}
+  .stat b{font:700 11px/1 var(--body);letter-spacing:.1em;color:#c7bcda;text-transform:uppercase}
+  .track{height:9px;border-radius:6px;background:#241a30;overflow:hidden}
+  .fill{height:100%;width:0;border-radius:6px;
+    background:linear-gradient(90deg,var(--cyan),var(--magenta-hot));
+    transition:width .7s cubic-bezier(.2,.7,.2,1)}
+  .stat span{font:700 12px/1 var(--body);color:#fff;text-align:right}
+  .block{border-inline-start:2px solid var(--accent,#C24A8A);padding:2px 12px;margin:0 0 16px}
+  .block h4{font-family:var(--disp);letter-spacing:.16em;font-size:14px;margin:0 0 4px;color:#fff}
+  .block p{margin:0;color:#ccc3dc;font-size:14px;line-height:1.55}
+  .pickif{background:linear-gradient(180deg,rgba(194,74,138,.14),rgba(194,74,138,.05));
+    border:1px solid rgba(194,74,138,.35);border-radius:12px;padding:12px 14px;margin:0 0 22px;
+    color:#f3d9e8;font-size:15px;text-align:center;direction:rtl}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  button{font-family:var(--disp);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;
+    border-radius:12px;padding:14px 18px;font-size:16px;border:1px solid #2a2f3c;background:#171320;color:var(--ink)}
+  .pick-btn{flex:1;min-width:180px;background:var(--magenta-hot);border-color:var(--magenta-hot);color:#fff;
+    box-shadow:0 8px 26px rgba(255,79,163,.4)}
+  .pick-btn.done{background:#1c8f5a;border-color:#1c8f5a;box-shadow:none}
+  .close{position:fixed;top:12px;inset-inline-end:14px;z-index:90;width:42px;height:42px;border-radius:50%;
+    background:rgba(20,16,25,.9);border:1px solid #2a2f3c;font-size:20px;line-height:1;padding:0;color:#fff}
+
+  /* ---------- picked banner ---------- */
+  .banner{position:fixed;left:0;right:0;bottom:0;z-index:70;transform:translateY(120%);
+    transition:transform .3s ease;background:linear-gradient(0deg,#120a17,rgba(18,10,23,.92));
+    border-top:1px solid var(--magenta-hot);padding:14px 16px calc(14px + env(safe-area-inset-bottom));
+    display:flex;align-items:center;gap:12px;justify-content:center;text-align:center}
+  .banner.show{transform:translateY(0)}
+  .banner .txt{font-family:var(--disp);letter-spacing:.14em;font-size:18px;color:#fff}
+  .banner .txt em{color:var(--magenta-hot);font-style:normal}
+
+  /* ---------- footer ---------- */
+  footer{margin-top:40px;text-align:center;color:var(--muted);font-size:13px;line-height:1.9}
+  .dates{font-family:var(--disp);letter-spacing:.24em;font-size:22px;color:#fff;margin:4px 0}
+  .logo-slot{height:46px;margin:14px auto 6px;display:flex;align-items:center;justify-content:center}
+  .logo-slot img{max-height:46px;max-width:180px;object-fit:contain}
+  .logo-fallback{font-family:var(--disp);letter-spacing:.3em;font-size:22px;color:#fff;opacity:.85}
+
+  /* ---------- brand logo, header ---------- */
+  .brand-logo{display:block;margin:0 auto 10px;max-height:64px;max-width:220px;object-fit:contain;
+    filter:drop-shadow(0 0 18px rgba(255,79,163,.35))}
+  .brand-logo[hidden]{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img class="brand-logo" id="brandLogo" src="logo.png" alt="OY VEY" hidden>
+    <p class="kicker">OY VEY · Tel Aviv</p>
+    <h1 class="wordmark">BLOODY<br>ROTHSCHILD</h1>
+    <p class="sub">make tel aviv freak again</p>
+    <div class="rule"></div>
+    <p class="cta">Choose your fighter</p>
+    <p class="help heb">בחר/י את הדמות שלך לערב. לוחצים על דמות — קוראים את הדף — ואז "זו הדמות שלי".</p>
+  </header>
+
+  <main class="roster" id="roster" aria-label="character roster"></main>
+
+  <footer>
+    <div class="logo-slot" id="logoSlot"></div>
+    <div class="dates" dir="ltr">19.07 · 26.07</div>
+    <div class="heb" dir="rtl">BLOODY ROTHSCHILD — לילה אחד בתל אביב · לינק בביו</div>
+  </footer>
+</div>
+
+<!-- character sheet overlay -->
+<div class="sheet" id="sheet" role="dialog" aria-modal="true">
+  <button class="close" id="closeBtn" aria-label="close">✕</button>
+  <div class="sheet-inner">
+    <div class="sheet-portrait" id="shPortrait"></div>
+    <div class="sheet-body">
+      <p class="s-cls" id="shCls"></p>
+      <h2 class="s-name" id="shName"></h2>
+      <p class="s-sheet" id="shSheetLine"></p>
+      <p class="s-one" id="shOne"></p>
+      <p class="s-appearance" id="shAppearance"></p>
+      <div class="stats" id="shStats"></div>
+      <div class="block"><h4 id="shAbilityName"></h4><p id="shAbilityDesc"></p></div>
+      <div class="block"><h4>BACKSTORY</h4><p id="shBack"></p></div>
+      <div class="pickif" id="shPickIf"></div>
+      <div class="actions">
+        <button class="pick-btn" id="pickBtn">זו הדמות שלי</button>
+        <button id="backBtn">חזרה</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- picked banner -->
+<div class="banner" id="banner">
+  <span class="txt">YOU ARE NOW <em id="bannerName"></em></span>
+</div>
+
+<script src="characters.js"></script>
+<script>
+const CAST = window.OY_VEY_CAST || [];
+const AXES = ["STR","DEX","CON","INT","WIS","CHA"]; // real D&D ability scores, normalized 0-10
+const LS_KEY = "oyvey_pick";
+const roster = document.getElementById('roster');
+const sheet = document.getElementById('sheet');
+let current = null;
+let picked = localStorage.getItem(LS_KEY) || null;
+
+/* ---- optional brand logo in footer (falls back to wordmark) ---- */
+(function(){
+  const slot = document.getElementById('logoSlot');
+  const img = new Image();
+  img.onload = ()=>{ slot.innerHTML=''; slot.appendChild(img); };
+  img.onerror = ()=>{ slot.innerHTML='<span class="logo-fallback">OY&nbsp;VEY</span>'; };
+  img.alt = "OY VEY"; img.src = "logo.png";
+})();
+
+/* ---- real transparent logo up top (no dark chip needed — header bg is already dark) ---- */
+(function(){
+  const el = document.getElementById('brandLogo');
+  const probe = new Image();
+  probe.onload = ()=>{ el.hidden = false; };
+  probe.src = el.src;
+})();
+
+/* ---- build roster ---- */
+CAST.forEach((c,i)=>{
+  const card = document.createElement('button');
+  card.className = 'card noimg' + (picked===c.id ? ' picked':'');
+  card.setAttribute('data-id', c.id);
+  card.innerHTML = `
+    <span class="idx">${String(i+1).padStart(2,'0')}</span>
+    <span class="badge">✓</span>
+    <div class="portrait" data-icon="${c.icon}">
+      <div class="plate">
+        <div class="nm">${c.name}</div>
+        <div class="cl">${c.cls}</div>
+      </div>
+    </div>`;
+  // try to load branded portrait; keep placeholder if missing
+  const p = card.querySelector('.portrait');
+  const im = new Image();
+  im.onload = ()=>{ p.style.backgroundImage = `url("branded/${c.id}.jpg")`; card.classList.remove('noimg'); };
+  im.onerror = ()=>{/* stay placeholder */};
+  im.src = `branded/${c.id}.jpg`;
+  card.addEventListener('click', ()=>openSheet(c.id));
+  roster.appendChild(card);
+});
+
+/* ---- open character sheet ---- */
+function openSheet(id){
+  const c = CAST.find(x=>x.id===id); if(!c) return;
+  current = c;
+  document.documentElement.style.setProperty('--accent', c.accent);
+  const port = document.getElementById('shPortrait');
+  port.className = 'sheet-portrait noimg';
+  port.setAttribute('data-icon', c.icon);
+  port.style.backgroundImage = '';
+  const im = new Image();
+  im.onload = ()=>{ port.style.backgroundImage=`url("branded/${c.id}.jpg")`; port.classList.remove('noimg'); };
+  im.src = `branded/${c.id}.jpg`;
+
+  document.getElementById('shCls').textContent = c.cls;
+  document.getElementById('shName').textContent = c.name;
+  document.getElementById('shSheetLine').textContent = c.sheetLine || '';
+  document.getElementById('shOne').textContent = '“'+c.oneLiner+'”';
+  document.getElementById('shAppearance').textContent = c.appearance || '';
+  document.getElementById('shAbilityName').textContent = c.ability.name;
+  document.getElementById('shAbilityDesc').textContent = c.ability.desc;
+  document.getElementById('shBack').textContent = c.backstory;
+  document.getElementById('shPickIf').textContent = c.pickIf;
+
+  const box = document.getElementById('shStats'); box.innerHTML='';
+  AXES.forEach(ax=>{
+    const v = c.stats[ax] ?? 0;
+    const row = document.createElement('div'); row.className='stat';
+    row.innerHTML = `<b>${ax}</b><div class="track"><div class="fill"></div></div><span>${v}</span>`;
+    box.appendChild(row);
+    requestAnimationFrame(()=>{ setTimeout(()=>{ row.querySelector('.fill').style.width = (v*10)+'%'; }, 60); });
+  });
+
+  const pb = document.getElementById('pickBtn');
+  const isPicked = picked===c.id;
+  pb.textContent = isPicked ? '✓ הדמות שלך' : 'זו הדמות שלי';
+  pb.classList.toggle('done', isPicked);
+
+  sheet.classList.add('open');
+  sheet.scrollTop = 0;
+  document.body.style.overflow='hidden';
+}
+function closeSheet(){ sheet.classList.remove('open'); document.body.style.overflow=''; }
+
+document.getElementById('closeBtn').addEventListener('click', closeSheet);
+document.getElementById('backBtn').addEventListener('click', closeSheet);
+sheet.addEventListener('click', e=>{ if(e.target===sheet) closeSheet(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && sheet.classList.contains('open')) closeSheet(); });
+
+/* ---- pick ---- */
+document.getElementById('pickBtn').addEventListener('click', ()=>{
+  if(!current) return;
+  picked = current.id;
+  localStorage.setItem(LS_KEY, picked);
+  document.querySelectorAll('.card').forEach(el=>
+    el.classList.toggle('picked', el.getAttribute('data-id')===picked));
+  const pb = document.getElementById('pickBtn');
+  pb.textContent = '✓ הדמות שלך'; pb.classList.add('done');
+  showBanner(current.name);
+  setTimeout(closeSheet, 650);
+});
+
+let bt;
+function showBanner(name){
+  document.getElementById('bannerName').textContent = name;
+  const b = document.getElementById('banner');
+  b.classList.add('show');
+  clearTimeout(bt); bt = setTimeout(()=>b.classList.remove('show'), 3200);
+}
+
+/* restore banner state on load if already picked */
+if(picked){ const c = CAST.find(x=>x.id===picked); if(c){ /* silent — badge already shown */ } }
+</script>
+</body>
+</html>
