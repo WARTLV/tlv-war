@@ -64,11 +64,12 @@
   .hero .kick{position:relative;font-size:clamp(11px,1.6vw,14px);font-weight:700;letter-spacing:.34em;color:var(--syn1);text-transform:uppercase;text-shadow:0 2px 16px rgba(0,0,0,.65)}
   .hero h1{position:relative;font-size:clamp(3rem,11.5vw,8.6rem);font-weight:900;line-height:1.02;letter-spacing:-.02em;margin-top:14px;text-shadow:0 6px 44px rgba(0,0,0,.62)}
   .hero .hen{position:relative;font-family:'Archivo Black';font-size:clamp(.95rem,2.6vw,1.9rem);letter-spacing:.22em;color:var(--ink2);margin-top:12px;text-shadow:0 3px 22px rgba(0,0,0,.6)}
-  .welcome{position:relative;font-family:'Archivo',sans-serif;font-size:clamp(1.05rem,2.7vw,1.75rem);font-weight:600;letter-spacing:.01em;line-height:1.4;color:var(--ink2);direction:ltr;max-width:20em;text-shadow:0 3px 22px rgba(0,0,0,.62)}
-  .welcome b{color:#fff;font-weight:800}
-  .wgl{position:relative;font-family:'Archivo Black','Archivo';font-size:clamp(2rem,6.8vw,4.8rem);font-weight:900;line-height:1.04;letter-spacing:-.01em;margin-top:16px;direction:ltr;
+  .hkick{position:relative;font-family:'Archivo',sans-serif;font-size:clamp(11px,1.7vw,14px);font-weight:700;letter-spacing:.42em;color:var(--syn1);text-transform:uppercase;text-shadow:0 2px 16px rgba(0,0,0,.72)}
+  .hbig{position:relative;font-family:'Archivo Black','Archivo';font-size:clamp(2.35rem,8.6vw,6.4rem);font-weight:900;line-height:1;letter-spacing:-.02em;margin-top:18px;direction:ltr;
     background:linear-gradient(100deg,var(--syn1),var(--syn2) 55%,var(--syn3));-webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 5px 26px rgba(0,0,0,.62))}
+    filter:drop-shadow(0 6px 30px rgba(0,0,0,.66))}
+  .hsub{position:relative;font-family:'Archivo',sans-serif;font-size:clamp(1.02rem,2.6vw,1.7rem);font-weight:600;letter-spacing:.005em;line-height:1.42;color:var(--ink2);direction:ltr;max-width:20em;margin-top:22px;text-shadow:0 3px 22px rgba(0,0,0,.62)}
+  .hsub b{color:#fff;font-weight:800}
   /* rotating media showcase */
   .hero-stage{position:absolute;inset:0;z-index:0;background:#0c0a09}
   .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.1s ease}
@@ -86,8 +87,9 @@
   .scrollcue::after{content:"";width:1px;height:34px;background:linear-gradient(180deg,var(--syn1),transparent);animation:cue 1.8s ease-in-out infinite}
   @keyframes cue{0%,100%{opacity:.25;transform:scaleY(.6);transform-origin:top}50%{opacity:1;transform:scaleY(1)}}
   /* hero entrance */
-  .js .welcome,.js .wgl{opacity:0;transform:translateY(24px);animation:up 1s cubic-bezier(.2,.75,.25,1) forwards}
-  .js .wgl{animation-delay:.24s}
+  .js .hkick,.js .hbig,.js .hsub{opacity:0;transform:translateY(24px);animation:up 1s cubic-bezier(.2,.75,.25,1) forwards}
+  .js .hbig{animation-delay:.16s}
+  .js .hsub{animation-delay:.34s}
   @keyframes up{to{opacity:1;transform:none}}
 
   /* ═══ WORLD SECTIONS — shared bones ═══ */
@@ -221,6 +223,45 @@
   .cbtn.ghosty{border:1px solid rgba(255,255,255,.25)}
   .foot{margin-top:60px;font-family:'Archivo';font-size:11px;letter-spacing:.22em;color:var(--ink3)}
 
+  /* ═══ HAMBURGER (mobile) ═══ */
+  .navtog{display:none;margin-inline-start:auto;width:42px;height:42px;border:0;background:transparent;cursor:pointer;
+    flex-direction:column;justify-content:center;align-items:center;gap:5px;padding:8px}
+  .navtog span{display:block;height:2px;width:22px;background:var(--ink);border-radius:2px;transition:transform .3s,opacity .3s}
+  nav.open .navtog span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  nav.open .navtog span:nth-child(2){opacity:0}
+  nav.open .navtog span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+  /* ═══ SAMPLE EPISODE ═══ */
+  .episode{position:relative;padding:clamp(74px,11vh,130px) 0;text-align:center;
+    background:radial-gradient(72% 60% at 50% 0%,rgba(120,14,8,.42),transparent 62%),linear-gradient(180deg,#140807,#0c0a09)}
+  .ep-title{font-size:clamp(2rem,6.4vw,3.9rem);font-weight:900;line-height:1.04;margin-top:10px}
+  .ep-sub{font-size:clamp(1rem,1.9vw,1.22rem);color:var(--ink2);margin-top:14px}
+  .ep-player{position:relative;margin:36px auto 0;max-width:420px;border-radius:18px;overflow:hidden;
+    box-shadow:0 34px 90px rgba(0,0,0,.62),0 0 0 1px rgba(255,255,255,.09)}
+  .ep-player video{width:100%;aspect-ratio:9/16;object-fit:cover;background:#000;display:block}
+
+  /* ═══ EXPLORE · WORLD PICKER (compact chips) ═══ */
+  .cards{position:relative;padding:clamp(46px,6vh,72px) 0;background:linear-gradient(180deg,#0c0a09,#090807)}
+  .cards-title{font-size:clamp(1.5rem,3.6vw,2.1rem);font-weight:900;line-height:1.04;margin-top:6px}
+  .chiprow{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-family:'Archivo';font-weight:700;font-size:13px;
+    color:var(--ink2);text-decoration:none;border:1px solid rgba(255,255,255,.14);border-radius:20px;
+    padding:9px 18px;transition:color .2s,border-color .2s,background .2s}
+  .chip:hover{color:#fff;border-color:var(--acc);background:color-mix(in srgb,var(--acc) 14%,transparent)}
+
+  /* ═══ LIGHTBOX ═══ */
+  .zoom{cursor:zoom-in}
+  .vbadge{pointer-events:none}
+  .lb{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:clamp(16px,4vw,48px);
+    background:rgba(6,5,4,.93);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .lb.open{display:flex}
+  .lb-inner{display:flex;align-items:center;justify-content:center;max-width:min(1100px,94vw);max-height:90vh}
+  .lb-inner img,.lb-inner video{max-width:100%;max-height:90vh;width:auto;height:auto;border-radius:10px;box-shadow:0 34px 100px rgba(0,0,0,.72)}
+  .lb-close{position:absolute;top:clamp(12px,3vw,26px);right:clamp(12px,3vw,26px);z-index:2;width:46px;height:46px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.5);color:#fff;font-size:20px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:background .2s}
+  .lb-close:hover{background:rgba(255,255,255,.16)}
+
   /* ═══ RESPONSIVE ═══ */
   @media (max-width:880px){
     .palagrid,.oygrid{grid-template-columns:1fr}
@@ -231,7 +272,13 @@
     nav .mark .en-f{display:none}
   }
   @media (max-width:640px){
-    nav .links{display:none}
+    .navtog{display:flex}
+    nav .links{position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;margin:0;padding:8px;
+      background:rgba(12,10,9,.98);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(255,255,255,.09);max-height:0;overflow:hidden;opacity:0;pointer-events:none;
+      transition:max-height .35s ease,opacity .25s}
+    nav.open .links{max-height:80vh;opacity:1;pointer-events:auto}
+    nav .links a{padding:13px 15px;font-size:15px;border-radius:10px}
   }
   @media (max-width:520px){
     .bigrow{grid-template-columns:repeat(3,1fr)}
@@ -241,7 +288,7 @@
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation:none!important;transition:none!important}
     html{scroll-behavior:auto}
-    .js .rv,.js .welcome,.js .wgl{opacity:1;transform:none}
+    .js .rv,.js .hkick,.js .hbig,.js .hsub{opacity:1;transform:none}
   }
 </style>
 </head>
@@ -252,35 +299,56 @@
   <div class="mark">ליאור פלד<span class="en-f">LIOR PELED</span></div>
   <div class="links" id="NAVL">
     <a href="#big">BIG.COM</a>
+    <a href="#episode">פרק לדוגמה</a>
     <a href="#war">WAR TLV</a>
     <a href="#pala">PALA PUNK</a>
     <a href="#oy">OY VEY</a>
     <a href="#comics">ניצ ופלדוס</a>
     <a href="#atro">ATRO</a>
   </div>
+  <button class="navtog" id="NAVTOG" aria-label="תפריט" aria-expanded="false"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- ═══════════ HERO ═══════════ -->
 <header class="hero" id="top">
   <div class="hero-stage" id="STAGE">
-    <div class="slide active"><video src="_media/big_v1.mp4" poster="_docimg/big_v1_poster.jpg" muted loop playsinline preload="metadata"></video></div>
-    <div class="slide"><img src="_docimg/oy_hero.jpg" alt=""></div>
-    <div class="slide"><video src="_media/pala_v1.mp4" poster="_docimg/pala_v1_poster.jpg" muted loop playsinline preload="none"></video></div>
-    <div class="slide"><img src="_docimg/war_vs.jpg" alt=""></div>
-    <div class="slide"><video src="_media/oy_v1.mp4" poster="_docimg/oy_v1_poster.jpg" muted loop playsinline preload="none"></video></div>
-    <div class="slide"><img src="_docimg/pala_hero.jpg" alt=""></div>
-    <div class="slide"><video src="_media/comics_v1.mp4" poster="_docimg/comics_v1_poster.jpg" muted loop playsinline preload="none"></video></div>
-    <div class="slide"><img src="_docimg/big_promo.jpg" alt=""></div>
+    <div class="slide active"><video src="_media/pala_court_bg.mp4" poster="_docimg/pala_court_poster.jpg" muted loop playsinline preload="metadata"></video></div>
+    <div class="slide"><video src="_media/big_dogwalk_bg.mp4" poster="_docimg/big_dogwalk_poster.jpg" muted loop playsinline preload="none"></video></div>
+    <div class="slide"><video src="_media/big_frisbee_bg.mp4" poster="_docimg/big_frisbee_poster.jpg" muted loop playsinline preload="none"></video></div>
+    <div class="slide"><video src="_media/oy_queen_bg.mp4" poster="_docimg/oy_queen_poster.jpg" muted loop playsinline preload="none"></video></div>
+    <div class="slide"><video src="_media/big_office_bg.mp4" poster="_docimg/big_office_poster.jpg" muted loop playsinline preload="none"></video></div>
+    <div class="slide"><video src="_media/pala_dobie_bg.mp4" poster="_docimg/pala_dobie_poster.jpg" muted loop playsinline preload="none"></video></div>
+    <div class="slide"><video src="_media/fairy_bg.mp4" poster="_docimg/fairy_poster.jpg" muted loop playsinline preload="none"></video></div>
   </div>
   <div class="hero-veil"></div>
   <div class="grain"></div>
   <div class="hero-inner">
-    <div class="welcome">Welcome to <b>Lior Peled's</b> Laboratory of Identities</div>
-    <div class="wgl">Good luck to every identity.</div>
+    <div class="hkick">LIOR PELED PRESENTS</div>
+    <h1 class="hbig">A LABORATORY<br>OF IDENTITIES</h1>
+    <div class="hsub">Six worlds, engineered in one lab — <b>scroll at your own risk.</b></div>
   </div>
   <div class="dots" id="DOTS"></div>
-  <a class="scrollcue" href="#big">SCROLL</a>
+  <a class="scrollcue" href="#big">GOOD LUCK ↓</a>
 </header>
+
+<!-- ═══════════ EXPLORE · WORLD PICKER ═══════════ -->
+<section class="cards" id="explore">
+  <div class="wrap">
+    <div class="rv cards-head">
+      <div class="wk" style="--acc:var(--syn1)">EXPLORE</div>
+      <h2 class="cards-title">בחרו עולם <span class="en-f" style="color:var(--ink3);font-size:.5em;letter-spacing:.1em">/ PICK A WORLD</span></h2>
+    </div>
+    <div class="chiprow rv">
+      <a class="chip" href="#episode" style="--acc:#ff3a2a">▶ פרק לדוגמה</a>
+      <a class="chip" href="#big" style="--acc:#ff3a2a">BIG.COM</a>
+      <a class="chip" href="#war" style="--acc:#3ba7ff">WAR TLV</a>
+      <a class="chip" href="#pala" style="--acc:#cbb3ff">PALA PUNK</a>
+      <a class="chip" href="#oy" style="--acc:#16e0d4">OY VEY</a>
+      <a class="chip" href="#comics" style="--acc:#ff3a6b">ניצ ופלדוס</a>
+      <a class="chip" href="#atro" style="--acc:#e0a35c">ATRO</a>
+    </div>
+  </div>
+</section>
 
 <!-- ═══════════ 01 · BIG.COM ═══════════ -->
 <section class="world w-big" id="big">
@@ -320,6 +388,21 @@
       <span class="tag">איפיון עקבי</span><span class="tag">בימוי סצנה</span><span class="tag en-f">Gemini · VEO3</span>
     </div>
     <a class="btn rv" href="https://www.instagram.com/wow.big.comm/" target="_blank" rel="noopener">↗&nbsp; @wow.big.comm · Instagram</a>
+  </div>
+</section>
+
+<!-- ═══════════ SAMPLE EPISODE ═══════════ -->
+<section class="episode" id="episode">
+  <div class="wrap">
+    <div class="rv ep-head">
+      <div class="wk" style="--acc:#ff3a2a">פרק לדוגמה · SAMPLE EPISODE</div>
+      <h2 class="ep-title"><span class="syn">המנהל הכתום</span></h2>
+      <p class="ep-sub">הסרטון האחרון מ־BIG.COM — עם הסאונד המקורי. לחצו נגן.</p>
+    </div>
+    <div class="ep-player rv">
+      <video src="_media/big_episode.mp4" poster="_docimg/big_episode_poster.jpg" controls playsinline preload="none"></video>
+      <div class="vbadge">EPISODE · SOUND ON</div>
+    </div>
   </div>
 </section>
 
@@ -563,6 +646,12 @@
   </div>
 </footer>
 
+<!-- ═══════════ LIGHTBOX ═══════════ -->
+<div class="lb" id="LB" aria-hidden="true" role="dialog" aria-modal="true">
+  <button class="lb-close" id="LBX" aria-label="סגור">✕</button>
+  <div class="lb-inner" id="LBIN"></div>
+</div>
+
 <script>
 /* HERO rotating showcase — cycle selected stills + videos */
 (function(){
@@ -637,6 +726,52 @@
     });},{rootMargin:'-40% 0px -50% 0px'});
     secs.forEach(function(s){if(s)io.observe(s);});
   }
+})();
+/* mobile nav toggle */
+(function(){
+  var nav=document.querySelector('nav'), tog=document.getElementById('NAVTOG');
+  if(!nav||!tog)return;
+  function shut(){nav.classList.remove('open');tog.setAttribute('aria-expanded','false');}
+  tog.addEventListener('click',function(e){e.stopPropagation();var o=nav.classList.toggle('open');tog.setAttribute('aria-expanded',o?'true':'false');});
+  nav.querySelectorAll('.links a').forEach(function(a){a.addEventListener('click',shut);});
+  document.addEventListener('click',function(e){if(nav.classList.contains('open')&&!nav.contains(e.target))shut();});
+})();
+/* lightbox — click media to enlarge; videos play with original sound (_src) */
+(function(){
+  var lb=document.getElementById('LB'), inner=document.getElementById('LBIN'), x=document.getElementById('LBX');
+  if(!lb)return;
+  function withAudio(v){
+    if(v.dataset.full)return v.dataset.full;
+    var s=v.getAttribute('src')||'';
+    if(/_bg\.mp4$/.test(s))return s.replace(/_bg\.mp4$/,'_v1_src.mp4');
+    if(/_v1\.mp4$/.test(s))return s.replace(/_v1\.mp4$/,'_v1_src.mp4');
+    return s;
+  }
+  function open(node){
+    inner.innerHTML='';
+    var el;
+    if(node.tagName==='VIDEO'){
+      el=document.createElement('video');
+      el.src=withAudio(node); el.controls=true; el.autoplay=true; el.setAttribute('playsinline','');
+    }else{
+      el=document.createElement('img'); el.src=node.dataset.full||node.currentSrc||node.src; el.alt=node.alt||'';
+    }
+    inner.appendChild(el);
+    lb.classList.add('open'); lb.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+  }
+  function close(){
+    lb.classList.remove('open'); lb.setAttribute('aria-hidden','true');
+    inner.innerHTML=''; document.body.style.overflow='';
+  }
+  var nodes=[].slice.call(document.querySelectorAll('.world img,.world video'));
+  nodes.forEach(function(n){
+    n.classList.add('zoom');
+    n.addEventListener('click',function(e){e.preventDefault();open(n);});
+  });
+  x.addEventListener('click',close);
+  lb.addEventListener('click',function(e){if(e.target===lb)close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lb.classList.contains('open'))close();});
 })();
 </script>
 </body>
