@@ -190,11 +190,6 @@
     background:linear-gradient(45deg,#f9ce34,#ee2a7b 45%,#6228d7);display:inline-flex;
     align-items:center;justify-content:center;color:#fff;font-size:15px}
   .ig-link b{color:#fff;font-weight:800}
-  .ig-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none;
-    direction:rtl;font-family:var(--disp);letter-spacing:.06em;text-transform:none;
-    background:linear-gradient(45deg,#f9ce34,#ee2a7b 45%,#6228d7);color:#fff;
-    border-radius:12px;padding:14px 18px;font-size:16px;box-shadow:0 8px 26px rgba(238,42,123,.35)}
-  .ig-btn .ig-badge{background:rgba(255,255,255,.18)}
 
   /* ---------- floating controls (mute + instagram) ---------- */
   .floaters{position:fixed;z-index:75;inset-inline-start:12px;bottom:calc(12px + env(safe-area-inset-bottom));
@@ -217,11 +212,7 @@
     font-size:clamp(14px,4.4vw,20px);margin:4px 0 0}
   .confirm .who{color:#e7dff2;font-size:15px;margin:14px 0 0;direction:rtl}
   .confirm .who .tbl{color:var(--cyan);font-family:var(--disp);letter-spacing:.06em}
-  .confirm .share{margin:22px 0 0;padding:16px;border:1px solid rgba(238,42,123,.4);border-radius:16px;
-    background:linear-gradient(180deg,rgba(238,42,123,.12),rgba(98,40,215,.08))}
-  .confirm .share p{margin:0 0 12px;color:#f3d9e8;font-size:15px;direction:rtl;line-height:1.5}
-  .confirm .share .ig-btn{width:100%}
-  .confirm .moreinfo{margin:14px 0 0;color:#9a8fb0;font-size:13px;direction:rtl}
+  .confirm .cf-ig{margin:26px 0 0}
   .confirm .back{margin:18px 0 0;background:transparent;border:1px solid #2a2f3c;color:#cbb8dc;
     font-size:13px;letter-spacing:.06em}
 
@@ -289,7 +280,7 @@
 
   <footer>
     <div class="logo-slot" id="logoSlot"></div>
-    <div class="dates" dir="ltr">19.07 · 26.07</div>
+    <div class="dates" dir="ltr">26.07</div>
     <div class="heb" dir="rtl">BLOODY ROTHSCHILD — לילה אחד בתל אביב</div>
     <div class="foot-ig">
       <a class="ig-link" href="https://www.instagram.com/oy.vey.roll/" target="_blank" rel="noopener">
@@ -338,13 +329,11 @@
     <div class="cname" id="cfName"></div>
     <div class="ccls" id="cfCls"></div>
     <div class="who" id="cfWho"></div>
-    <div class="share">
-      <p>צלמו מסך של הדמות שלכם ותייגו אותנו בסטורי <b>@oy.vey.roll</b> 📸</p>
-      <a class="ig-btn" href="https://www.instagram.com/oy.vey.roll/" target="_blank" rel="noopener">
-        <span class="ig-badge">◎</span>עקבו אחרינו באינסטגרם
+    <p class="cf-ig">
+      <a class="ig-link" href="https://www.instagram.com/oy.vey.roll/" target="_blank" rel="noopener">
+        <span class="ig-badge">◎</span><span>שאלות ומידע נוספים? <b>@oy.vey.roll</b></span>
       </a>
-      <p class="moreinfo">עוד מידע, לוח אירועים ושאלות — הכל אצלנו באינסטגרם.</p>
-    </div>
+    </p>
     <button class="back" id="cfBack" type="button">חזרה לבחירה</button>
   </div>
 </div>
