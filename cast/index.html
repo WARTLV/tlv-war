@@ -50,14 +50,18 @@
     background:linear-gradient(90deg,transparent,var(--magenta),transparent)}
 
   /* ---------- profile chip ---------- */
-  .profile-chip{display:inline-flex;align-items:center;gap:10px;margin:2px auto 0;
+  .profile-chip{display:inline-flex;flex-direction:column;align-items:center;gap:8px;margin:2px auto 0}
+  .profile-chip[hidden]{display:none}
+  .pc-row{display:inline-flex;align-items:center;gap:10px;
     background:rgba(23,19,32,.8);border:1px solid #2a2f3c;border-radius:999px;padding:7px 8px 7px 16px;
     font-size:14px;color:#e7dff2}
-  .profile-chip b{color:#fff}
-  .profile-chip .tbl{color:var(--cyan);font-family:var(--disp);letter-spacing:.08em}
-  .profile-chip button{font-family:var(--body);text-transform:none;letter-spacing:0;
+  .pc-row[hidden]{display:none}
+  .pc-row.pick-row{border-color:rgba(255,79,163,.4)}
+  .pc-row b{color:#fff}
+  .pc-row .tbl{color:var(--cyan);font-family:var(--disp);letter-spacing:.08em}
+  .pc-row .charname{color:var(--magenta-hot);font-family:var(--disp);letter-spacing:.06em}
+  .pc-row button{font-family:var(--body);text-transform:none;letter-spacing:0;
     padding:5px 12px;font-size:12px;border-radius:999px;background:#241a30;border:1px solid #34283f;color:#cbb8dc}
-  .profile-chip[hidden]{display:none}
 
   /* ---------- roster grid ---------- */
   .roster{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
@@ -270,8 +274,14 @@
     <p class="sub">make tel aviv freak again</p>
     <div class="rule"></div>
     <div class="profile-chip" id="profileChip" hidden>
-      <span>שלום <b id="chipName"></b> · <span class="tbl">שולחן <span id="chipTable"></span></span></span>
-      <button id="editProfile" type="button">החלף</button>
+      <div class="pc-row">
+        <span>שלום <b id="chipName"></b> · <span class="tbl">שולחן <span id="chipTable"></span></span></span>
+        <button id="editProfile" type="button">החלף</button>
+      </div>
+      <div class="pc-row pick-row" id="pickRow" hidden>
+        <span>הדמות שלך: <b class="charname" id="mypickName"></b></span>
+        <button id="cancelPickBtn" type="button">בטל בחירה</button>
+      </div>
     </div>
     <p class="help heb" id="rosterHelp">בחר/י את הדמות שלך לערב. לוחצים על דמות — קוראים את הדף — ואז "זו הדמות שלי".</p>
   </header>
@@ -413,7 +423,29 @@ function enterApp(){
   document.getElementById('chipTable').textContent = profile.table;
   chip.hidden = false;
   buildRoster();
+  renderPickChip();
 }
+
+// this device's pick, only if it belongs to the CURRENT table (switching tables drops it visually)
+function myPickHere(){
+  const mp = STORE.myPick();
+  return (mp && profile && String(mp.table)===String(profile.table)) ? mp : null;
+}
+function renderPickChip(){
+  const mp = myPickHere();
+  const row = document.getElementById('pickRow');
+  if (!mp){ row.hidden = true; return; }
+  const c = CAST.find(x=>x.id===mp.charId);
+  document.getElementById('mypickName').textContent = c ? c.name : mp.charId;
+  row.hidden = false;
+}
+document.getElementById('cancelPickBtn').addEventListener('click', ()=>{
+  const mp = myPickHere(); if (!mp || !profile) return;
+  if (!confirm('לבטל את הבחירה שלך? הדמות תשוחרר לבחירה מחדש.')) return;
+  STORE.release(profile.table, mp.charId);
+  buildRoster();
+  renderPickChip();
+});
 
 /* ================= roster ================= */
 function buildRoster(){
@@ -479,15 +511,21 @@ function openSheet(id){
     requestAnimationFrame(()=>{ setTimeout(()=>{ row.querySelector('.fill').style.width = (v*10)+'%'; }, 60); });
   });
 
-  // pick button reflects table lock state
+  // pick button reflects table lock state + this device's own single pick
   const picks = profile ? STORE.getPicks(profile.table) : {};
   const takenBy = picks[c.id];
-  const mine = STORE.myPick();
-  const isMine = mine && mine.charId===c.id && String(mine.table)===String(profile.table);
+  const mine = myPickHere();
+  const isMine = mine && mine.charId===c.id;
+  const hasOtherPick = mine && mine.charId!==c.id;
   const pb = document.getElementById('pickBtn');
   pb.classList.remove('done');
   pb.disabled = false;
   if (isMine){ pb.textContent = '✓ הדמות שלך'; pb.classList.add('done'); pb.disabled = true; }
+  else if (hasOtherPick){
+    const otherChar = CAST.find(x=>x.id===mine.charId);
+    pb.textContent = 'כבר בחרת את ' + (otherChar ? otherChar.name : '') + ' — בטל/י כדי לבחור אחרת';
+    pb.disabled = true;
+  }
   else if (takenBy){ pb.textContent = 'כבר נבחר ע"י ' + takenBy; pb.disabled = true; }
   else { pb.textContent = 'זו הדמות שלי'; }
 
@@ -505,6 +543,7 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape' && sheet.classList
 /* ================= pick ================= */
 document.getElementById('pickBtn').addEventListener('click', ()=>{
   if(!current || !profile) return;
+  if (myPickHere()) return; // guard: one character per player (button is disabled in this case too)
   const res = STORE.claim(profile.table, current.id, profile.name);
   if (!res.ok){
     // someone at this table already took it — refresh lock state and show it
@@ -515,6 +554,7 @@ document.getElementById('pickBtn').addEventListener('click', ()=>{
   }
   STORE.setMyPick(profile.table, current.id, profile.name);
   buildRoster();
+  renderPickChip();
   closeSheet();
   showConfirm(current);
 });

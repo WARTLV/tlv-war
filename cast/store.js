@@ -59,6 +59,21 @@
       return mp;
     },
 
+    // undo a claim (e.g. patron joined the wrong table). Frees the character
+    // for that table and clears "my pick" if it was this device's own pick.
+    release(table, charId) {
+      const picks = read(tableKey(table), {});
+      if (picks[charId] !== undefined) {
+        delete picks[charId];
+        write(tableKey(table), picks);
+      }
+      const mp = read(M_KEY, null);
+      if (mp && String(mp.table) === String(table) && mp.charId === charId) {
+        try { localStorage.removeItem(M_KEY); } catch (e) {}
+      }
+      return { ok: true };
+    },
+
     // ---- change notifications ----
     // TODAY: cross-tab sync on the same device via the storage event.
     // FIREBASE: replace body with a realtime .on('value') listener for /tables/<table>.
