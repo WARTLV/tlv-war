@@ -31,7 +31,7 @@
   body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:59;opacity:.35;
     background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.18) 2px 3px);}
 
-  .wrap{max-width:1080px;margin:0 auto;padding:0 16px 64px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 16px 88px}
 
   /* ---------- header ---------- */
   header{padding:34px 0 18px;text-align:center;position:relative}
@@ -46,8 +46,18 @@
     text-transform:uppercase;padding-inline-start:.5em;animation:flick 5s infinite}
   @keyframes flick{0%,97%,100%{opacity:1}98%{opacity:.35}}
   .help{color:var(--muted);font-size:14px;margin:6px 0 0;line-height:1.6}
-  .rule{height:1px;margin:22px auto 26px;max-width:520px;
+  .rule{height:1px;margin:22px auto 20px;max-width:520px;
     background:linear-gradient(90deg,transparent,var(--magenta),transparent)}
+
+  /* ---------- profile chip ---------- */
+  .profile-chip{display:inline-flex;align-items:center;gap:10px;margin:2px auto 0;
+    background:rgba(23,19,32,.8);border:1px solid #2a2f3c;border-radius:999px;padding:7px 8px 7px 16px;
+    font-size:14px;color:#e7dff2}
+  .profile-chip b{color:#fff}
+  .profile-chip .tbl{color:var(--cyan);font-family:var(--disp);letter-spacing:.08em}
+  .profile-chip button{font-family:var(--body);text-transform:none;letter-spacing:0;
+    padding:5px 12px;font-size:12px;border-radius:999px;background:#241a30;border:1px solid #34283f;color:#cbb8dc}
+  .profile-chip[hidden]{display:none}
 
   /* ---------- roster grid ---------- */
   .roster{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
@@ -75,13 +85,27 @@
   .plate .nm{color:var(--navy);font-size:clamp(20px,6.4vw,30px);letter-spacing:.10em;line-height:1}
   .plate .cl{color:var(--magenta);font-size:clamp(10px,3vw,13px);letter-spacing:.18em;margin-top:3px}
   .plate .cl::before,.plate .cl::after{content:"·";margin:0 .5em;color:var(--magenta);opacity:.6}
+  /* picker name — shown on the card once the character is taken */
+  .plate .picker{display:none;direction:rtl;margin-top:5px;font-family:var(--body);font-weight:800;
+    font-size:clamp(11px,3.2vw,14px);letter-spacing:.02em;color:#fff;
+    background:var(--magenta-hot);border-radius:999px;padding:3px 10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.35);max-width:92%;margin-inline:auto;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .idx{position:absolute;top:8px;inset-inline-end:11px;z-index:3;font-family:var(--disp);
+    font-size:14px;letter-spacing:.1em;color:rgba(255,255,255,.55)}
   .badge{position:absolute;top:10px;inset-inline-start:10px;z-index:3;width:30px;height:30px;border-radius:50%;
     background:var(--magenta-hot);color:#fff;display:none;align-items:center;justify-content:center;font-size:16px;
     box-shadow:0 0 0 3px rgba(255,79,163,.25)}
-  .card.picked{border-color:var(--magenta-hot);box-shadow:0 0 0 2px var(--magenta-hot),0 10px 30px rgba(255,79,163,.3)}
-  .card.picked .badge{display:flex}
-  .idx{position:absolute;top:8px;inset-inline-end:11px;z-index:3;font-family:var(--disp);
-    font-size:14px;letter-spacing:.1em;color:rgba(255,255,255,.55)}
+  /* taken (locked) card */
+  .card.taken{cursor:default}
+  .card.taken .portrait img{filter:grayscale(.55) brightness(.82)}
+  .card.taken .plate .picker{display:block}
+  .card.taken::after{content:"נבחר";position:absolute;top:10px;inset-inline-start:10px;z-index:3;
+    font:800 11px/1 var(--body);letter-spacing:.12em;color:#fff;background:rgba(10,7,12,.72);
+    border:1px solid var(--magenta-hot);border-radius:999px;padding:5px 9px}
+  .card.mine{border-color:var(--magenta-hot);box-shadow:0 0 0 2px var(--magenta-hot),0 10px 30px rgba(255,79,163,.3)}
+  .card.mine::after{content:"שלך ✓";background:var(--magenta-hot);border-color:var(--magenta-hot)}
+  .card.mine .badge{display:flex}
 
   /* ---------- character sheet overlay ---------- */
   .sheet{position:fixed;inset:0;z-index:80;display:none;padding:0;
@@ -129,17 +153,77 @@
   .pick-btn{flex:1;min-width:180px;background:var(--magenta-hot);border-color:var(--magenta-hot);color:#fff;
     box-shadow:0 8px 26px rgba(255,79,163,.4)}
   .pick-btn.done{background:#1c8f5a;border-color:#1c8f5a;box-shadow:none}
+  .pick-btn:disabled{background:#2a2333;border-color:#3a2f45;color:#9a8fb0;box-shadow:none;cursor:default;
+    font-size:13px;letter-spacing:.06em}
   .close{position:fixed;top:12px;inset-inline-end:14px;z-index:90;width:42px;height:42px;border-radius:50%;
     background:rgba(20,16,25,.9);border:1px solid #2a2f3c;font-size:20px;line-height:1;padding:0;color:#fff}
 
-  /* ---------- picked banner ---------- */
-  .banner{position:fixed;left:0;right:0;bottom:0;z-index:70;transform:translateY(120%);
-    transition:transform .3s ease;background:linear-gradient(0deg,#120a17,rgba(18,10,23,.92));
-    border-top:1px solid var(--magenta-hot);padding:14px 16px calc(14px + env(safe-area-inset-bottom));
-    display:flex;align-items:center;gap:12px;justify-content:center;text-align:center}
-  .banner.show{transform:translateY(0)}
-  .banner .txt{font-family:var(--disp);letter-spacing:.14em;font-size:18px;color:#fff}
-  .banner .txt em{color:var(--magenta-hot);font-style:normal}
+  /* ---------- gate (entry form) ---------- */
+  .gate{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;
+    background:radial-gradient(900px 600px at 50% -10%, rgba(194,74,138,.28), transparent 60%),
+      radial-gradient(700px 700px at 50% 120%, rgba(138,92,255,.22), transparent 60%), #08070c;
+    overflow:auto}
+  .gate[hidden]{display:none}
+  .gate-card{width:100%;max-width:420px;text-align:center}
+  .gate-logo{max-height:60px;max-width:200px;object-fit:contain;margin:0 auto 14px;display:block;
+    filter:drop-shadow(0 0 18px rgba(255,79,163,.35))}
+  .gate-card h1{font-family:var(--disp);font-size:clamp(40px,13vw,72px);line-height:.86;margin:0;color:#fff;
+    text-shadow:0 0 22px rgba(255,79,163,.5)}
+  .gate-card .gsub{font-family:var(--disp);letter-spacing:.3em;color:var(--magenta-hot);
+    text-transform:uppercase;font-size:clamp(13px,4vw,18px);margin:8px 0 0;padding-inline-start:.3em}
+  .gate-card .gp{color:#cbb8dc;font-size:15px;margin:18px 0 18px;line-height:1.6;direction:rtl}
+  .field{text-align:right;direction:rtl;margin:0 0 14px}
+  .field label{display:block;font-size:13px;color:#b9aecb;margin:0 0 6px;letter-spacing:.02em}
+  .field input,.field select{width:100%;padding:14px 14px;border-radius:12px;background:#171320;
+    border:1px solid #34283f;color:#fff;font-family:var(--body);font-size:16px;direction:rtl}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--magenta-hot);
+    box-shadow:0 0 0 3px rgba(255,79,163,.2)}
+  .field .err{color:#ff7a9c;font-size:12px;margin-top:5px;min-height:14px}
+  .gate .enter-btn{width:100%;background:var(--magenta-hot);border-color:var(--magenta-hot);color:#fff;
+    padding:16px;font-size:18px;box-shadow:0 8px 26px rgba(255,79,163,.4);margin-top:4px}
+  .gate-ig{margin:18px 0 0;direction:rtl}
+
+  /* Instagram link/button (shared) */
+  .ig-link{display:inline-flex;align-items:center;gap:8px;text-decoration:none;direction:rtl;
+    color:#f3d9e8;font-size:14px;font-family:var(--body)}
+  .ig-link .ig-badge{width:26px;height:26px;border-radius:8px;flex:0 0 auto;
+    background:linear-gradient(45deg,#f9ce34,#ee2a7b 45%,#6228d7);display:inline-flex;
+    align-items:center;justify-content:center;color:#fff;font-size:15px}
+  .ig-link b{color:#fff;font-weight:800}
+  .ig-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none;
+    direction:rtl;font-family:var(--disp);letter-spacing:.06em;text-transform:none;
+    background:linear-gradient(45deg,#f9ce34,#ee2a7b 45%,#6228d7);color:#fff;
+    border-radius:12px;padding:14px 18px;font-size:16px;box-shadow:0 8px 26px rgba(238,42,123,.35)}
+  .ig-btn .ig-badge{background:rgba(255,255,255,.18)}
+
+  /* ---------- floating controls (mute + instagram) ---------- */
+  .floaters{position:fixed;z-index:75;inset-inline-start:12px;bottom:calc(12px + env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;gap:10px}
+  .fbtn{width:46px;height:46px;border-radius:50%;border:1px solid #2a2f3c;background:rgba(20,16,25,.9);
+    color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;padding:0;
+    box-shadow:0 4px 14px rgba(0,0,0,.4);text-decoration:none}
+  .fbtn.ig{background:linear-gradient(45deg,#f9ce34,#ee2a7b 45%,#6228d7);border:none}
+
+  /* ---------- confirmation screen ---------- */
+  .confirm{position:fixed;inset:0;z-index:95;display:none;align-items:center;justify-content:center;padding:26px;
+    background:radial-gradient(900px 600px at 50% -5%, rgba(194,74,138,.30), transparent 60%),
+      rgba(6,5,10,.95);overflow:auto;text-align:center}
+  .confirm.open{display:flex;animation:fade .25s ease}
+  .confirm-card{width:100%;max-width:440px}
+  .confirm .you{font-family:var(--disp);letter-spacing:.3em;color:#cbb8dc;font-size:15px;text-transform:uppercase}
+  .confirm .cname{font-family:var(--disp);font-size:clamp(52px,17vw,96px);line-height:.86;margin:6px 0 0;color:#fff;
+    text-shadow:0 0 26px rgba(255,79,163,.55)}
+  .confirm .ccls{font-family:var(--disp);letter-spacing:.26em;color:var(--magenta-hot);text-transform:uppercase;
+    font-size:clamp(14px,4.4vw,20px);margin:4px 0 0}
+  .confirm .who{color:#e7dff2;font-size:15px;margin:14px 0 0;direction:rtl}
+  .confirm .who .tbl{color:var(--cyan);font-family:var(--disp);letter-spacing:.06em}
+  .confirm .share{margin:22px 0 0;padding:16px;border:1px solid rgba(238,42,123,.4);border-radius:16px;
+    background:linear-gradient(180deg,rgba(238,42,123,.12),rgba(98,40,215,.08))}
+  .confirm .share p{margin:0 0 12px;color:#f3d9e8;font-size:15px;direction:rtl;line-height:1.5}
+  .confirm .share .ig-btn{width:100%}
+  .confirm .moreinfo{margin:14px 0 0;color:#9a8fb0;font-size:13px;direction:rtl}
+  .confirm .back{margin:18px 0 0;background:transparent;border:1px solid #2a2f3c;color:#cbb8dc;
+    font-size:13px;letter-spacing:.06em}
 
   /* ---------- footer ---------- */
   footer{margin-top:40px;text-align:center;color:var(--muted);font-size:13px;line-height:1.9}
@@ -147,6 +231,7 @@
   .logo-slot{height:46px;margin:14px auto 6px;display:flex;align-items:center;justify-content:center}
   .logo-slot img{max-height:46px;max-width:180px;object-fit:contain}
   .logo-fallback{font-family:var(--disp);letter-spacing:.3em;font-size:22px;color:#fff;opacity:.85}
+  .foot-ig{margin:10px 0 0}
 
   /* ---------- brand logo, header ---------- */
   .brand-logo{display:block;margin:0 auto 10px;max-height:64px;max-width:220px;object-fit:contain;
@@ -155,6 +240,37 @@
 </style>
 </head>
 <body>
+
+<!-- ========== GATE (entry form) ========== -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <img class="gate-logo" id="gateLogo" src="logo.png" alt="OY VEY" hidden>
+    <h1>BLOODY<br>ROTHSCHILD</h1>
+    <p class="gsub">choose your fighter</p>
+    <p class="gp">מלאו שם ומספר שולחן כדי לבחור את הדמות שלכם לערב.</p>
+    <form id="gateForm" novalidate>
+      <div class="field">
+        <label for="fName">השם שלך</label>
+        <input id="fName" type="text" autocomplete="given-name" maxlength="24" placeholder="איך קוראים לך?">
+        <div class="err" id="errName"></div>
+      </div>
+      <div class="field">
+        <label for="fTable">מספר שולחן</label>
+        <select id="fTable">
+          <option value="">בחר/י שולחן…</option>
+        </select>
+        <div class="err" id="errTable"></div>
+      </div>
+      <button type="submit" class="enter-btn">כניסה</button>
+    </form>
+    <p class="gate-ig">
+      <a class="ig-link" href="https://www.instagram.com/oy.vey.roll/" target="_blank" rel="noopener">
+        <span class="ig-badge">◎</span><span>עוד מידע ושאלות? האינסטגרם שלנו <b>@oy.vey.roll</b></span>
+      </a>
+    </p>
+  </div>
+</div>
+
 <div class="wrap">
   <header>
     <img class="brand-logo" id="brandLogo" src="logo.png" alt="OY VEY" hidden>
@@ -162,8 +278,11 @@
     <h1 class="wordmark">BLOODY<br>ROTHSCHILD</h1>
     <p class="sub">make tel aviv freak again</p>
     <div class="rule"></div>
-    <p class="cta">Choose your fighter</p>
-    <p class="help heb">בחר/י את הדמות שלך לערב. לוחצים על דמות — קוראים את הדף — ואז "זו הדמות שלי".</p>
+    <div class="profile-chip" id="profileChip" hidden>
+      <span>שלום <b id="chipName"></b> · <span class="tbl">שולחן <span id="chipTable"></span></span></span>
+      <button id="editProfile" type="button">החלף</button>
+    </div>
+    <p class="help heb" id="rosterHelp">בחר/י את הדמות שלך לערב. לוחצים על דמות — קוראים את הדף — ואז "זו הדמות שלי".</p>
   </header>
 
   <main class="roster" id="roster" aria-label="character roster"></main>
@@ -171,11 +290,25 @@
   <footer>
     <div class="logo-slot" id="logoSlot"></div>
     <div class="dates" dir="ltr">19.07 · 26.07</div>
-    <div class="heb" dir="rtl">BLOODY ROTHSCHILD — לילה אחד בתל אביב · לינק בביו</div>
+    <div class="heb" dir="rtl">BLOODY ROTHSCHILD — לילה אחד בתל אביב</div>
+    <div class="foot-ig">
+      <a class="ig-link" href="https://www.instagram.com/oy.vey.roll/" target="_blank" rel="noopener">
+        <span class="ig-badge">◎</span><span>עוד מידע ושאלות · <b>@oy.vey.roll</b></span>
+      </a>
+    </div>
   </footer>
 </div>
 
-<!-- character sheet overlay -->
+<!-- ========== floating controls ========== -->
+<div class="floaters">
+  <button class="fbtn" id="muteBtn" type="button" aria-label="mute/unmute" title="מוזיקה">🔊</button>
+  <a class="fbtn ig" href="https://www.instagram.com/oy.vey.roll/" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">◎</a>
+</div>
+
+<!-- background music -->
+<audio id="bgm" loop preload="auto"><source src="critical_failure.mp3" type="audio/mpeg"></audio>
+
+<!-- ========== character sheet overlay ========== -->
 <div class="sheet" id="sheet" role="dialog" aria-modal="true">
   <button class="close" id="closeBtn" aria-label="close">✕</button>
   <div class="sheet-inner">
@@ -198,22 +331,43 @@
   </div>
 </div>
 
-<!-- picked banner -->
-<div class="banner" id="banner">
-  <span class="txt">YOU ARE NOW <em id="bannerName"></em></span>
+<!-- ========== confirmation screen ========== -->
+<div class="confirm" id="confirm">
+  <div class="confirm-card">
+    <div class="you">you are now</div>
+    <div class="cname" id="cfName"></div>
+    <div class="ccls" id="cfCls"></div>
+    <div class="who" id="cfWho"></div>
+    <div class="share">
+      <p>צלמו מסך של הדמות שלכם ותייגו אותנו בסטורי <b>@oy.vey.roll</b> 📸</p>
+      <a class="ig-btn" href="https://www.instagram.com/oy.vey.roll/" target="_blank" rel="noopener">
+        <span class="ig-badge">◎</span>עקבו אחרינו באינסטגרם
+      </a>
+      <p class="moreinfo">עוד מידע, לוח אירועים ושאלות — הכל אצלנו באינסטגרם.</p>
+    </div>
+    <button class="back" id="cfBack" type="button">חזרה לבחירה</button>
+  </div>
 </div>
 
 <script src="characters.js"></script>
+<script src="store.js"></script>
 <script>
 const CAST = window.OY_VEY_CAST || [];
+const STORE = window.OY_VEY_STORE;
 const AXES = ["STR","DEX","CON","INT","WIS","CHA"]; // real D&D ability scores, normalized 0-10
-const LS_KEY = "oyvey_pick";
+const IG_URL = "https://www.instagram.com/oy.vey.roll/";
 const roster = document.getElementById('roster');
 const sheet = document.getElementById('sheet');
-let current = null;
-let picked = localStorage.getItem(LS_KEY) || null;
+let current = null;      // character open in the sheet
+let profile = STORE.getProfile();   // {name, table} | null
 
-/* ---- optional brand logo in footer (falls back to wordmark) ---- */
+/* ---- brand logo probes (header + gate; fall back quietly) ---- */
+[['brandLogo'],['gateLogo']].forEach(([id])=>{
+  const el = document.getElementById(id);
+  const probe = new Image();
+  probe.onload = ()=>{ el.hidden = false; };
+  probe.src = el.src;
+});
 (function(){
   const slot = document.getElementById('logoSlot');
   const img = new Image();
@@ -222,40 +376,89 @@ let picked = localStorage.getItem(LS_KEY) || null;
   img.alt = "OY VEY"; img.src = "logo.png";
 })();
 
-/* ---- real transparent logo up top (no dark chip needed — header bg is already dark) ---- */
-(function(){
-  const el = document.getElementById('brandLogo');
-  const probe = new Image();
-  probe.onload = ()=>{ el.hidden = false; };
-  probe.src = el.src;
-})();
+/* ================= background music ================= */
+const bgm = document.getElementById('bgm');
+const muteBtn = document.getElementById('muteBtn');
+let muted = localStorage.getItem('oyvey_muted') === '1';
+bgm.volume = 0.35;
+function reflectMute(){ muteBtn.textContent = muted ? '🔇' : '🔊'; bgm.muted = muted; }
+function startMusic(){
+  if (muted) return;
+  bgm.play().catch(()=>{ /* autoplay blocked — a later gesture will retry */ });
+}
+reflectMute();
+muteBtn.addEventListener('click', ()=>{
+  muted = !muted; localStorage.setItem('oyvey_muted', muted ? '1':'0');
+  reflectMute();
+  if (!muted) startMusic();
+});
+// returning users skip the gate (no submit gesture) — retry music on first interaction
+window.addEventListener('pointerdown', function once(){ startMusic(); window.removeEventListener('pointerdown', once); }, {once:true});
 
-/* ---- build roster ---- */
-CAST.forEach((c,i)=>{
-  const card = document.createElement('button');
-  card.className = 'card noimg' + (picked===c.id ? ' picked':'');
-  card.setAttribute('data-id', c.id);
-  card.innerHTML = `
-    <span class="idx">${String(i+1).padStart(2,'0')}</span>
-    <span class="badge">✓</span>
-    <div class="portrait" data-icon="${c.icon}">
-      <img alt="${c.name}" loading="eager" decoding="async">
-      <div class="plate">
-        <div class="nm">${c.name}</div>
-        <div class="cl">${c.cls}</div>
-      </div>
-    </div>`;
-  // single real <img> fetch (was: probe Image() + duplicate CSS background-image fetch —
-  // doubled data/time on slow mobile networks). onerror keeps the placeholder.
-  const im = card.querySelector('.portrait img');
-  im.onload = ()=>{ card.classList.remove('noimg'); };
-  im.onerror = ()=>{/* stay placeholder */};
-  im.src = `branded/${c.id}.jpg`;
-  card.addEventListener('click', ()=>openSheet(c.id));
-  roster.appendChild(card);
+/* ================= gate (entry form) ================= */
+const gate = document.getElementById('gate');
+const fName = document.getElementById('fName');
+const fTable = document.getElementById('fTable');
+for (let t=1; t<=10; t++){ const o=document.createElement('option'); o.value=String(t); o.textContent='שולחן '+t; fTable.appendChild(o); }
+
+document.getElementById('gateForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const name = fName.value.trim();
+  const table = fTable.value;
+  document.getElementById('errName').textContent = name ? '' : 'נא למלא שם';
+  document.getElementById('errTable').textContent = table ? '' : 'נא לבחור שולחן';
+  if (!name || !table) return;
+  profile = STORE.setProfile(name, table);
+  startMusic();                 // user gesture — unlocks audio on mobile
+  enterApp();
+});
+document.getElementById('editProfile').addEventListener('click', ()=>{
+  if (profile){ fName.value = profile.name; fTable.value = profile.table; }
+  gate.hidden = false;
 });
 
-/* ---- open character sheet ---- */
+function enterApp(){
+  gate.hidden = true;
+  const chip = document.getElementById('profileChip');
+  document.getElementById('chipName').textContent = profile.name;
+  document.getElementById('chipTable').textContent = profile.table;
+  chip.hidden = false;
+  buildRoster();
+}
+
+/* ================= roster ================= */
+function buildRoster(){
+  const picks = profile ? STORE.getPicks(profile.table) : {};
+  const mine = STORE.myPick();
+  roster.innerHTML = '';
+  CAST.forEach((c,i)=>{
+    const takenBy = picks[c.id];
+    const isMine = mine && mine.charId===c.id && String(mine.table)===String(profile.table);
+    const card = document.createElement('button');
+    card.className = 'card noimg' + (takenBy ? ' taken':'') + (isMine ? ' mine':'');
+    card.setAttribute('data-id', c.id);
+    card.innerHTML = `
+      <span class="idx">${String(i+1).padStart(2,'0')}</span>
+      <span class="badge">✓</span>
+      <div class="portrait" data-icon="${c.icon}">
+        <img alt="${c.name}" loading="eager" decoding="async">
+        <div class="plate">
+          <div class="nm">${c.name}</div>
+          <div class="cl">${c.cls}</div>
+          <div class="picker">${takenBy ? 'נבחרה ע"י '+escapeHtml(takenBy) : ''}</div>
+        </div>
+      </div>`;
+    const im = card.querySelector('.portrait img');
+    im.onload = ()=>{ card.classList.remove('noimg'); };
+    im.onerror = ()=>{};
+    im.src = `branded/${c.id}.jpg`;
+    card.addEventListener('click', ()=>openSheet(c.id));
+    roster.appendChild(card);
+  });
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* ================= character sheet ================= */
 function openSheet(id){
   const c = CAST.find(x=>x.id===id); if(!c) return;
   current = c;
@@ -287,10 +490,17 @@ function openSheet(id){
     requestAnimationFrame(()=>{ setTimeout(()=>{ row.querySelector('.fill').style.width = (v*10)+'%'; }, 60); });
   });
 
+  // pick button reflects table lock state
+  const picks = profile ? STORE.getPicks(profile.table) : {};
+  const takenBy = picks[c.id];
+  const mine = STORE.myPick();
+  const isMine = mine && mine.charId===c.id && String(mine.table)===String(profile.table);
   const pb = document.getElementById('pickBtn');
-  const isPicked = picked===c.id;
-  pb.textContent = isPicked ? '✓ הדמות שלך' : 'זו הדמות שלי';
-  pb.classList.toggle('done', isPicked);
+  pb.classList.remove('done');
+  pb.disabled = false;
+  if (isMine){ pb.textContent = '✓ הדמות שלך'; pb.classList.add('done'); pb.disabled = true; }
+  else if (takenBy){ pb.textContent = 'כבר נבחר ע"י ' + takenBy; pb.disabled = true; }
+  else { pb.textContent = 'זו הדמות שלי'; }
 
   sheet.classList.add('open');
   sheet.scrollTop = 0;
@@ -303,29 +513,40 @@ document.getElementById('backBtn').addEventListener('click', closeSheet);
 sheet.addEventListener('click', e=>{ if(e.target===sheet) closeSheet(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape' && sheet.classList.contains('open')) closeSheet(); });
 
-/* ---- pick ---- */
+/* ================= pick ================= */
 document.getElementById('pickBtn').addEventListener('click', ()=>{
-  if(!current) return;
-  picked = current.id;
-  localStorage.setItem(LS_KEY, picked);
-  document.querySelectorAll('.card').forEach(el=>
-    el.classList.toggle('picked', el.getAttribute('data-id')===picked));
-  const pb = document.getElementById('pickBtn');
-  pb.textContent = '✓ הדמות שלך'; pb.classList.add('done');
-  showBanner(current.name);
-  setTimeout(closeSheet, 650);
+  if(!current || !profile) return;
+  const res = STORE.claim(profile.table, current.id, profile.name);
+  if (!res.ok){
+    // someone at this table already took it — refresh lock state and show it
+    buildRoster();
+    const pb = document.getElementById('pickBtn');
+    pb.textContent = 'כבר נבחר ע"י ' + res.takenBy; pb.disabled = true;
+    return;
+  }
+  STORE.setMyPick(profile.table, current.id, profile.name);
+  buildRoster();
+  closeSheet();
+  showConfirm(current);
 });
 
-let bt;
-function showBanner(name){
-  document.getElementById('bannerName').textContent = name;
-  const b = document.getElementById('banner');
-  b.classList.add('show');
-  clearTimeout(bt); bt = setTimeout(()=>b.classList.remove('show'), 3200);
+/* ================= confirmation ================= */
+function showConfirm(c){
+  document.getElementById('cfName').textContent = c.name;
+  document.getElementById('cfCls').textContent = c.cls;
+  document.getElementById('cfWho').innerHTML =
+    escapeHtml(profile.name) + ' · <span class="tbl">שולחן ' + escapeHtml(profile.table) + '</span>';
+  document.getElementById('confirm').classList.add('open');
+  document.body.style.overflow='hidden';
 }
+document.getElementById('cfBack').addEventListener('click', ()=>{
+  document.getElementById('confirm').classList.remove('open');
+  document.body.style.overflow='';
+});
 
-/* restore banner state on load if already picked */
-if(picked){ const c = CAST.find(x=>x.id===picked); if(c){ /* silent — badge already shown */ } }
+/* ================= boot ================= */
+if (profile){ enterApp(); }        // returning patron — skip gate
+else { fTable.value=''; }          // first visit — gate stays up
 </script>
 </body>
 </html>
