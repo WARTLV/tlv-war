@@ -3,6 +3,14 @@
 <head>
 <meta charset="utf-8">
 <script>document.documentElement.className+=' js';</script>
+<script>
+/* apply saved language before first paint — avoids a flash of the wrong language.
+   The actual show/hide is done by CSS rules scoped to html.lang-en (see <style>),
+   so just setting the class here is enough — no inline style injection needed. */
+(function(){
+  try{ if(localStorage.getItem('portfolio_lang')==='en') document.documentElement.className+=' lang-en'; }catch(e){}
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0c0a09">
 <title>ליאור פלד · תיק עבודות · Hyper-Synthetic Pop</title>
@@ -51,6 +59,32 @@
   nav .links a{font-size:12.5px;font-weight:600;color:var(--ink3);text-decoration:none;padding:7px 11px;border-radius:16px;white-space:nowrap;transition:color .25s,background .25s}
   nav .links a:hover{color:var(--ink)}
   nav .links a.on{color:#fff;background:rgba(255,255,255,.09)}
+  .langtog{display:flex;align-items:center;gap:2px;margin-inline-start:6px;font-family:'Archivo';font-size:11px;font-weight:800;
+    border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:3px;flex:none}
+  .langtog button{border:0;background:transparent;color:var(--ink3);padding:5px 10px;border-radius:13px;cursor:pointer;
+    letter-spacing:.06em;transition:color .2s,background .2s}
+  .langtog button.on{color:#0c0a09;background:var(--ink)}
+
+  /* dual-language show/hide — !important class-scoped rules beat any component's own
+     display:flex/grid (author-normal beats UA-normal [hidden], so [hidden] alone isn't enough) */
+  html:not(.lang-en) [data-l="en"]{display:none!important}
+  html.lang-en [data-l="he"]{display:none!important}
+  [data-l="en"]{direction:ltr;text-align:left}
+
+  /* read-more expander (replaces old EN-only collapsible pattern) */
+  details.more{margin-top:16px;max-width:44em}
+  details.more summary{font-family:'Archivo';font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--acc);
+    cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:7px;padding:4px 0}
+  details.more summary::-webkit-details-marker{display:none}
+  details.more summary::before{content:"+";font-size:15px;transition:transform .25s}
+  details.more[open] summary::before{transform:rotate(45deg)}
+  details.more[open] summary{margin-bottom:4px}
+  details.more .wbody{margin-top:10px}
+
+  /* inline "how it was built" hook → Behind the Lab */
+  .labhook{display:inline-flex;align-items:center;gap:6px;margin-top:18px;font-family:'Archivo';font-size:12px;font-weight:700;
+    letter-spacing:.03em;color:var(--acc);text-decoration:none;opacity:.85;transition:opacity .2s,gap .2s}
+  .labhook:hover{opacity:1;gap:9px}
 
   /* ═══ HERO ═══ */
   .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
@@ -68,7 +102,8 @@
   .hbig{position:relative;font-family:'Archivo Black','Archivo';font-size:clamp(2.35rem,8.6vw,6.4rem);font-weight:900;line-height:1;letter-spacing:-.02em;margin-top:18px;direction:ltr;
     background:linear-gradient(100deg,var(--syn1),var(--syn2) 55%,var(--syn3));-webkit-background-clip:text;background-clip:text;color:transparent;
     filter:drop-shadow(0 6px 30px rgba(0,0,0,.66))}
-  .hsub{position:relative;font-family:'Archivo',sans-serif;font-size:clamp(1.02rem,2.6vw,1.7rem);font-weight:600;letter-spacing:.005em;line-height:1.42;color:var(--ink2);direction:ltr;max-width:20em;margin-top:22px;text-shadow:0 3px 22px rgba(0,0,0,.62)}
+  .hsub{position:relative;font-family:'Archivo',sans-serif;font-size:clamp(1.02rem,2.6vw,1.7rem);font-weight:600;letter-spacing:.005em;line-height:1.42;color:var(--ink2);max-width:22em;margin-top:22px;text-shadow:0 3px 22px rgba(0,0,0,.62)}
+  .hsub[data-l="en"]{direction:ltr;max-width:20em}
   .hsub b{color:#fff;font-weight:800}
   /* rotating media showcase */
   .hero-stage{position:absolute;inset:0;z-index:0;background:#0c0a09}
@@ -106,11 +141,6 @@
   .wbody{margin-top:26px;max-width:44em;display:grid;gap:16px}
   .wbody p{font-size:clamp(1rem,1.6vw,1.13rem);line-height:1.85;color:var(--ink2);font-weight:400}
   .wbody p b{color:var(--ink);font-weight:700}
-  details.en{margin-top:20px;max-width:44em;border-top:1px solid color-mix(in srgb,var(--acc) 28%,transparent);padding-top:12px;direction:ltr;text-align:left}
-  details.en summary{font-family:'Archivo';font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--ink3);cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
-  details.en summary::before{content:"+";font-size:14px;color:var(--acc);transition:transform .25s}
-  details.en[open] summary::before{transform:rotate(45deg)}
-  details.en p{font-family:'Archivo';font-size:.92rem;line-height:1.75;color:var(--ink3);margin-top:12px}
   .offer{margin-top:30px;max-width:44em;border-inline-start:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 9%,transparent);
     padding:16px 20px;border-radius:0 12px 12px 0}
   [dir="rtl"] .offer{border-radius:12px 0 0 12px}
@@ -200,37 +230,79 @@
   .comicrow .ph:hover{transform:translateY(-8px)}
   .comicrow img,.comicrow video{width:100%;height:100%;object-fit:cover}
 
-  /* ═══ ALBUM · characters & songs ═══ */
+  /* ═══ ALBUM · tracklist (game theme + character songs) ═══ */
   .album{position:relative;padding:clamp(74px,10vh,120px) 0;overflow:hidden;background:
     radial-gradient(70% 55% at 50% 0%,rgba(123,47,247,.26),transparent 62%),linear-gradient(180deg,#0d0a14,#0c0a09)}
   .album-title{font-size:clamp(2rem,6vw,3.7rem);font-weight:900;line-height:1.04;margin-top:8px}
   .album-sub{font-size:clamp(1rem,1.8vw,1.18rem);color:var(--ink2);margin-top:14px;max-width:42em}
   .album-sub b{color:var(--ink)}
-  .fgrid{margin-top:42px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  .fcard{position:relative;overflow:hidden;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:#000;
-    cursor:pointer;padding:0;isolation:isolate;font-family:inherit;transition:transform .3s,box-shadow .3s,border-color .3s}
-  .fcard .fimg{aspect-ratio:4/5;overflow:hidden}
-  .fcard .fimg img{width:100%;height:100%;object-fit:cover;transition:transform .5s,filter .3s;filter:saturate(.9) contrast(1.02)}
-  .fcard:hover{transform:translateY(-6px);border-color:color-mix(in srgb,var(--acc) 60%,transparent);box-shadow:0 22px 50px color-mix(in srgb,var(--acc) 30%,rgba(0,0,0,.5))}
-  .fcard:hover .fimg img{transform:scale(1.05)}
-  .fcard .fmeta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:16px;text-align:right;
-    background:linear-gradient(180deg,transparent,rgba(5,4,8,.92) 82%)}
-  .fname{font-family:'Archivo Black';font-size:clamp(1.1rem,2vw,1.4rem);color:#fff;direction:ltr;text-align:right;letter-spacing:-.01em}
-  .frole{font-family:'Archivo';font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--acc);margin-top:3px;direction:ltr;text-align:right}
-  .fbadge{position:absolute;top:12px;right:12px;z-index:3;width:40px;height:40px;border-radius:50%;
-    background:color-mix(in srgb,var(--acc) 88%,#000);color:#0c0a09;display:flex;align-items:center;justify-content:center;
-    font-size:15px;box-shadow:0 6px 18px rgba(0,0,0,.5);transition:transform .3s}
-  .fcard:hover .fbadge{transform:scale(1.08)}
-  .feq{position:absolute;top:14px;right:14px;z-index:3;display:none;align-items:flex-end;gap:3px;height:22px}
-  .fcard.playing .feq{display:flex}
-  .fcard.playing .fbadge{display:none}
+  /* featured track — the game's own theme */
+  .track-feat{position:relative;margin-top:38px;display:flex;align-items:center;gap:18px;cursor:pointer;
+    border:1px solid rgba(123,47,247,.4);border-radius:18px;padding:16px 20px;background:rgba(123,47,247,.08);
+    font-family:inherit;text-align:right;width:100%;isolation:isolate;transition:border-color .25s,background .25s}
+  .track-feat:hover{border-color:#7b2ff7;background:rgba(123,47,247,.14)}
+  .fbadge{border-radius:50%;background:color-mix(in srgb,var(--acc,#7b2ff7) 88%,#000);color:#0c0a09;
+    display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 6px 18px rgba(0,0,0,.5)}
+  .track-feat .fbadge{position:relative;inset:auto;flex:none;width:52px;height:52px}
+  .track-feat .ttxt{flex:1;min-width:0}
+  .track-feat .tlabel{font-family:'Archivo';font-size:10.5px;font-weight:800;letter-spacing:.18em;color:#7b2ff7}
+  .track-feat .tname{font-family:'Archivo Black';font-size:clamp(1.05rem,2.4vw,1.5rem);margin-top:4px;direction:ltr;text-align:right}
+  .track-feat .feq{position:relative;inset:auto;flex:none;margin-inline-start:6px}
+  .track-feat.playing{border-color:#7b2ff7;background:rgba(123,47,247,.16)}
+  .track-feat.playing .fbadge .tplay{display:none}
+  .track-feat.playing .fbadge .feq{display:flex!important}
+  /* tracklist rows — characters */
+  .tracklist{margin-top:14px;display:grid;gap:2px}
+  .track{position:relative;display:flex;align-items:center;gap:14px;padding:11px 10px;border-radius:12px;
+    background:transparent;border:0;cursor:pointer;font-family:inherit;text-align:right;width:100%;isolation:isolate;
+    transition:background .2s}
+  .track:hover{background:rgba(255,255,255,.045)}
+  .track .tnum{flex:none;width:1.6em;font-family:'Archivo';font-size:12px;color:var(--ink3);direction:ltr;text-align:center}
+  .track .tthumb{position:relative;flex:none;width:46px;height:46px;border-radius:9px;overflow:hidden;background:#000}
+  .track .tthumb img{width:100%;height:100%;object-fit:cover;filter:saturate(.9)}
+  .track .tinfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .track .tfname{font-family:'Archivo Black';font-size:.98rem;color:#fff;direction:ltr;text-align:right;letter-spacing:-.005em}
+  .track .tfrole{font-family:'Archivo';font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--acc);margin-top:2px;direction:ltr;text-align:right}
+  .track .tbadge{flex:none;width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(255,255,255,.22);
+    display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--ink2);transition:border-color .2s,color .2s,background .2s}
+  .track:hover .tbadge{border-color:var(--acc);color:#fff}
+  .track.playing{background:color-mix(in srgb,var(--acc) 10%,transparent)}
+  .track.playing .tbadge{border-color:var(--acc);background:var(--acc);color:#0c0a09}
+  .track .feq{position:relative;inset:auto;display:none;align-items:flex-end;gap:3px;height:16px}
+  .track.playing .feq{display:flex}
+  .track.playing .tbadge .tplay{display:none}
+  .feq{display:flex;align-items:flex-end;gap:3px}
   .feq span{width:3px;background:var(--acc);border-radius:2px;animation:eq .9s ease-in-out infinite}
   .feq span:nth-child(1){height:40%;animation-delay:0s}
   .feq span:nth-child(2){height:100%;animation-delay:.2s}
   .feq span:nth-child(3){height:60%;animation-delay:.4s}
   .feq span:nth-child(4){height:85%;animation-delay:.12s}
   @keyframes eq{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
-  .fcard.playing{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc),0 22px 54px color-mix(in srgb,var(--acc) 42%,rgba(0,0,0,.5))}
+
+  /* ═══ OY VEY · in-page cast showcase ═══ */
+  .castgrid{margin-top:26px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+  .cchip{position:relative;overflow:hidden;border-radius:12px;border:1px solid rgba(22,224,212,.18);background:#000;
+    aspect-ratio:3/4;isolation:isolate}
+  .cchip img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .4s}
+  .cchip:hover img{transform:scale(1.06)}
+  .cchip .cclabel{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:8px 6px 7px;text-align:center;
+    background:linear-gradient(180deg,transparent,rgba(5,4,8,.92) 70%)}
+  .cchip .ccname{font-family:'Archivo Black';font-size:10.5px;color:#fff;letter-spacing:.02em;direction:ltr}
+  .cchip .cccls{font-family:'Archivo';font-size:8.5px;font-weight:700;letter-spacing:.08em;color:#16e0d4;margin-top:1px;direction:ltr}
+
+  /* ═══ BEHIND THE LAB — technical capabilities (abstract) ═══ */
+  .lab{position:relative;padding:clamp(74px,10vh,120px) 0;background:
+    radial-gradient(65% 55% at 50% 0%,rgba(22,224,212,.14),transparent 62%),linear-gradient(180deg,#0a0d0d,#0c0a09)}
+  .lab-title{font-size:clamp(2rem,6vw,3.7rem);font-weight:900;line-height:1.04;margin-top:8px}
+  .lab-sub{font-size:clamp(1rem,1.8vw,1.18rem);color:var(--ink2);margin-top:14px;max-width:44em}
+  .labgrid{margin-top:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .labcard{border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:22px 20px;background:rgba(255,255,255,.03);
+    transition:border-color .25s,background .25s,transform .25s}
+  .labcard:hover{border-color:rgba(22,224,212,.45);background:rgba(22,224,212,.05);transform:translateY(-4px)}
+  .labcard .lk{font-size:22px}
+  .labcard .lt{font-size:1.05rem;font-weight:900;margin-top:12px}
+  .labcard .lx{font-size:.92rem;line-height:1.65;color:var(--ink2);margin-top:8px}
+  .labcard .lw{font-family:'Archivo';font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--ink3);margin-top:12px}
 
   /* ═══ 06 ATRO — warm espresso, process-forward ═══ */
   .w-atro{--acc:#e0a35c;background:
@@ -321,12 +393,13 @@
     .comicrow{grid-template-columns:1fr;max-width:420px;margin-inline:auto;margin-top:38px}
     .idgrid{grid-template-columns:1fr}
     .bigrow{grid-template-columns:repeat(3,1fr);gap:9px}
+    .labgrid{grid-template-columns:1fr}
     nav .mark .en-f{display:none}
   }
   @media (max-width:760px){
     .castcard{grid-template-columns:1fr}
     .castcard .cimg{aspect-ratio:16/10;min-height:0}
-    .fgrid{grid-template-columns:repeat(2,1fr)}
+    .castgrid{grid-template-columns:repeat(3,1fr)}
   }
   @media (max-width:640px){
     .navtog{display:flex}
@@ -336,14 +409,16 @@
       transition:max-height .35s ease,opacity .25s}
     nav.open .links{max-height:80vh;opacity:1;pointer-events:auto}
     nav .links a{padding:13px 15px;font-size:15px;border-radius:10px}
+    .langtog{margin-inline-start:0}
   }
   @media (max-width:520px){
     .bigrow{grid-template-columns:repeat(3,1fr)}
     .warrow{gap:9px}
     .marquee{bottom:52px}
+    .track-feat{flex-wrap:wrap}
   }
   @media (max-width:460px){
-    .fgrid{grid-template-columns:1fr;max-width:340px;margin-inline:auto}
+    .castgrid{grid-template-columns:repeat(3,1fr);max-width:340px;margin-inline:auto}
   }
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation:none!important;transition:none!important}
@@ -359,13 +434,17 @@
   <div class="mark">ליאור פלד<span class="en-f">LIOR PELED</span></div>
   <div class="links" id="NAVL">
     <a href="#big">BIG.COM</a>
-    <a href="#episode">פרק מלא</a>
+    <a href="#episode" data-l="he">פרק מלא</a><a href="#episode" data-l="en">EPISODE</a>
     <a href="#oy">OY VEY</a>
     <a href="#war">WAR TLV</a>
-    <a href="#comics">ניצ ופלדוס</a>
+    <a href="#comics" data-l="he">ניצ ופלדוס</a><a href="#comics" data-l="en">COMICS</a>
     <a href="#pala">PALA PUNK</a>
-    <a href="#album">האלבום</a>
+    <a href="#lab" data-l="he">מאחורי המעבדה</a><a href="#lab" data-l="en">BEHIND THE LAB</a>
+    <a href="#album" data-l="he">האלבום</a><a href="#album" data-l="en">ALBUM</a>
     <a href="#atro">ATRO</a>
+  </div>
+  <div class="langtog" id="LANGTOG" role="group" aria-label="Language">
+    <button type="button" data-set="he" class="on">HE</button><button type="button" data-set="en">EN</button>
   </div>
   <button class="navtog" id="NAVTOG" aria-label="תפריט" aria-expanded="false"><span></span><span></span><span></span></button>
 </nav>
@@ -386,10 +465,12 @@
   <div class="hero-inner">
     <div class="hkick">LIOR PELED PRESENTS</div>
     <h1 class="hbig">A LABORATORY<br>OF IDENTITIES</h1>
-    <div class="hsub">Six worlds, engineered in one lab — <b>scroll at your own risk.</b></div>
+    <div class="hsub" data-l="he">שישה עולמות, שהונדסו במעבדה אחת — <b>גללו על אחריותכם.</b></div>
+    <div class="hsub" data-l="en">Six worlds, engineered in one lab — <b>scroll at your own risk.</b></div>
   </div>
   <div class="dots" id="DOTS"></div>
-  <a class="scrollcue" href="#big">GOOD LUCK ↓</a>
+  <a class="scrollcue" href="#big" data-l="he">בהצלחה ↓</a>
+  <a class="scrollcue" href="#big" data-l="en">GOOD LUCK ↓</a>
 </header>
 
 <!-- ═══════════ EXPLORE · WORLD PICKER ═══════════ -->
@@ -397,16 +478,18 @@
   <div class="wrap">
     <div class="rv cards-head">
       <div class="wk" style="--acc:var(--syn1)">EXPLORE</div>
-      <h2 class="cards-title">בחרו עולם <span class="en-f" style="color:var(--ink3);font-size:.5em;letter-spacing:.1em">/ PICK A WORLD</span></h2>
+      <h2 class="cards-title" data-l="he">בחרו עולם <span class="en-f" style="color:var(--ink3);font-size:.5em;letter-spacing:.1em">/ PICK A WORLD</span></h2>
+      <h2 class="cards-title" data-l="en">PICK A WORLD</h2>
     </div>
     <div class="chiprow rv">
       <a class="chip" href="#big" style="--acc:#ff3a2a">BIG.COM</a>
-      <a class="chip" href="#episode" style="--acc:#ff3a2a">▶ פרק מלא</a>
+      <a class="chip" href="#episode" style="--acc:#ff3a2a" data-l="he">▶ פרק מלא</a><a class="chip" href="#episode" style="--acc:#ff3a2a" data-l="en">▶ EPISODE</a>
       <a class="chip" href="#oy" style="--acc:#16e0d4">OY VEY</a>
       <a class="chip" href="#war" style="--acc:#3ba7ff">WAR TLV</a>
-      <a class="chip" href="#comics" style="--acc:#ff3a6b">ניצ ופלדוס</a>
+      <a class="chip" href="#comics" style="--acc:#ff3a6b" data-l="he">ניצ ופלדוס</a><a class="chip" href="#comics" style="--acc:#ff3a6b" data-l="en">COMICS</a>
       <a class="chip" href="#pala" style="--acc:#cbb3ff">PALA PUNK</a>
-      <a class="chip" href="#album" style="--acc:#7b2ff7">♪ האלבום</a>
+      <a class="chip" href="#lab" style="--acc:#16e0d4" data-l="he">⚙ מאחורי המעבדה</a><a class="chip" href="#lab" style="--acc:#16e0d4" data-l="en">⚙ BEHIND THE LAB</a>
+      <a class="chip" href="#album" style="--acc:#7b2ff7" data-l="he">♪ האלבום</a><a class="chip" href="#album" style="--acc:#7b2ff7" data-l="en">♪ ALBUM</a>
       <a class="chip" href="#atro" style="--acc:#e0a35c">ATRO</a>
     </div>
   </div>
@@ -420,7 +503,8 @@
       <div class="wk">01 · מעבדת זהויות · A Lab of Identities</div>
       <div class="wt"><span class="en-f">BIG.COM</span></div>
       <div class="ws">היאבקות ↔ חיי לילה תל־אביביים · Wrestling ↔ Tel Aviv nightlife</div>
-      <div class="wlead">BIG.COM הוא לא אתר, לא עמוד אינסטגרם ולא סדרת סרטונים — <em>הוא מעבדה של זהויות מוגזמות.</em></div>
+      <div class="wlead" data-l="he">BIG.COM הוא לא אתר, לא עמוד אינסטגרם ולא סדרת סרטונים — <em>הוא מעבדה של זהויות מוגזמות.</em></div>
+      <div class="wlead" data-l="en">BIG.COM isn't a website, an Instagram page, or a video series — <em>it's a lab for exaggerated identities.</em></div>
     </div>
     <div class="bigvid rv">
       <video src="_media/big_v1.mp4" poster="_docimg/big_v1_poster.jpg" preload="metadata" autoplay muted loop playsinline></video>
@@ -432,22 +516,34 @@
       <div class="ph"><img loading="lazy" decoding="async" src="_docimg/big_icon.jpg" alt="FRISBEE"></div>
     </div>
     <div class="cap rv">ENERGY CUT · האייקון · לחישה מאחורי הקלעים · FRISBEE</div>
-    <div class="wbody rv">
-      <p>הכל מתחיל באיפיון. כל דמות מקבלת <b>זהות נעולה</b> — מראה קבוע, פרסונה, שפת גוף ואטיטיוד — שנשמרת זהה על פני תמונות וסרטונים דרך תיאור מדויק ותמונת רפרנס. הבסיס הוא הניגוד הקיצוני: עולם הלילה התל־אביבי הקר נדחף אל המכונה הצבעונית של ההיאבקות. זו לא הרמוניה — זו התנגשות מכוונת.</p>
-      <p>משם אני בונה את הסצנה. כל כניסה לזירה, כל קרב וכל פרומו מתוכננים כרגע: זווית מצלמה, קהל, פירוטכניקה ודיאלוג בעברית שמופק ב-VEO3. אני מאפיין, מביים ומדייק עד שהסרטון לא נראה כפלט אוטומטי אלא כרגע של מיתולוגיה. <b>VEO3 הוא לא המכחול שלי; הוא השותף שלי לפשע.</b></p>
-      <p>מה שמיוצר כאן הוא הוכחת שליטה: שימוש מדויק ב-AI כדי לייצר סרטוני מיתוג שהם קונספט — לא קליפ יפה, אלא וידאו שמוכר עולם, דמות ורעיון.</p>
+    <div class="wbody rv" data-l="he">
+      <p>וידאו-מיתוג שמייצר <b>עולם, לא קליפ</b>: זהות ויזואלית נעולה — מראה, פרסונה, שפת גוף — שנשמרת זהה על פני עשרות תמונות וסרטונים, מונעת מהניגוד הקיצוני בין חיי הלילה הקרים לזירת ההיאבקות הצבעונית.</p>
+      <details class="more"><summary>קרא עוד</summary><div class="wbody">
+        <p>הכל מתחיל באיפיון. כל דמות מקבלת <b>זהות נעולה</b> — מראה קבוע, פרסונה, שפת גוף ואטיטיוד — שנשמרת זהה על פני תמונות וסרטונים דרך תיאור מדויק ותמונת רפרנס. הבסיס הוא הניגוד הקיצוני: עולם הלילה התל־אביבי הקר נדחף אל המכונה הצבעונית של ההיאבקות. זו לא הרמוניה — זו התנגשות מכוונת.</p>
+        <p>משם אני בונה את הסצנה. כל כניסה לזירה, כל קרב וכל פרומו מתוכננים כרגע: זווית מצלמה, קהל, פירוטכניקה ודיאלוג בעברית שמופק ב-VEO3. אני מאפיין, מביים ומדייק עד שהסרטון לא נראה כפלט אוטומטי אלא כרגע של מיתולוגיה. <b>VEO3 הוא לא המכחול שלי; הוא השותף שלי לפשע.</b></p>
+        <p>מה שמיוצר כאן הוא הוכחת שליטה: שימוש מדויק ב-AI כדי לייצר סרטוני מיתוג שהם קונספט — לא קליפ יפה, אלא וידאו שמוכר עולם, דמות ורעיון.</p>
+      </div></details>
+      <a class="labhook" href="#lab">⚙ איך זה נבנה · מאחורי המעבדה</a>
     </div>
-    <details class="en rv"><summary>ENGLISH</summary>
-      <p>It all starts with characterization. Every character gets a locked identity — a fixed look, a persona, body language and attitude — kept identical across stills and video through a precise description and a reference image. The foundation is extreme contrast: cold Tel Aviv nightlife pushed into the colorful machine of pro wrestling. Not harmony — a deliberate collision.</p>
-      <p>From there I build the scene. Every ring entrance, every fight, every promo is designed as a moment: camera angle, crowd, pyrotechnics, and Hebrew dialogue generated in VEO3. I characterize, direct and refine until the video reads not as an automatic output but as a moment of mythology. VEO3 is not my brush; it is my partner in crime.</p>
-      <p>What is produced here is a proof of command: precise use of AI to create branding videos that are concept — not a pretty clip, but a video that sells a world, a character and an idea.</p>
-    </details>
+    <div class="wbody rv" data-l="en">
+      <p>Branding video that builds <b>a world, not a clip</b>: a locked visual identity — look, persona, body language — held identical across dozens of stills and videos, driven by the extreme contrast between cold nightlife and the colorful wrestling arena.</p>
+      <details class="more"><summary>READ MORE</summary><div class="wbody">
+        <p>It all starts with characterization. Every character gets a locked identity — a fixed look, a persona, body language and attitude — kept identical across stills and video through a precise description and a reference image. The foundation is extreme contrast: cold Tel Aviv nightlife pushed into the colorful machine of pro wrestling. Not harmony — a deliberate collision.</p>
+        <p>From there I build the scene. Every ring entrance, every fight, every promo is designed as a moment: camera angle, crowd, pyrotechnics, and Hebrew dialogue generated in VEO3. I characterize, direct and refine until the video reads not as an automatic output but as a moment of mythology. VEO3 is not my brush; it is my partner in crime.</p>
+        <p>What is produced here is a proof of command: precise use of AI to create branding videos that are concept — not a pretty clip, but a video that sells a world, a character and an idea.</p>
+      </div></details>
+      <a class="labhook" href="#lab">⚙ HOW IT WAS BUILT · BEHIND THE LAB</a>
+    </div>
     <div class="offer rv">
       <div class="ol">עבור מותג · FOR A BRAND</div>
-      <p>דמות AI עקבית — פרזנטור או מסקוט עם פרסונה נעולה, שמדבר עברית ומופיע בכל קמפיין באותה זהות בדיוק.</p>
+      <p data-l="he">דמות AI עקבית — פרזנטור או מסקוט עם פרסונה נעולה, שמדבר עברית ומופיע בכל קמפיין באותה זהות בדיוק.</p>
+      <p data-l="en">A consistent AI character — a presenter or mascot with a locked persona, speaking Hebrew and appearing in every campaign with the exact same identity.</p>
     </div>
-    <div class="tags rv">
+    <div class="tags rv" data-l="he">
       <span class="tag">איפיון עקבי</span><span class="tag">בימוי סצנה</span><span class="tag en-f">Gemini · VEO3</span>
+    </div>
+    <div class="tags rv" data-l="en">
+      <span class="tag en-f">Consistent characterization</span><span class="tag en-f">Scene direction</span><span class="tag en-f">Gemini · VEO3</span>
     </div>
     <a class="btn rv" href="https://www.instagram.com/wow.big.comm/" target="_blank" rel="noopener">↗&nbsp; @wow.big.comm · Instagram</a>
   </div>
@@ -459,7 +555,8 @@
     <div class="rv ep-head">
       <div class="wk" style="--acc:#ff3a2a">פרק מלא · FULL EPISODE</div>
       <h2 class="ep-title"><span class="syn">המנהל הכתום</span></h2>
-      <p class="ep-sub">פרק שלם מ־BIG.COM — עם הסאונד המקורי. לחצו נגן.</p>
+      <p class="ep-sub" data-l="he">פרק שלם מ־BIG.COM — עם הסאונד המקורי. לחצו נגן.</p>
+      <p class="ep-sub" data-l="en">A full episode from BIG.COM — with original sound. Press play.</p>
     </div>
     <div class="ep-player rv">
       <video src="_media/big_episode.mp4" poster="_docimg/big_episode_poster.jpg" controls playsinline preload="none"></video>
@@ -477,7 +574,8 @@
       <div class="wk">02 · פנטזיה פוגשת לילה תל־אביבי · Fantasy Meets the Tel Aviv Night</div>
       <div class="wt"><span class="en-f">OY VEY</span></div>
       <div class="ws">סדרת וידאו בסגנון פילם-80s · An 80s-film video series</div>
-      <div class="wlead">המשימה: להפוך את "מבוכים ודרקונים" לערב תל־אביבי, <em>לקהל היפסטרי.</em></div>
+      <div class="wlead" data-l="he">המשימה: להפוך את "מבוכים ודרקונים" לערב תל־אביבי, <em>לקהל היפסטרי.</em></div>
+      <div class="wlead" data-l="en">The mission: turning Dungeons &amp; Dragons into a Tel Aviv night out, <em>for a hipster crowd.</em></div>
     </div>
     <div class="oygrid" style="margin-top:44px">
       <div class="oymedia rv">
@@ -485,22 +583,34 @@
         <div class="ph"><img loading="lazy" decoding="async" src="_docimg/oy_hero.jpg" alt="מלכת האלף"></div>
       </div>
       <div class="rv">
-        <div class="wbody" style="margin-top:0">
-          <p>המשימה כאן לא הייתה פשוטה — להלביש את "מבוכים ודרקונים" שחור ולשלוח אותו למסיבה, <b>בלי שירגיש מחופש.</b> כמו בכל הסגנון שלי, אני בא מעולם של שילובי תרבויות — אז התחלתי לשלב את עולם הפנטזיה בעולם הקלאב, עם איפיון שמכניס את הסממנים התרסותיים של שני העולמות ל-DNA אחד אחיד.</p>
-          <p>פנטזיה ו-AI הם זיווג מתבקש — אבל גם עולם הלילה המטושטש מתאים ל-AI בצורה מדהימה: גרֵין, ערפל, ניאון, פרצופים שצפים בין אמיתי לדמיוני. הניגוד בין דמות פנטזיה משכנעת לבין הסביבה הסינתטית הוא בדיוק מה שמייצר את הקסם.</p>
-          <p>לכן בחרתי לא לטשטש את גבולות ה-AI אלא להציג אותו בפרונט: <b>המלאכותיות היא לא משהו להסתיר — היא הסגנון.</b> אימנתי DNA ויזואלי שלם (פילם-80s, פלטה, גימור) כדי שכל פרק ייראה כמו אותה יד.</p>
+        <div class="wbody" style="margin-top:0" data-l="he">
+          <p>לשלב פנטזיה ולילה תל־אביבי ל-<b>DNA ויזואלי אחד</b> — בלי שזה ירגיש כמו תחפושת. אימנתי סגנון שלם (פילם-80s, פלטה, גימור) כדי שכל פרק ייראה כמו אותה יד, ובחרתי להציג את המלאכותיות בפרונט במקום להסתיר אותה.</p>
+          <details class="more"><summary>קרא עוד</summary><div class="wbody">
+            <p>המשימה כאן לא הייתה פשוטה — להלביש את "מבוכים ודרקונים" שחור ולשלוח אותו למסיבה, <b>בלי שירגיש מחופש.</b> כמו בכל הסגנון שלי, אני בא מעולם של שילובי תרבויות — אז התחלתי לשלב את עולם הפנטזיה בעולם הקלאב, עם איפיון שמכניס את הסממנים התרסותיים של שני העולמות ל-DNA אחד אחיד.</p>
+            <p>פנטזיה ו-AI הם זיווג מתבקש — אבל גם עולם הלילה המטושטש מתאים ל-AI בצורה מדהימה: גרֵין, ערפל, ניאון, פרצופים שצפים בין אמיתי לדמיוני. הניגוד בין דמות פנטזיה משכנעת לבין הסביבה הסינתטית הוא בדיוק מה שמייצר את הקסם.</p>
+            <p>לכן בחרתי לא לטשטש את גבולות ה-AI אלא להציג אותו בפרונט: <b>המלאכותיות היא לא משהו להסתיר — היא הסגנון.</b> אימנתי DNA ויזואלי שלם (פילם-80s, פלטה, גימור) כדי שכל פרק ייראה כמו אותה יד.</p>
+          </div></details>
+          <a class="labhook" href="#lab">⚙ איך זה נבנה · מאחורי המעבדה</a>
         </div>
-        <details class="en"><summary>ENGLISH</summary>
-          <p>The mission here was anything but simple — to dress Dungeons &amp; Dragons in black and send it to a party, without it feeling like a costume. As in all of my style, I come from a world of culture-mixing — so I began fusing the fantasy world with the club world, with a characterization that folds the defiant signifiers of both worlds into one unified DNA.</p>
-          <p>Fantasy and AI are a natural pairing — but the blurry world of nightlife suits AI astonishingly well too: grain, haze, neon, faces that float between the real and the imagined. The contrast between a convincing fantasy character and the synthetic environment is exactly what creates the magic.</p>
-          <p>So I chose not to blur the boundaries of the AI but to put it front and center: the artificiality is not something to hide — it is the style. I trained a full visual DNA (80s-film, palette, finish) so every episode looks like the same hand.</p>
-        </details>
+        <div class="wbody" style="margin-top:0" data-l="en">
+          <p>Fusing fantasy and Tel Aviv nightlife into <b>one visual DNA</b> — without it feeling like a costume. I trained a full style (80s-film, palette, finish) so every episode looks like the same hand, and chose to put the artificiality front and center instead of hiding it.</p>
+          <details class="more"><summary>READ MORE</summary><div class="wbody">
+            <p>The mission here was anything but simple — to dress Dungeons &amp; Dragons in black and send it to a party, without it feeling like a costume. As in all of my style, I come from a world of culture-mixing — so I began fusing the fantasy world with the club world, with a characterization that folds the defiant signifiers of both worlds into one unified DNA.</p>
+            <p>Fantasy and AI are a natural pairing — but the blurry world of nightlife suits AI astonishingly well too: grain, haze, neon, faces that float between the real and the imagined. The contrast between a convincing fantasy character and the synthetic environment is exactly what creates the magic.</p>
+            <p>So I chose not to blur the boundaries of the AI but to put it front and center: the artificiality is not something to hide — it is the style. I trained a full visual DNA (80s-film, palette, finish) so every episode looks like the same hand.</p>
+          </div></details>
+          <a class="labhook" href="#lab">⚙ HOW IT WAS BUILT · BEHIND THE LAB</a>
+        </div>
         <div class="offer">
           <div class="ol">עבור מותג · FOR A BRAND</div>
-          <p>סדרת תוכן עם סגנון חתום — פורמט אנכי ויראלי ו-DNA ויזואלי אחד, פרק אחרי פרק שנראה כמו אותה יד.</p>
+          <p data-l="he">סדרת תוכן עם סגנון חתום — פורמט אנכי ויראלי ו-DNA ויזואלי אחד, פרק אחרי פרק שנראה כמו אותה יד.</p>
+          <p data-l="en">A content series with a signature style — a viral vertical format and one visual DNA, episode after episode that looks like the same hand.</p>
         </div>
-        <div class="tags">
+        <div class="tags" data-l="he">
           <span class="tag">שילוב תרבויות</span><span class="tag">AI בפרונט</span><span class="tag en-f">VEO3 · trained style</span>
+        </div>
+        <div class="tags" data-l="en">
+          <span class="tag en-f">Culture-mixing</span><span class="tag en-f">AI up front</span><span class="tag en-f">VEO3 · trained style</span>
         </div>
       </div>
     </div>
@@ -518,14 +628,34 @@
     <div class="castcard rv">
       <div class="cimg"><img loading="lazy" decoding="async" src="_docimg/cast_preview.jpg" alt="BLOODY ROTHSCHILD — בחירת דמות"></div>
       <div class="cbody">
-        <div class="col">הפיצ'ר · CHOOSE YOUR FIGHTER</div>
-        <div class="cttl">האורחים נכנסים למשחק<br>לפני שהם מגיעים</div>
-        <div class="ctxt">בניתי לאירוע עמוד <b>בחירת דמות</b> משלו — כל אורח בוחר את הדמות שלו מראש ונכנס אל תוך העולם עוד לפני שדרך בדלת. <b>ההשתתפות מתחילה לפני הכניסה.</b></div>
+        <div class="col" data-l="he">הפיצ'ר · CHOOSE YOUR FIGHTER</div>
+        <div class="col" data-l="en">THE FEATURE · CHOOSE YOUR FIGHTER</div>
+        <div class="cttl" data-l="he">האורחים נכנסים למשחק<br>לפני שהם מגיעים</div>
+        <div class="cttl" data-l="en">Guests enter the game<br>before they arrive</div>
+        <div class="ctxt" data-l="he">בניתי לאירוע עמוד <b>בחירת דמות</b> משלו — כל אורח בוחר את הדמות שלו מראש ונכנס אל תוך העולם עוד לפני שדרך בדלת. <b>ההשתתפות מתחילה לפני הכניסה.</b> שש הדמויות למטה — כל אחת עם יכולת חתומה, סיפור רקע ונתוני D&amp;D אמיתיים.</div>
+        <div class="ctxt" data-l="en">I built the event its own <b>character-select</b> page — every guest picks their character in advance and steps into the world before they even walk through the door. <b>Participation starts before entry.</b> The six below — each with a signature ability, backstory and real D&amp;D stats.</div>
         <div class="btnrow" style="--acc:#16e0d4">
-          <a class="btn" href="https://wartlv.github.io/tlv-war/cast/" target="_blank" rel="noopener">↗&nbsp; BLOODY ROTHSCHILD · בחרו דמות</a>
+          <a class="btn" href="https://wartlv.github.io/tlv-war/cast/" target="_blank" rel="noopener" data-l="he">↗&nbsp; BLOODY ROTHSCHILD · בחרו דמות</a>
+          <a class="btn" href="https://wartlv.github.io/tlv-war/cast/" target="_blank" rel="noopener" data-l="en">↗&nbsp; BLOODY ROTHSCHILD · CHOOSE A CHARACTER</a>
           <a class="btn ghost2" href="https://www.instagram.com/wow.big.comm/" target="_blank" rel="noopener">@wow.big.comm</a>
         </div>
       </div>
+    </div>
+
+    <!-- OY VEY · in-page cast showcase (6 branded portraits) -->
+    <div class="castgrid rv">
+      <div class="cchip"><img loading="lazy" decoding="async" src="_docimg/cast_tuhar.jpg" alt="TUHAR — THE HEALER">
+        <div class="cclabel"><div class="ccname">TUHAR</div><div class="cccls">THE HEALER</div></div></div>
+      <div class="cchip"><img loading="lazy" decoding="async" src="_docimg/cast_deborah.jpg" alt="DEBORAH — THE SEER">
+        <div class="cclabel"><div class="ccname">DEBORAH</div><div class="cccls">THE SEER</div></div></div>
+      <div class="cchip"><img loading="lazy" decoding="async" src="_docimg/cast_harel.jpg" alt="HAREL — THE SOLDIER">
+        <div class="cclabel"><div class="ccname">HAREL</div><div class="cccls">THE SOLDIER</div></div></div>
+      <div class="cchip"><img loading="lazy" decoding="async" src="_docimg/cast_leon.jpg" alt="LEON — THE SMALL GIANT">
+        <div class="cclabel"><div class="ccname">LEON</div><div class="cccls">SMALL GIANT</div></div></div>
+      <div class="cchip"><img loading="lazy" decoding="async" src="_docimg/cast_diana.jpg" alt="DIANA — THE HIPPY">
+        <div class="cclabel"><div class="ccname">DIANA</div><div class="cccls">THE HIPPY</div></div></div>
+      <div class="cchip"><img loading="lazy" decoding="async" src="_docimg/cast_meshi.jpg" alt="MESHI — THE THIEF">
+        <div class="cclabel"><div class="ccname">MESHI</div><div class="cccls">THE THIEF</div></div></div>
     </div>
   </div>
 </section>
@@ -538,7 +668,8 @@
       <div class="wk">03 · המניפסט כמשחק · The Manifesto, Playable</div>
       <div class="wt"><span class="en-f">WAR TLV</span></div>
       <div class="ws">משחק לחימה בעברית · A Hebrew fighting game</div>
-      <div class="wlead">השלב שבו אתם, הקהל, בוחרים מי ה-Heel ומי ה-Face — <em>וזה מה שהופך את הקונספט לחי.</em></div>
+      <div class="wlead" data-l="he">השלב שבו אתם, הקהל, בוחרים מי ה-Heel ומי ה-Face — <em>וזה מה שהופך את הקונספט לחי.</em></div>
+      <div class="wlead" data-l="en">The stage where you, the audience, decide who's the Heel and who's the Face — <em>and that's what makes the concept alive.</em></div>
     </div>
     <div class="warrow rv">
       <div class="ph"><img loading="lazy" decoding="async" src="_docimg/war_select.jpg" alt="בחירת דמות"></div>
@@ -547,22 +678,34 @@
       <div class="ph"><img loading="lazy" decoding="async" src="_docimg/war_pick.jpg" alt="רוסטר"></div>
     </div>
     <div class="cap rv">בחירת דמות · VS · קרב · רוסטר — צילומי מסך אמיתיים מתוך המשחק</div>
-    <div class="wbody rv">
-      <p>WAR TLV הוא BIG.COM כשהקהל מחזיק בשלט. לקחתי את יקום הדמויות והפכתי אותו ל<b>משחק לחימה אמיתי</b> שרץ בדפדפן ובנייד — כי זהות מוגזמת לא נועדה רק לצפייה, אלא להשתתפות. אתם לא צופים בזה בזמן שאתם גוללים בשירותים — אתם מי שמחליט מי המנצח.</p>
-      <p>כל לוחם הוא מותג: שם, צבע, שיר כניסה וטקס. בניתי את המנוע מאפס — מצלמה דינמית, רקע גרפיטי חי, מד "סופר" ומערכת הגנה אקטיבית בתזמון — כדי שהמיתולוגיה תהיה משהו שמשחקים בו, לא רק צופים בו.</p>
-      <p>זה הניסיון למתוח את הפופ החדש עד הקצה: להפוך את הקהל מצופה למשתתף. וזו הדרך הטובה ביותר להכניס אנשים אל תוך המותג — <b>כשאתה משחק בדמות, אתה כבר חלק ממנה.</b></p>
+    <div class="wbody rv" data-l="he">
+      <p>WAR TLV הוא BIG.COM כשהקהל מחזיק בשלט: <b>משחק לחימה אמיתי</b> שרץ בדפדפן ובנייד, בנוי מאפס — כי זהות מוגזמת לא נועדה רק לצפייה, אלא להשתתפות. כל לוחם הוא מותג עם שם, צבע ושיר כניסה משלו.</p>
+      <details class="more"><summary>קרא עוד</summary><div class="wbody">
+        <p>WAR TLV הוא BIG.COM כשהקהל מחזיק בשלט. לקחתי את יקום הדמויות והפכתי אותו ל<b>משחק לחימה אמיתי</b> שרץ בדפדפן ובנייד — כי זהות מוגזמת לא נועדה רק לצפייה, אלא להשתתפות. אתם לא צופים בזה בזמן שאתם גוללים בשירותים — אתם מי שמחליט מי המנצח.</p>
+        <p>כל לוחם הוא מותג: שם, צבע, שיר כניסה וטקס. בניתי את המנוע מאפס — מצלמה דינמית, רקע גרפיטי חי, מד "סופר" ומערכת הגנה אקטיבית בתזמון — כדי שהמיתולוגיה תהיה משהו שמשחקים בו, לא רק צופים בו.</p>
+        <p>זה הניסיון למתוח את הפופ החדש עד הקצה: להפוך את הקהל מצופה למשתתף. וזו הדרך הטובה ביותר להכניס אנשים אל תוך המותג — <b>כשאתה משחק בדמות, אתה כבר חלק ממנה.</b></p>
+      </div></details>
+      <a class="labhook" href="#lab">⚙ איך זה נבנה · מאחורי המעבדה</a>
     </div>
-    <details class="en rv"><summary>ENGLISH</summary>
-      <p>WAR TLV is BIG.COM with the audience holding the controller. I turned the universe of characters into a real fighting game running in the browser and on mobile — because an exaggerated identity isn't meant only to be watched, but to be played. You're not watching this while scrolling on the toilet — you're the one who decides who wins.</p>
-      <p>Every fighter is a brand: name, color, entrance theme and ritual. I built the engine from scratch — dynamic camera, a living graffiti backdrop, a "super" meter and a timing-based active-defence system — so the mythology becomes something you play, not just watch.</p>
-      <p>This is the attempt to push the new pop as far as it goes: turning the audience from viewers into participants. And it's the best way to pull people into the brand — once you play a character, you're already part of it.</p>
-    </details>
+    <div class="wbody rv" data-l="en">
+      <p>WAR TLV is BIG.COM with the audience holding the controller: <b>a real fighting game</b> running in the browser and on mobile, built from scratch — because an exaggerated identity isn't meant only to be watched, but to be played. Every fighter is a brand with its own name, color and entrance theme.</p>
+      <details class="more"><summary>READ MORE</summary><div class="wbody">
+        <p>WAR TLV is BIG.COM with the audience holding the controller. I turned the universe of characters into a real fighting game running in the browser and on mobile — because an exaggerated identity isn't meant only to be watched, but to be played. You're not watching this while scrolling on the toilet — you're the one who decides who wins.</p>
+        <p>Every fighter is a brand: name, color, entrance theme and ritual. I built the engine from scratch — dynamic camera, a living graffiti backdrop, a "super" meter and a timing-based active-defence system — so the mythology becomes something you play, not just watch.</p>
+        <p>This is the attempt to push the new pop as far as it goes: turning the audience from viewers into participants. And it's the best way to pull people into the brand — once you play a character, you're already part of it.</p>
+      </div></details>
+      <a class="labhook" href="#lab">⚙ HOW IT WAS BUILT · BEHIND THE LAB</a>
+    </div>
     <div class="offer rv">
       <div class="ol">עבור מותג · FOR A BRAND</div>
-      <p>חוויה אינטראקטיבית ממותגת — משחק או מנגנון שמעביר את הקהל מצפייה להשתתפות, ומכניס אותו אל תוך המותג.</p>
+      <p data-l="he">חוויה אינטראקטיבית ממותגת — משחק או מנגנון שמעביר את הקהל מצפייה להשתתפות, ומכניס אותו אל תוך המותג.</p>
+      <p data-l="en">A branded interactive experience — a game or mechanism that moves the audience from watching to participating, pulling them into the brand.</p>
     </div>
-    <div class="tags rv">
+    <div class="tags rv" data-l="he">
       <span class="tag">הקהל משתתף</span><span class="tag">קרבה למותג</span><span class="tag en-f">Claude · HTML5</span><span class="tag en-f">Gemini · Runway</span>
+    </div>
+    <div class="tags rv" data-l="en">
+      <span class="tag en-f">Audience participates</span><span class="tag en-f">Brand proximity</span><span class="tag en-f">Claude · HTML5</span><span class="tag en-f">Gemini · Runway</span>
     </div>
     <a class="btn rv" href="https://wartlv.github.io/tlv-war/" target="_blank" rel="noopener">▶&nbsp; PLAY · wartlv.github.io</a>
   </div>
@@ -576,7 +719,8 @@
       <div class="wk">04 · מיקס־מדיה מתוך רגע אמיתי · Mixed Media From a Real Moment</div>
       <div class="wt">ניצ ופלדוס</div>
       <div class="ws">Situationship in the Middle East</div>
-      <div class="wlead">קומיקס שנולד ברגע שבו נפל טיל — <em>ובאותו זמן התחילה אהבה.</em></div>
+      <div class="wlead" data-l="he">קומיקס שנולד ברגע שבו נפל טיל — <em>ובאותו זמן התחילה אהבה.</em></div>
+      <div class="wlead" data-l="en">A comic born the moment a missile fell — <em>and at the same time, a love story began.</em></div>
     </div>
     <div class="comicrow rv">
       <div class="ph"><img loading="lazy" decoding="async" src="_docimg/comics_cover.jpg" alt="כריכה"></div>
@@ -584,24 +728,37 @@
       <div class="ph"><video src="_media/comics_v1.mp4" poster="_docimg/comics_v1_poster.jpg" preload="metadata" autoplay muted loop playsinline></video><div class="vbadge">VIDEO</div></div>
     </div>
     <div class="cap rv" style="text-align:center">כריכה · עמוד מהספר · פאנל מונפש (Runway / VEO)</div>
-    <div class="wbody rv">
-      <p>אני חנון קומיקס מושבע, וכאן יצאתי למתוח את גבולות הפורמט. עבדתי בטכניקת <b>מיקס־מדיה</b> שמשלבת סגנונות וטכניקות שונים — מעבר בין דימויים בסגנון קומיקס קלאסי מאויר לבין וידאו במגוון סגנונות. זה מה שמזריק את הפאנק־רוק אל תוך האיור הקלאסי.</p>
-      <p>הקומיקס נולד בתוך המלחמה השנייה מול איראן. כמה ימים לתוכה נפל טיל בליסטי במרכז תל אביב, כ-400 מטר מאיתנו — ראינו ממש את רגע הפגיעה. השילוב של מלחמה ושל התחלה חדשה של זוגיות, בשלב שעוד לא קראנו לו "זוגיות", יצר רגע מיוחד. הקומיקס היה הדרך שלי לעכל ולתפוס את הרגעים שעברנו יחד במציאות המזרח־תיכונית שלנו. <b>השם הוא לא בדיחה — זו הייתה המציאות.</b></p>
-      <p>כלי ה-AI מאפשרים ליוצרים כמוני לתפוס רגעים עכשוויים במהירות — כך שמההתחלה ועד הסוף הרגע עדיין כאן והעבודה עדיין רלוונטית. זו הנקודה: לא רק לאייר, אלא לעצור את ההווה לפני שהוא חולף.</p>
+    <div class="wbody rv" data-l="he">
+      <p>קומיקס במיקס־מדיה שנולד ברגע אמיתי: טיל בליסטי נפל כ-400 מטר מאיתנו, ובאותו זמן התחילה זוגיות. <b>השם הוא לא בדיחה — זו הייתה המציאות.</b> כלי AI איפשרו לי לתפוס את הרגע במהירות, לפני שהוא חולף.</p>
+      <details class="more"><summary>קרא עוד</summary><div class="wbody">
+        <p>אני חנון קומיקס מושבע, וכאן יצאתי למתוח את גבולות הפורמט. עבדתי בטכניקת <b>מיקס־מדיה</b> שמשלבת סגנונות וטכניקות שונים — מעבר בין דימויים בסגנון קומיקס קלאסי מאויר לבין וידאו במגוון סגנונות. זה מה שמזריק את הפאנק־רוק אל תוך האיור הקלאסי.</p>
+        <p>הקומיקס נולד בתוך המלחמה השנייה מול איראן. כמה ימים לתוכה נפל טיל בליסטי במרכז תל אביב, כ-400 מטר מאיתנו — ראינו ממש את רגע הפגיעה. השילוב של מלחמה ושל התחלה חדשה של זוגיות, בשלב שעוד לא קראנו לו "זוגיות", יצר רגע מיוחד. הקומיקס היה הדרך שלי לעכל ולתפוס את הרגעים שעברנו יחד במציאות המזרח־תיכונית שלנו.</p>
+        <p>כלי ה-AI מאפשרים ליוצרים כמוני לתפוס רגעים עכשוויים במהירות — כך שמההתחלה ועד הסוף הרגע עדיין כאן והעבודה עדיין רלוונטית. זו הנקודה: לא רק לאייר, אלא לעצור את ההווה לפני שהוא חולף.</p>
+      </div></details>
+      <a class="labhook" href="#lab">⚙ איך זה נבנה · מאחורי המעבדה</a>
     </div>
-    <details class="en rv"><summary>ENGLISH</summary>
-      <p>I'm a sworn comics nerd, and here I set out to stretch the format. I worked in a mixed-media technique that fuses different styles and techniques — moving between classic illustrated comic panels and video in a range of styles. That's what injects punk rock into the classic illustration.</p>
-      <p>The comic was born inside the second war with Iran. A few days in, a ballistic missile fell in central Tel Aviv, about 400 meters from us — we saw the moment of impact itself. The collision of war and the beginning of a relationship — at a stage we hadn't yet called "a relationship" — created a singular moment. The comic was my way to process and hold what we lived through together in our Middle Eastern reality. The title is not a joke — it was the reality.</p>
-      <p>AI tools let creators like me capture present-tense moments fast — so from start to finish the moment is still here and the work is still relevant. That's the point: not just to illustrate, but to freeze the present before it passes.</p>
-    </details>
+    <div class="wbody rv" data-l="en">
+      <p>A mixed-media comic born from a real moment: a ballistic missile fell about 400 meters from us, and at the same time, a relationship began. <b>The title is not a joke — it was the reality.</b> AI tools let me capture the moment fast, before it passed.</p>
+      <details class="more"><summary>READ MORE</summary><div class="wbody">
+        <p>I'm a sworn comics nerd, and here I set out to stretch the format. I worked in a mixed-media technique that fuses different styles and techniques — moving between classic illustrated comic panels and video in a range of styles. That's what injects punk rock into the classic illustration.</p>
+        <p>The comic was born inside the second war with Iran. A few days in, a ballistic missile fell in central Tel Aviv, about 400 meters from us — we saw the moment of impact itself. The collision of war and the beginning of a relationship — at a stage we hadn't yet called "a relationship" — created a singular moment. The comic was my way to process and hold what we lived through together in our Middle Eastern reality.</p>
+        <p>AI tools let creators like me capture present-tense moments fast — so from start to finish the moment is still here and the work is still relevant. That's the point: not just to illustrate, but to freeze the present before it passes.</p>
+      </div></details>
+      <a class="labhook" href="#lab">⚙ HOW IT WAS BUILT · BEHIND THE LAB</a>
+    </div>
     <div class="offer rv">
       <div class="ol">האפשרות · THE POSSIBILITY</div>
-      <p>IP מאויר שקם לחיים — דמות מקורית ועקבית לספר, לסדרה או כמסקוט, בסטילס ובווידאו מדבר.</p>
+      <p data-l="he">IP מאויר שקם לחיים — דמות מקורית ועקבית לספר, לסדרה או כמסקוט, בסטילס ובווידאו מדבר.</p>
+      <p data-l="en">Illustrated IP brought to life — an original, consistent character for a book, a series, or a mascot, in stills and in talking video.</p>
     </div>
-    <div class="tags rv">
+    <div class="tags rv" data-l="he">
       <span class="tag">מיקס־מדיה</span><span class="tag">דמות עקבית</span><span class="tag en-f">Gemini · Runway Act-Two</span>
     </div>
-    <a class="btn rv" href="https://www.instagram.com/p/DVia0RiDe_q/?img_index=1" target="_blank" rel="noopener">↗&nbsp; לצפייה בקומיקס · Instagram</a>
+    <div class="tags rv" data-l="en">
+      <span class="tag en-f">Mixed media</span><span class="tag en-f">Consistent character</span><span class="tag en-f">Gemini · Runway Act-Two</span>
+    </div>
+    <a class="btn rv" href="https://www.instagram.com/p/DVia0RiDe_q/?img_index=1" target="_blank" rel="noopener" data-l="he">↗&nbsp; לצפייה בקומיקס · Instagram</a>
+    <a class="btn rv" href="https://www.instagram.com/p/DVia0RiDe_q/?img_index=1" target="_blank" rel="noopener" data-l="en">↗&nbsp; View the comic · Instagram</a>
   </div>
 </section>
 
@@ -614,26 +771,39 @@
       <div class="wk">05 · בידול אסטרטגי · Strategic Differentiation</div>
       <div class="wt"><span class="en-f">PALA PUNK</span></div>
       <div class="ws">ספורט אורבני לפאדל · Urban padel brand</div>
-      <div class="wlead">המותג שגורם לך לא להרגיש שהתחפשת — אלא פשוט <em>להמשיך ללבוש שחור. תמיד.</em></div>
+      <div class="wlead" data-l="he">המותג שגורם לך לא להרגיש שהתחפשת — אלא פשוט <em>להמשיך ללבוש שחור. תמיד.</em></div>
+      <div class="wlead" data-l="en">The brand that doesn't make you feel like you dressed up — you just <em>keep wearing black. Always.</em></div>
     </div>
     <div class="palagrid" style="margin-top:44px">
       <div class="rv">
-        <div class="wbody" style="margin-top:0">
-          <p>PALA PUNK הוא ניסיון ליצור <b>בידול חזק</b> בין המיתוג הלבן והמוקפד של הטניס לבין הנראות של הפאדל — ספורט חדש שהזהות שלו עדיין נבנית. הפרצה הזו אפשרה לי לקחת סגנון שמתאים לחיי הלילה — מסיבות, קלאבים וכל הלייפסטייל שמתחת למטריית הוולנס.</p>
-          <p>יש אנשים שחיי הלילה הם חלק נורמלי מהחיים — לרוב אנשי הייטק — וההיגיון שלהם הוא לחבר את הספורט לאופי המחתרתי שלהם. הלכתי עם זה רחוק: בחרתי דוגמנית ייצוגית, שרירית, אפילו טיפה גברית, כדי להראות את הליברליות שבאה עם חיי הלילה — חלק מהערכים של המותג.</p>
-          <p>העיצוב מושפע מתרבות רחוב במינימליזם של חיי הלילה — לכן הוא גדול וחד. <b>שחור מָאט מוחלט, פס לילך דק כדיוק היחיד, וספל מאצ'ה כצבע החם היחיד בפריים.</b> לא מותג שצועק; מותג שיודע.</p>
+        <div class="wbody" style="margin-top:0" data-l="he">
+          <p><b>בידול חזק</b> בין המיתוג הלבן והמוקפד של הטניס לבין הפאדל — ספורט חדש שהזהות שלו עדיין נבנית. עיצוב שחור מָאט מוחלט, פס לילך דק כדיוק היחיד, השאול מחיי הלילה התל־אביביים.</p>
+          <details class="more"><summary>קרא עוד</summary><div class="wbody">
+            <p>PALA PUNK הוא ניסיון ליצור <b>בידול חזק</b> בין המיתוג הלבן והמוקפד של הטניס לבין הנראות של הפאדל — ספורט חדש שהזהות שלו עדיין נבנית. הפרצה הזו אפשרה לי לקחת סגנון שמתאים לחיי הלילה — מסיבות, קלאבים וכל הלייפסטייל שמתחת למטריית הוולנס.</p>
+            <p>יש אנשים שחיי הלילה הם חלק נורמלי מהחיים — לרוב אנשי הייטק — וההיגיון שלהם הוא לחבר את הספורט לאופי המחתרתי שלהם. הלכתי עם זה רחוק: בחרתי דוגמנית ייצוגית, שרירית, אפילו טיפה גברית, כדי להראות את הליברליות שבאה עם חיי הלילה — חלק מהערכים של המותג.</p>
+            <p>העיצוב מושפע מתרבות רחוב במינימליזם של חיי הלילה — לכן הוא גדול וחד. <b>שחור מָאט מוחלט, פס לילך דק כדיוק היחיד, וספל מאצ'ה כצבע החם היחיד בפריים.</b> לא מותג שצועק; מותג שיודע.</p>
+          </div></details>
+          <a class="labhook" href="#lab">⚙ איך זה נבנה · מאחורי המעבדה</a>
         </div>
-        <details class="en"><summary>ENGLISH</summary>
-          <p>PALA PUNK is an attempt to draw a sharp line between the white, meticulous branding of tennis and the look of padel — a new sport whose identity is still being formed. That opening let me take a style that belongs to nightlife — parties, clubs, and the whole lifestyle under the wellness umbrella.</p>
-          <p>For some people nightlife is a normal part of life — often in hi-tech — and it makes perfect sense to connect the sport with their underground character. I pushed it far: I cast a model who is striking, muscular, even slightly masculine, to show the liberalism that comes with nightlife — part of the brand's values.</p>
-          <p>The design is street culture in the minimalism of nightlife — so it is big and sharp. Absolute matte black, a single thin lilac stripe, a matcha cup as the only warm color in frame. Not a brand that shouts; a brand that knows.</p>
-        </details>
+        <div class="wbody" style="margin-top:0" data-l="en">
+          <p>A sharp <b>differentiation</b> between tennis's white, meticulous branding and padel — a new sport whose identity is still being formed. Absolute matte black, a single thin lilac stripe, borrowed from Tel Aviv nightlife.</p>
+          <details class="more"><summary>READ MORE</summary><div class="wbody">
+            <p>PALA PUNK is an attempt to draw a sharp line between the white, meticulous branding of tennis and the look of padel — a new sport whose identity is still being formed. That opening let me take a style that belongs to nightlife — parties, clubs, and the whole lifestyle under the wellness umbrella.</p>
+            <p>For some people nightlife is a normal part of life — often in hi-tech — and it makes perfect sense to connect the sport with their underground character. I pushed it far: I cast a model who is striking, muscular, even slightly masculine, to show the liberalism that comes with nightlife — part of the brand's values.</p>
+            <p>The design is street culture in the minimalism of nightlife — so it is big and sharp. Absolute matte black, a single thin lilac stripe, a matcha cup as the only warm color in frame. Not a brand that shouts; a brand that knows.</p>
+          </div></details>
+          <a class="labhook" href="#lab">⚙ HOW IT WAS BUILT · BEHIND THE LAB</a>
+        </div>
         <div class="offer">
           <div class="ol">עבור מותג · FOR A BRAND</div>
-          <p>זהות שלמה מתוך טענה אחת — שפה ויזואלית חדה שמבדלת אותך מכל מי שנראה כמו כולם.</p>
+          <p data-l="he">זהות שלמה מתוך טענה אחת — שפה ויזואלית חדה שמבדלת אותך מכל מי שנראה כמו כולם.</p>
+          <p data-l="en">A whole identity from one claim — a sharp visual language that sets you apart from everyone who looks like everyone else.</p>
         </div>
-        <div class="tags">
+        <div class="tags" data-l="he">
           <span class="tag">בידול אסטרטגי</span><span class="tag">תרבות רחוב × מינימליזם</span><span class="tag en-f">Claude · Gemini · VEO3</span>
+        </div>
+        <div class="tags" data-l="en">
+          <span class="tag en-f">Strategic differentiation</span><span class="tag en-f">Street culture × minimalism</span><span class="tag en-f">Claude · Gemini · VEO3</span>
         </div>
         <a class="btn" href="https://www.instagram.com/palapunk.co/" target="_blank" rel="noopener" style="--acc:#cbb3ff">↗&nbsp; @palapunk.co · Instagram</a>
       </div>
@@ -641,6 +811,70 @@
         <div class="ph tall"><video src="_media/pala_v1.mp4" poster="_docimg/pala_v1_poster.jpg" preload="metadata" autoplay muted loop playsinline></video><div class="vbadge">VIDEO</div></div>
         <div class="ph"><img loading="lazy" decoding="async" src="_docimg/pala_hero.jpg" alt="ספל מאצ'ה"></div>
         <div class="ph"><img loading="lazy" decoding="async" src="_docimg/pala_2.jpg" alt="פאדל על מגרש בטון"></div>
+        <div class="ph"><video src="_media/pala_v2.mp4" data-full="_media/pala_v2_src.mp4" poster="_docimg/pala_v2_poster.jpg" preload="metadata" autoplay muted loop playsinline></video><div class="vbadge">VIDEO</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ BEHIND THE LAB · technical capabilities ═══════════ -->
+<section class="lab" id="lab">
+  <div class="wrap">
+    <div class="rv">
+      <div class="wk" style="--acc:#16e0d4">היכולות · CAPABILITIES</div>
+      <h2 class="lab-title" data-l="he">מאחורי המעבדה <span class="en-f" style="color:var(--ink3);font-size:.42em;letter-spacing:.1em">/ BEHIND THE LAB</span></h2>
+      <h2 class="lab-title" data-l="en">BEHIND THE LAB</h2>
+      <p class="lab-sub" data-l="he">כל עולם למעלה הוא תוצר — כאן הכלים והשיטות. לא הפרומפטים ולא ה"מתכונים", אלא סוג העבודה: מה נדרש כדי שדמות AI תישאר עקבית לאורך עשרות סרטונים, שסגנון שלם יילמד ויוחל, ושמותג ייבנה כמערכת ולא כפוסט.</p>
+      <p class="lab-sub" data-l="en">Every world above is a result — this is the tooling and method behind it. Not prompts or "recipes," but the kind of work: what it takes for an AI character to stay consistent across dozens of videos, for a full style to be trained and applied, and for a brand to be built as a system, not a post.</p>
+    </div>
+    <div class="labgrid rv">
+      <div class="labcard">
+        <div class="lk">🧬</div>
+        <div class="lt" data-l="he">DNA ויזואלי מאומן</div>
+        <div class="lt" data-l="en">Trained visual DNA</div>
+        <div class="lx" data-l="he">מערכת סגנון שלמה — פלטה, גימור, אווירה — כך שעולם שלם נראה כמו יד אחת, פרק אחרי פרק.</div>
+        <div class="lx" data-l="en">A full style system — palette, finish, mood — so an entire world reads as one hand, episode after episode.</div>
+        <div class="lw">OY VEY · BIG.COM</div>
+      </div>
+      <div class="labcard">
+        <div class="lk">🎭</div>
+        <div class="lt" data-l="he">עקביות דמות נעולה</div>
+        <div class="lt" data-l="en">Locked character consistency</div>
+        <div class="lx" data-l="he">זהות אחת — מראה, פרסונה, שפת גוף — נשמרת זהה על פני עשרות תמונות וסרטונים דרך תיאור מדויק ותמונת רפרנס.</div>
+        <div class="lx" data-l="en">One identity — look, persona, body language — held identical across dozens of stills and videos through precise description and a reference image.</div>
+        <div class="lw">BIG.COM · ניצ ופלדוס</div>
+      </div>
+      <div class="labcard">
+        <div class="lk">🗺️</div>
+        <div class="lt" data-l="he">מערכת מותג מלאה</div>
+        <div class="lt" data-l="en">Full brand systems</div>
+        <div class="lx" data-l="he">לוקחים שאלה עמומה והופכים אותה למיצוב, ארכיטקטורת מוצר, מסע לקוח ושפה — ב-Brand Bible שלם שאפשר לפתוח לפיו עסק.</div>
+        <div class="lx" data-l="en">Taking a vague question and turning it into positioning, product architecture, customer journey and language — a full Brand Bible a business can be opened by.</div>
+        <div class="lw">ATRO</div>
+      </div>
+      <div class="labcard">
+        <div class="lk">🕹️</div>
+        <div class="lt" data-l="he">מנוע מ-0</div>
+        <div class="lt" data-l="en">Engine, from zero</div>
+        <div class="lx" data-l="he">בניית מוצר אינטראקטיבי מלא — מצלמה דינמית, מערכת קרב בתזמון, מד "סופר" — שרץ בדפדפן ובנייד.</div>
+        <div class="lx" data-l="en">Building a full interactive product — dynamic camera, timing-based combat, a "super" meter — running in the browser and on mobile.</div>
+        <div class="lw">WAR TLV</div>
+      </div>
+      <div class="labcard">
+        <div class="lk">🎬</div>
+        <div class="lt" data-l="he">בימוי סצנה ב-AI</div>
+        <div class="lt" data-l="en">AI scene direction</div>
+        <div class="lx" data-l="he">כל כניסה, קרב ופרומו מתוכננים כרגע — זווית מצלמה, קהל, תזמון, דיאלוג — ומדויקים עד שהם קוראים כמיתולוגיה, לא כפלט.</div>
+        <div class="lx" data-l="en">Every entrance, fight and promo is designed as a moment — camera angle, crowd, timing, dialogue — refined until it reads as mythology, not output.</div>
+        <div class="lw">BIG.COM · OY VEY</div>
+      </div>
+      <div class="labcard">
+        <div class="lk">🔀</div>
+        <div class="lt" data-l="he">תזמור רב-מודלי</div>
+        <div class="lt" data-l="en">Multi-model orchestration</div>
+        <div class="lx" data-l="he">כלים שונים לתפקידים שונים — לוגיקה ובנייה, תמונה, וידאו, סאונד — משולבים לכדי תוצר אחד עקבי.</div>
+        <div class="lx" data-l="en">Different tools for different jobs — logic and build, image, video, sound — combined into one consistent output.</div>
+        <div class="lw en-f">Claude · Gemini · VEO3 · Runway</div>
       </div>
     </div>
   </div>
@@ -651,51 +885,70 @@
   <div class="wrap">
     <div class="rv">
       <div class="wk" style="--acc:#7b2ff7">האלבום · THE ROSTER</div>
-      <h2 class="album-title">שיר לכל דמות <span class="en-f" style="color:var(--ink3);font-size:.42em;letter-spacing:.1em">/ A SONG PER FIGHTER</span></h2>
-      <p class="album-sub">כל לוחם ב־WAR TLV קיבל <b>פרסונה שלמה</b> — לא רק מראה וסטטים, אלא גם <b>שיר כניסה משלו</b>. זה חלק מהפרסונליזציה: לכל דמות קול. לחצו על דמות כדי לשמוע את השיר שלה.</p>
+      <h2 class="album-title" data-l="he">שיר לכל דמות <span class="en-f" style="color:var(--ink3);font-size:.42em;letter-spacing:.1em">/ A SONG PER FIGHTER</span></h2>
+      <h2 class="album-title" data-l="en">A SONG PER FIGHTER</h2>
+      <p class="album-sub" data-l="he">כל לוחם ב־WAR TLV קיבל <b>פרסונה שלמה</b> — לא רק מראה וסטטים, אלא גם <b>שיר כניסה משלו</b>. זה חלק מהפרסונליזציה: לכל דמות קול. לחצו על טראק כדי לשמוע אותו.</p>
+      <p class="album-sub" data-l="en">Every WAR TLV fighter got a <b>full persona</b> — not just a look and stats, but their own <b>entrance theme</b>. That's part of the personalization: every character gets a voice. Click a track to hear it.</p>
     </div>
-    <div class="fgrid rv">
-      <button class="fcard" type="button" data-song="_media/song_b.mp4" style="--acc:#1565c0">
-        <div class="fimg"><img loading="lazy" decoding="async" src="_docimg/fighter_b.jpg" alt="BIG.COM"></div>
-        <div class="fbadge">▶</div>
-        <div class="feq"><span></span><span></span><span></span><span></span></div>
-        <div class="fmeta"><div class="fname">BIG.COM</div><div class="frole">TEL AVIV HEEL</div></div>
+
+    <button class="track-feat rv" type="button" data-song="_media/song_game.mp4">
+      <div class="fbadge"><span class="tplay">▶</span><span class="feq" style="display:none"><span></span><span></span><span></span><span></span></span></div>
+      <div class="ttxt">
+        <div class="tlabel" data-l="he">שיר הנושא של המשחק</div>
+        <div class="tlabel" data-l="en">THE GAME'S THEME SONG</div>
+        <div class="tname">WAR TLV — MAIN THEME</div>
+      </div>
+    </button>
+
+    <div class="tracklist rv">
+      <button class="track" type="button" data-song="_media/song_b.mp4" style="--acc:#1565c0">
+        <span class="tnum">01</span>
+        <span class="tthumb"><img loading="lazy" decoding="async" src="_docimg/fighter_b.jpg" alt="BIG.COM"></span>
+        <span class="tinfo"><span class="tfname">BIG.COM</span><span class="tfrole">TEL AVIV HEEL</span></span>
+        <span class="tbadge"><span class="tplay">▶</span></span>
+        <span class="feq"><span></span><span></span><span></span><span></span></span>
       </button>
-      <button class="fcard" type="button" data-song="_media/song_s.mp4" style="--acc:#e040fb">
-        <div class="fimg"><img loading="lazy" decoding="async" src="_docimg/fighter_s.jpg" alt="האייקון"></div>
-        <div class="fbadge">▶</div>
-        <div class="feq"><span></span><span></span><span></span><span></span></div>
-        <div class="fmeta"><div class="fname" style="direction:rtl">האייקון</div><div class="frole">THE ICON</div></div>
+      <button class="track" type="button" data-song="_media/song_s.mp4" style="--acc:#e040fb">
+        <span class="tnum">02</span>
+        <span class="tthumb"><img loading="lazy" decoding="async" src="_docimg/fighter_s.jpg" alt="האייקון"></span>
+        <span class="tinfo"><span class="tfname" style="direction:rtl">האייקון</span><span class="tfrole">THE ICON</span></span>
+        <span class="tbadge"><span class="tplay">▶</span></span>
+        <span class="feq"><span></span><span></span><span></span><span></span></span>
       </button>
-      <button class="fcard" type="button" data-song="_media/song_i.mp4" style="--acc:#ffcc00">
-        <div class="fimg"><img loading="lazy" decoding="async" src="_docimg/fighter_i.jpg" alt="T.M.R"></div>
-        <div class="fbadge">▶</div>
-        <div class="feq"><span></span><span></span><span></span><span></span></div>
-        <div class="fmeta"><div class="fname">T.M.R</div><div class="frole">THE CHAMPION</div></div>
+      <button class="track" type="button" data-song="_media/song_i.mp4" style="--acc:#ffcc00">
+        <span class="tnum">03</span>
+        <span class="tthumb"><img loading="lazy" decoding="async" src="_docimg/fighter_i.jpg" alt="T.M.R"></span>
+        <span class="tinfo"><span class="tfname">T.M.R</span><span class="tfrole">THE CHAMPION</span></span>
+        <span class="tbadge"><span class="tplay">▶</span></span>
+        <span class="feq"><span></span><span></span><span></span><span></span></span>
       </button>
-      <button class="fcard" type="button" data-song="_media/song_y.mp4" style="--acc:#00e676">
-        <div class="fimg"><img loading="lazy" decoding="async" src="_docimg/fighter_y.jpg" alt="ישר"></div>
-        <div class="fbadge">▶</div>
-        <div class="feq"><span></span><span></span><span></span><span></span></div>
-        <div class="fmeta"><div class="fname" style="direction:rtl">ישר</div><div class="frole">THE SOLUTION</div></div>
+      <button class="track" type="button" data-song="_media/song_y.mp4" style="--acc:#00e676">
+        <span class="tnum">04</span>
+        <span class="tthumb"><img loading="lazy" decoding="async" src="_docimg/fighter_y.jpg" alt="ישר"></span>
+        <span class="tinfo"><span class="tfname" style="direction:rtl">ישר</span><span class="tfrole">THE SOLUTION</span></span>
+        <span class="tbadge"><span class="tplay">▶</span></span>
+        <span class="feq"><span></span><span></span><span></span><span></span></span>
       </button>
-      <button class="fcard" type="button" data-song="_media/song_r.mp4" style="--acc:#cfd3da">
-        <div class="fimg"><img loading="lazy" decoding="async" src="_docimg/fighter_r.jpg" alt="השופט"></div>
-        <div class="fbadge">▶</div>
-        <div class="feq"><span></span><span></span><span></span><span></span></div>
-        <div class="fmeta"><div class="fname" style="direction:rtl">השופט</div><div class="frole">SILENT ENFORCER</div></div>
+      <button class="track" type="button" data-song="_media/song_r.mp4" style="--acc:#cfd3da">
+        <span class="tnum">05</span>
+        <span class="tthumb"><img loading="lazy" decoding="async" src="_docimg/fighter_r.jpg" alt="השופט"></span>
+        <span class="tinfo"><span class="tfname" style="direction:rtl">השופט</span><span class="tfrole">SILENT ENFORCER</span></span>
+        <span class="tbadge"><span class="tplay">▶</span></span>
+        <span class="feq"><span></span><span></span><span></span><span></span></span>
       </button>
-      <button class="fcard" type="button" data-song="_media/song_f.mp4" style="--acc:#ff7a1a">
-        <div class="fimg"><img loading="lazy" decoding="async" src="_docimg/fighter_f.jpg" alt="FRISBEE"></div>
-        <div class="fbadge">▶</div>
-        <div class="feq"><span></span><span></span><span></span><span></span></div>
-        <div class="fmeta"><div class="fname">FRISBEE</div><div class="frole">BEACH LEGEND</div></div>
+      <button class="track" type="button" data-song="_media/song_f.mp4" style="--acc:#ff7a1a">
+        <span class="tnum">06</span>
+        <span class="tthumb"><img loading="lazy" decoding="async" src="_docimg/fighter_f.jpg" alt="FRISBEE"></span>
+        <span class="tinfo"><span class="tfname">FRISBEE</span><span class="tfrole">BEACH LEGEND</span></span>
+        <span class="tbadge"><span class="tplay">▶</span></span>
+        <span class="feq"><span></span><span></span><span></span><span></span></span>
       </button>
     </div>
     <audio id="ALBUM_AUDIO" preload="none"></audio>
     <div class="offer rv" style="--acc:#7b2ff7;margin-top:34px">
       <div class="ol">עבור מותג · FOR A BRAND</div>
-      <p>פרסונליזציה עד הקצה — לא רק דמות, אלא זהות סאונדית: שיר, קול וטקס כניסה שהופכים כל דמות למותג שאפשר לזהות בעיניים עצומות.</p>
+      <p data-l="he">פרסונליזציה עד הקצה — לא רק דמות, אלא זהות סאונדית: שיר, קול וטקס כניסה שהופכים כל דמות למותג שאפשר לזהות בעיניים עצומות.</p>
+      <p data-l="en">Personalization taken to the edge — not just a character, but a sonic identity: a song, a voice, an entrance ritual that turns every character into a brand you can recognize with your eyes closed.</p>
     </div>
   </div>
 </section>
@@ -708,21 +961,23 @@
       <div class="wk">06 · חשיבת מותג עמוקה · Deep Brand Thinking</div>
       <div class="wt"><span class="en-f">ATRO</span> · אטרו</div>
       <div class="ws">ביום קפה, בערב יין · Coffee by day, wine by night</div>
-      <div class="wlead">הפרויקט היחיד כאן בלי תמונה אחת — <em>כי כולו תהליך.</em></div>
+      <div class="wlead" data-l="he">הפרויקט היחיד כאן בלי תמונה אחת — <em>כי כולו תהליך.</em></div>
+      <div class="wlead" data-l="en">The only project here without a single image — <em>because it's all process.</em></div>
     </div>
-    <div class="wbody rv">
-      <p>אטרו הוא בית קפה שכונתי בתל אביב — וגם הרבה יותר מזה. ביום קפה, בערב יין, ובאמצע עולם אלטרנטיבי שמנורמל לתוך השכונה: CBD ושמן פטריות לצד בקבוקי היין, בית מרקחת קנאביס מורשה כשכן. <b>האתגר לא היה לעצב — אלא להגדיר.</b> לא פארמה, לא בר — המשהו שביניהם, שמרוויח דווקא מזה שאי אפשר להדביק לו תווית.</p>
-      <p>זה הפרויקט שנבנה הכי הרבה דרך חשיבה עם AI, והיחיד כאן כמעט בלי נראות בכלל. הערך כאן הוא לא דימוי — אלא <b>תהליך ותשתית</b>: איך לוקחים שאלה עמומה והופכים אותה למערכת מותג שלמה שאפשר לפתוח לפיה עסק אמיתי.</p>
+    <div class="wbody rv" data-l="he">
+      <p><b>האתגר לא היה לעצב — אלא להגדיר.</b> אטרו הוא בית קפה שכונתי בתל אביב שמנרמל עולם אלטרנטיבי (CBD, שמן פטריות, בית מרקחת קנאביס כשכן) לתוך השכונה — לא פארמה, לא בר, אלא משהו שמרוויח דווקא מזה שאי אפשר להדביק לו תווית. התהליך למטה.</p>
+      <a class="labhook" href="#lab">⚙ איך זה נבנה · מאחורי המעבדה</a>
     </div>
-    <details class="en rv"><summary>ENGLISH</summary>
-      <p>ATRO is a neighborhood café in Tel Aviv — and far more than that. Coffee by day, wine by night, and in between an alternative world normalized into the neighborhood: CBD and mushroom oil beside the wine bottles, a licensed cannabis pharmacy as our neighbor. The challenge wasn't to design — it was to define. Not a pharmacy, not a bar — the thing in between, that profits precisely from being impossible to label.</p>
-      <p>This is the project built most through thinking with AI, and the only one here with almost no visuals at all. The value here isn't an image — it's a process and an infrastructure: taking a vague question and turning it into a complete brand system a real business can open and run by.</p>
-    </details>
+    <div class="wbody rv" data-l="en">
+      <p><b>The challenge wasn't to design — it was to define.</b> ATRO is a neighborhood café in Tel Aviv that normalizes an alternative world (CBD, mushroom oil, a licensed cannabis pharmacy as a neighbor) into the block — not a pharmacy, not a bar, but something that profits precisely from being impossible to label. The process below.</p>
+      <a class="labhook" href="#lab">⚙ HOW IT WAS BUILT · BEHIND THE LAB</a>
+    </div>
 
     <div class="anat">
       <div class="rv">
-        <div class="anh">התהליך <span class="en-f">FROM A QUESTION TO A SYSTEM</span></div>
-        <div class="proc">
+        <div class="anh" data-l="he">התהליך <span class="en-f">FROM A QUESTION TO A SYSTEM</span></div>
+        <div class="anh" data-l="en">FROM A QUESTION TO A SYSTEM</div>
+        <div class="proc" data-l="he">
           <div class="pstep"><div class="pn">01</div><div>
             <div class="pt">להגדיר, לא לעצב <span class="en-f">DEFINE</span></div>
             <div class="px">הצעד הראשון לא היה ויזואלי. <b>לא פארמה, לא בר</b> — הגדרתי את המרחב שאין לו תווית, וגיליתי שהעמימות הזו היא בדיוק הנכס.</div>
@@ -744,13 +999,37 @@
             <div class="px">לא תמונה — <b>תשתית</b>. חוקים, מערכות ושפה שאפשר לפתוח לפיהם עסק אמיתי. ההוכחה ש-AI הוא לא רק כלי ויזואלי, אלא שותף לחשיבה אסטרטגית עמוקה.</div>
           </div></div>
         </div>
+        <div class="proc" data-l="en">
+          <div class="pstep"><div class="pn">01</div><div>
+            <div class="pt">DEFINE, NOT DESIGN</div>
+            <div class="px">The first step wasn't visual. <b>Not a pharmacy, not a bar</b> — I defined the unlabeled space, and found that the ambiguity itself is the asset.</div>
+          </div></div>
+          <div class="pstep"><div class="pn">02</div><div>
+            <div class="pt">THREE-LAYER POSITIONING</div>
+            <div class="px"><b>Day</b> — coffee, boulevard benches, morning energy. <b>Night</b> — a neighborhood wine bar. <b>Alternative</b> — CBD, mushroom oil and wellness with a licensed pharmacy next door. One place that changes skin by the hour.</div>
+          </div></div>
+          <div class="pstep"><div class="pn">03</div><div>
+            <div class="pt">PRODUCT INNOVATION = THE DIFFERENTIATION</div>
+            <div class="px">The product itself is the differentiation: <b>The Ficosit</b> (espresso+CBD), <b>UPLOAD</b> (mushroom oil), <b>The Grid</b> boxes (wine+jam+candle), and content sub-brand <b>M8.RADIO</b> — not a playlist, a social-proof engine.</div>
+          </div></div>
+          <div class="pstep"><div class="pn">04</div><div>
+            <div class="pt">THE FULL SYSTEM</div>
+            <div class="px">Positioning, architecture, customer-journey choreography, retail logic, an operating model and brand language — all in a <b>17-chapter Brand Bible.</b></div>
+          </div></div>
+          <div class="pstep"><div class="pn">05</div><div>
+            <div class="pt">THE OUTCOME</div>
+            <div class="px">Not an image — <b>infrastructure</b>. Rules, systems and language a real business can open and run by. Proof that AI isn't just a visual tool, but a partner for deep strategic thinking.</div>
+          </div></div>
+        </div>
       </div>
       <div class="rv">
-        <div class="synth">מקום אחד שמחליף עור לפי שעה — ונשאר מותג אחד, כי כל מרכיב משרת ערך־על אחד: <span class="syn">תישאר</span>. הקפה, היין, הפטריות, המארזים והתרבות הם אותו סיפור.</div>
+        <div class="synth" data-l="he">מקום אחד שמחליף עור לפי שעה — ונשאר מותג אחד, כי כל מרכיב משרת ערך־על אחד: <span class="syn">תישאר</span>. הקפה, היין, הפטריות, המארזים והתרבות הם אותו סיפור.</div>
+        <div class="synth" data-l="en">One place that changes skin by the hour — and stays one brand, because every element serves a single super-value: <span class="syn">stay</span>. The coffee, the wine, the mushrooms, the boxes and the culture are the same story.</div>
       </div>
       <div class="offer rv">
         <div class="ol">עבור מותג · FOR A BRAND</div>
-        <p>מערכת מותג שלמה שאפשר לפתוח לפיה עסק — מיצוב, חדשנות מוצר, מסע לקוח ושפה, ב-Brand Bible אחד.</p>
+        <p data-l="he">מערכת מותג שלמה שאפשר לפתוח לפיה עסק — מיצוב, חדשנות מוצר, מסע לקוח ושפה, ב-Brand Bible אחד.</p>
+        <p data-l="en">A complete brand system a business can be opened by — positioning, product innovation, customer journey and language, in one Brand Bible.</p>
       </div>
     </div>
   </div>
@@ -763,7 +1042,8 @@
     <div class="ek">תזכרו את זה · YOU'LL REMEMBER THIS</div>
     <h2>מעבדה אחת. <span class="syn">שישה עולמות.</span></h2>
     <div class="een">ONE LAB · SIX WORLDS · ONE HAND</div>
-    <p>כל עולם כאן נולד באותה מעבדה — לקחת זהות ולצרוב אותה בזיכרון. אם הגעת עד לכאן וזה נשאר לך בראש, זה בדיוק מה שאני עושה למותגים.</p>
+    <p data-l="he">כל עולם כאן נולד באותה מעבדה — לקחת זהות ולצרוב אותה בזיכרון. אם הגעת עד לכאן וזה נשאר לך בראש, זה בדיוק מה שאני עושה למותגים.</p>
+    <p data-l="en">Every world here was born in the same lab — take an identity and burn it into memory. If you made it this far and it's still in your head, that's exactly what I do for brands.</p>
     <div class="cbtns">
       <a class="cbtn solid" href="mailto:liorpeled93@gmail.com">✉&nbsp; liorpeled93@gmail.com</a>
       <a class="cbtn ghosty" href="tel:+972548036035">☏&nbsp; 054-8036035</a>
@@ -848,11 +1128,29 @@
   var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
   if('IntersectionObserver' in window){
     var io=new IntersectionObserver(function(es){es.forEach(function(e){
-      var i=secs.indexOf(e.target);
-      if(i>-1&&e.isIntersecting){links.forEach(function(l){l.classList.remove('on');});links[i].classList.add('on');}
+      var href='#'+e.target.id;
+      if(e.isIntersecting){
+        links.forEach(function(l){l.classList.remove('on');});
+        /* mark every nav link pointing at this section (both HE/EN twins) */
+        links.forEach(function(l){if(l.getAttribute('href')===href)l.classList.add('on');});
+      }
     });},{rootMargin:'-40% 0px -50% 0px'});
     secs.forEach(function(s){if(s)io.observe(s);});
   }
+})();
+/* language toggle — HE default, EN via nav button, remembered in localStorage */
+(function(){
+  var tog=document.getElementById('LANGTOG'); if(!tog)return;
+  var html=document.documentElement;
+  function setLang(l){
+    html.classList.toggle('lang-en',l==='en');
+    tog.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-set')===l);});
+    try{localStorage.setItem('portfolio_lang',l);}catch(e){}
+  }
+  setLang(html.classList.contains('lang-en')?'en':'he');
+  tog.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click',function(){setLang(b.getAttribute('data-set'));});
+  });
 })();
 /* mobile nav toggle */
 (function(){
@@ -863,27 +1161,27 @@
   nav.querySelectorAll('.links a').forEach(function(a){a.addEventListener('click',shut);});
   document.addEventListener('click',function(e){if(nav.classList.contains('open')&&!nav.contains(e.target))shut();});
 })();
-/* album — click a fighter to play their theme (one at a time) */
+/* album tracklist — click the featured theme or a fighter row to play (one at a time) */
 (function(){
-  var grid=document.querySelector('.fgrid'); if(!grid)return;
+  var album=document.getElementById('album'); if(!album)return;
   var audio=document.getElementById('ALBUM_AUDIO'); if(!audio)return;
-  var cards=[].slice.call(grid.querySelectorAll('.fcard'));
+  var tracks=[].slice.call(album.querySelectorAll('.track-feat,.track'));
   var current=null;
-  function stopAll(){cards.forEach(function(c){c.classList.remove('playing');});}
-  cards.forEach(function(c){
-    c.addEventListener('click',function(){
-      var song=c.getAttribute('data-song');
-      if(current===c && !audio.paused){ audio.pause(); c.classList.remove('playing'); current=null; return; }
+  function stopAll(){tracks.forEach(function(t){t.classList.remove('playing');});}
+  tracks.forEach(function(t){
+    t.addEventListener('click',function(){
+      var song=t.getAttribute('data-song');
+      if(current===t && !audio.paused){ audio.pause(); t.classList.remove('playing'); current=null; return; }
       stopAll();
       audio.src=song; audio.currentTime=0; audio.play().catch(function(){});
-      c.classList.add('playing'); current=c;
+      t.classList.add('playing'); current=t;
     });
   });
   audio.addEventListener('ended',function(){stopAll();current=null;});
   if('IntersectionObserver' in window){
     new IntersectionObserver(function(es){es.forEach(function(e){
       if(!e.isIntersecting && !audio.paused){audio.pause();stopAll();current=null;}
-    });},{threshold:0}).observe(document.getElementById('album'));
+    });},{threshold:0}).observe(album);
   }
 })();
 /* lightbox — click media to enlarge; videos play with original sound (_src) */
@@ -928,7 +1226,9 @@
     if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
   }
-  var nodes=[].slice.call(document.querySelectorAll('.world img,.world video'));
+  var nodes=[].slice.call(document.querySelectorAll('.world img,.world video')).filter(function(n){
+    return !n.closest('.ep-player'); /* controls players (e.g. OY VEY promo) play inline, not in the lightbox */
+  });
   nodes.forEach(function(n){
     n.classList.add('zoom');
     n.addEventListener('click',function(e){e.preventDefault();open(n);});
