@@ -122,6 +122,9 @@
     background:linear-gradient(100deg,var(--syn1),var(--syn2));padding:12px 26px;border-radius:26px;margin-top:26px;
     box-shadow:0 10px 28px color-mix(in srgb,var(--acc) 35%,transparent);transition:transform .25s,box-shadow .25s}
   .btn:hover{transform:translateY(-2px);box-shadow:0 16px 36px color-mix(in srgb,var(--acc) 50%,transparent)}
+  .btn.ghost2{background:transparent;border:1px solid color-mix(in srgb,var(--acc) 55%,transparent);color:var(--ink);box-shadow:none}
+  .btn.ghost2:hover{background:color-mix(in srgb,var(--acc) 14%,transparent);box-shadow:none}
+  .btnrow{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
   .vbadge{position:absolute;bottom:10px;left:10px;z-index:2;display:flex;align-items:center;gap:5px;font-family:'Archivo';font-size:10px;font-weight:700;letter-spacing:.08em;color:#fff;background:rgba(0,0,0,.55);border-radius:12px;padding:3px 9px;direction:ltr}
   .vbadge::before{content:"";width:0;height:0;border-left:6px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent}
   .cap{font-size:12.5px;color:var(--ink3);margin-top:12px}
@@ -141,7 +144,7 @@
   .bigrow .ph{border-radius:12px;overflow:hidden;aspect-ratio:3/4;box-shadow:0 14px 36px rgba(0,0,0,.5)}
   .bigrow img{width:100%;height:100%;object-fit:cover}
 
-  /* ═══ 02 WAR TLV — neon graffiti ═══ */
+  /* ═══ 03 WAR TLV — neon graffiti ═══ */
   .w-war{--acc:#3ba7ff;background:
     radial-gradient(70% 55% at 12% 8%,rgba(20,80,180,.4),transparent 62%),
     radial-gradient(55% 45% at 90% 80%,rgba(200,30,30,.22),transparent 60%),
@@ -151,7 +154,7 @@
   .warrow .ph:hover{transform:translateY(-8px)}
   .warrow img{width:100%;height:100%;object-fit:cover}
 
-  /* ═══ 03 PALA PUNK — matte black + lilac ═══ */
+  /* ═══ 05 PALA PUNK — matte black + lilac ═══ */
   .w-pala{--acc:#cbb3ff;background:#050505}
   .stripe{position:absolute;left:0;right:0;top:52%;height:2px;background:linear-gradient(90deg,transparent,#cbb3ff 20%,#cbb3ff 80%,transparent);
     box-shadow:0 0 30px rgba(203,179,255,.55);opacity:.6;pointer-events:none}
@@ -162,7 +165,7 @@
   .palamedia .ph:not(.tall){aspect-ratio:3/4}
   .palamedia img,.palamedia video{width:100%;height:100%;object-fit:cover}
 
-  /* ═══ 04 OY VEY — 80s purple/teal + grain ═══ */
+  /* ═══ 02 OY VEY — 80s purple/teal + grain ═══ */
   .w-oy{--acc:#16e0d4;background:
     radial-gradient(75% 55% at 85% 10%,rgba(90,20,140,.5),transparent 62%),
     radial-gradient(55% 40% at 8% 85%,rgba(10,110,105,.35),transparent 60%),
@@ -173,8 +176,21 @@
   .oymedia{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .oymedia .ph{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:9/15;box-shadow:0 20px 55px rgba(0,0,0,.65),0 0 0 1px rgba(22,224,212,.14)}
   .oymedia img,.oymedia video{width:100%;height:100%;object-fit:cover}
+  /* OY promo player + cast feature card */
+  .oy-promo{margin-top:52px;text-align:center}
+  .oy-promo .ep-player{margin-top:20px}
+  .castcard{position:relative;margin-top:44px;display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(18px,3vw,40px);align-items:stretch;
+    border:1px solid color-mix(in srgb,var(--acc) 32%,transparent);border-radius:20px;overflow:hidden;
+    background:color-mix(in srgb,var(--acc) 7%,transparent)}
+  .castcard .cimg{position:relative;min-height:200px;overflow:hidden}
+  .castcard .cimg img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+  .castcard .cbody{padding:clamp(20px,3vw,34px);display:flex;flex-direction:column;justify-content:center;text-align:right}
+  .castcard .col{font-size:11px;font-weight:900;letter-spacing:.24em;color:var(--acc)}
+  .castcard .cttl{font-size:clamp(1.3rem,3vw,2rem);font-weight:900;line-height:1.1;margin-top:8px}
+  .castcard .ctxt{font-size:clamp(.98rem,1.6vw,1.1rem);line-height:1.7;color:var(--ink2);margin-top:12px}
+  .castcard .ctxt b{color:var(--ink)}
 
-  /* ═══ 05 NITZ & PELDUS — dark (same language as the rest) ═══ */
+  /* ═══ 04 NITZ & PELDUS — dark (same language as the rest) ═══ */
   .w-comics{--acc:#ff3a6b;background:
     radial-gradient(72% 55% at 14% 8%,rgba(190,20,80,.42),transparent 62%),
     radial-gradient(55% 45% at 90% 88%,rgba(230,180,70,.1),transparent 60%),
@@ -184,11 +200,43 @@
   .comicrow .ph:hover{transform:translateY(-8px)}
   .comicrow img,.comicrow video{width:100%;height:100%;object-fit:cover}
 
-  /* ═══ 06 ATRO — warm espresso, text only ═══ */
+  /* ═══ ALBUM · characters & songs ═══ */
+  .album{position:relative;padding:clamp(74px,10vh,120px) 0;overflow:hidden;background:
+    radial-gradient(70% 55% at 50% 0%,rgba(123,47,247,.26),transparent 62%),linear-gradient(180deg,#0d0a14,#0c0a09)}
+  .album-title{font-size:clamp(2rem,6vw,3.7rem);font-weight:900;line-height:1.04;margin-top:8px}
+  .album-sub{font-size:clamp(1rem,1.8vw,1.18rem);color:var(--ink2);margin-top:14px;max-width:42em}
+  .album-sub b{color:var(--ink)}
+  .fgrid{margin-top:42px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .fcard{position:relative;overflow:hidden;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:#000;
+    cursor:pointer;padding:0;isolation:isolate;font-family:inherit;transition:transform .3s,box-shadow .3s,border-color .3s}
+  .fcard .fimg{aspect-ratio:4/5;overflow:hidden}
+  .fcard .fimg img{width:100%;height:100%;object-fit:cover;transition:transform .5s,filter .3s;filter:saturate(.9) contrast(1.02)}
+  .fcard:hover{transform:translateY(-6px);border-color:color-mix(in srgb,var(--acc) 60%,transparent);box-shadow:0 22px 50px color-mix(in srgb,var(--acc) 30%,rgba(0,0,0,.5))}
+  .fcard:hover .fimg img{transform:scale(1.05)}
+  .fcard .fmeta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:16px;text-align:right;
+    background:linear-gradient(180deg,transparent,rgba(5,4,8,.92) 82%)}
+  .fname{font-family:'Archivo Black';font-size:clamp(1.1rem,2vw,1.4rem);color:#fff;direction:ltr;text-align:right;letter-spacing:-.01em}
+  .frole{font-family:'Archivo';font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--acc);margin-top:3px;direction:ltr;text-align:right}
+  .fbadge{position:absolute;top:12px;right:12px;z-index:3;width:40px;height:40px;border-radius:50%;
+    background:color-mix(in srgb,var(--acc) 88%,#000);color:#0c0a09;display:flex;align-items:center;justify-content:center;
+    font-size:15px;box-shadow:0 6px 18px rgba(0,0,0,.5);transition:transform .3s}
+  .fcard:hover .fbadge{transform:scale(1.08)}
+  .feq{position:absolute;top:14px;right:14px;z-index:3;display:none;align-items:flex-end;gap:3px;height:22px}
+  .fcard.playing .feq{display:flex}
+  .fcard.playing .fbadge{display:none}
+  .feq span{width:3px;background:var(--acc);border-radius:2px;animation:eq .9s ease-in-out infinite}
+  .feq span:nth-child(1){height:40%;animation-delay:0s}
+  .feq span:nth-child(2){height:100%;animation-delay:.2s}
+  .feq span:nth-child(3){height:60%;animation-delay:.4s}
+  .feq span:nth-child(4){height:85%;animation-delay:.12s}
+  @keyframes eq{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+  .fcard.playing{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc),0 22px 54px color-mix(in srgb,var(--acc) 42%,rgba(0,0,0,.5))}
+
+  /* ═══ 06 ATRO — warm espresso, process-forward ═══ */
   .w-atro{--acc:#e0a35c;background:
     radial-gradient(80% 60% at 50% 0%,rgba(90,55,20,.45),transparent 62%),
     linear-gradient(180deg,#15100a,#0e0a07)}
-  .w-atro .wrap{max-width:900px}
+  .w-atro .wrap{max-width:940px}
   .anat{margin-top:40px;display:grid;gap:34px}
   .anh{font-size:clamp(1.05rem,2vw,1.3rem);font-weight:900;color:var(--acc);letter-spacing:.02em}
   .anh .en-f{font-size:.72em;font-weight:700;color:var(--ink3);letter-spacing:.14em;margin-inline-start:10px}
@@ -197,14 +245,18 @@
   .idcard .t{font-size:1.05rem;font-weight:800}
   .idcard .t .en-f{display:block;font-size:10px;font-weight:700;letter-spacing:.16em;color:var(--ink3);margin-top:3px}
   .idcard p{font-size:.93rem;line-height:1.6;color:var(--ink2);margin-top:9px}
-  .stages{margin-top:14px;display:grid}
-  .stage{display:grid;grid-template-columns:auto 1fr;gap:20px;border-top:1px solid rgba(224,163,92,.2);padding:16px 0;align-items:start}
-  .stage .sn{font-family:'Archivo Black';font-size:1.5rem;color:var(--acc);line-height:1;direction:ltr}
-  .stage .st{font-size:1.06rem;font-weight:800}
-  .stage .st .en-f{font-size:.72em;font-weight:700;color:var(--ink3);letter-spacing:.1em;margin-inline-start:8px}
-  .stage .sx{font-size:.95rem;line-height:1.7;color:var(--ink2);margin-top:5px}
-  .stage .sx b{color:var(--ink)}
-  .synth{margin-top:8px;font-size:clamp(1.2rem,2.6vw,1.7rem);font-weight:800;line-height:1.5;border-inline-start:3px solid var(--acc);padding-inline-start:18px;max-width:30em}
+  /* process flow */
+  .proc{margin-top:16px;display:grid;gap:0;position:relative}
+  .pstep{display:grid;grid-template-columns:auto 1fr;gap:22px;padding:22px 0;border-top:1px solid rgba(224,163,92,.22);align-items:start}
+  .pstep:first-child{border-top:0}
+  .pstep .pn{font-family:'Archivo Black';font-size:1.4rem;color:var(--acc);line-height:1;direction:ltr;
+    width:2.4em;height:2.4em;display:flex;align-items:center;justify-content:center;border-radius:50%;
+    border:1.5px solid color-mix(in srgb,var(--acc) 45%,transparent);background:color-mix(in srgb,var(--acc) 8%,transparent);font-size:1.05rem}
+  .pstep .pt{font-size:clamp(1.1rem,2.2vw,1.35rem);font-weight:900}
+  .pstep .pt .en-f{font-size:.62em;font-weight:700;color:var(--ink3);letter-spacing:.12em;margin-inline-start:10px}
+  .pstep .px{font-size:clamp(.96rem,1.5vw,1.06rem);line-height:1.75;color:var(--ink2);margin-top:7px;max-width:40em}
+  .pstep .px b{color:var(--ink)}
+  .synth{margin-top:26px;font-size:clamp(1.2rem,2.6vw,1.7rem);font-weight:800;line-height:1.5;border-inline-start:3px solid var(--acc);padding-inline-start:18px;max-width:30em}
 
   /* ═══ CLOSING ═══ */
   .end{position:relative;min-height:88svh;display:flex;align-items:center;overflow:hidden;
@@ -271,6 +323,11 @@
     .bigrow{grid-template-columns:repeat(3,1fr);gap:9px}
     nav .mark .en-f{display:none}
   }
+  @media (max-width:760px){
+    .castcard{grid-template-columns:1fr}
+    .castcard .cimg{aspect-ratio:16/10;min-height:0}
+    .fgrid{grid-template-columns:repeat(2,1fr)}
+  }
   @media (max-width:640px){
     .navtog{display:flex}
     nav .links{position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;margin:0;padding:8px;
@@ -284,6 +341,9 @@
     .bigrow{grid-template-columns:repeat(3,1fr)}
     .warrow{gap:9px}
     .marquee{bottom:52px}
+  }
+  @media (max-width:460px){
+    .fgrid{grid-template-columns:1fr;max-width:340px;margin-inline:auto}
   }
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation:none!important;transition:none!important}
@@ -299,11 +359,12 @@
   <div class="mark">ליאור פלד<span class="en-f">LIOR PELED</span></div>
   <div class="links" id="NAVL">
     <a href="#big">BIG.COM</a>
-    <a href="#episode">פרק לדוגמה</a>
-    <a href="#war">WAR TLV</a>
-    <a href="#pala">PALA PUNK</a>
+    <a href="#episode">פרק מלא</a>
     <a href="#oy">OY VEY</a>
+    <a href="#war">WAR TLV</a>
     <a href="#comics">ניצ ופלדוס</a>
+    <a href="#pala">PALA PUNK</a>
+    <a href="#album">האלבום</a>
     <a href="#atro">ATRO</a>
   </div>
   <button class="navtog" id="NAVTOG" aria-label="תפריט" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -312,10 +373,10 @@
 <!-- ═══════════ HERO ═══════════ -->
 <header class="hero" id="top">
   <div class="hero-stage" id="STAGE">
-    <div class="slide active"><video src="_media/pala_court_bg.mp4" poster="_docimg/pala_court_poster.jpg" muted loop playsinline preload="metadata"></video></div>
+    <div class="slide active"><video src="_media/oy_queen_bg.mp4" poster="_docimg/oy_queen_poster.jpg" muted loop playsinline preload="metadata"></video></div>
     <div class="slide"><video src="_media/big_dogwalk_bg.mp4" poster="_docimg/big_dogwalk_poster.jpg" muted loop playsinline preload="none"></video></div>
+    <div class="slide"><video src="_media/pala_court_bg.mp4" poster="_docimg/pala_court_poster.jpg" muted loop playsinline preload="none"></video></div>
     <div class="slide"><video src="_media/big_frisbee_bg.mp4" poster="_docimg/big_frisbee_poster.jpg" muted loop playsinline preload="none"></video></div>
-    <div class="slide"><video src="_media/oy_queen_bg.mp4" poster="_docimg/oy_queen_poster.jpg" muted loop playsinline preload="none"></video></div>
     <div class="slide"><video src="_media/big_office_bg.mp4" poster="_docimg/big_office_poster.jpg" muted loop playsinline preload="none"></video></div>
     <div class="slide"><video src="_media/pala_dobie_bg.mp4" poster="_docimg/pala_dobie_poster.jpg" muted loop playsinline preload="none"></video></div>
     <div class="slide"><video src="_media/fairy_bg.mp4" poster="_docimg/fairy_poster.jpg" muted loop playsinline preload="none"></video></div>
@@ -339,12 +400,13 @@
       <h2 class="cards-title">בחרו עולם <span class="en-f" style="color:var(--ink3);font-size:.5em;letter-spacing:.1em">/ PICK A WORLD</span></h2>
     </div>
     <div class="chiprow rv">
-      <a class="chip" href="#episode" style="--acc:#ff3a2a">▶ פרק לדוגמה</a>
       <a class="chip" href="#big" style="--acc:#ff3a2a">BIG.COM</a>
-      <a class="chip" href="#war" style="--acc:#3ba7ff">WAR TLV</a>
-      <a class="chip" href="#pala" style="--acc:#cbb3ff">PALA PUNK</a>
+      <a class="chip" href="#episode" style="--acc:#ff3a2a">▶ פרק מלא</a>
       <a class="chip" href="#oy" style="--acc:#16e0d4">OY VEY</a>
+      <a class="chip" href="#war" style="--acc:#3ba7ff">WAR TLV</a>
       <a class="chip" href="#comics" style="--acc:#ff3a6b">ניצ ופלדוס</a>
+      <a class="chip" href="#pala" style="--acc:#cbb3ff">PALA PUNK</a>
+      <a class="chip" href="#album" style="--acc:#7b2ff7">♪ האלבום</a>
       <a class="chip" href="#atro" style="--acc:#e0a35c">ATRO</a>
     </div>
   </div>
@@ -391,13 +453,13 @@
   </div>
 </section>
 
-<!-- ═══════════ SAMPLE EPISODE ═══════════ -->
+<!-- ═══════════ FULL EPISODE ═══════════ -->
 <section class="episode" id="episode">
   <div class="wrap">
     <div class="rv ep-head">
-      <div class="wk" style="--acc:#ff3a2a">פרק לדוגמה · SAMPLE EPISODE</div>
+      <div class="wk" style="--acc:#ff3a2a">פרק מלא · FULL EPISODE</div>
       <h2 class="ep-title"><span class="syn">המנהל הכתום</span></h2>
-      <p class="ep-sub">הסרטון האחרון מ־BIG.COM — עם הסאונד המקורי. לחצו נגן.</p>
+      <p class="ep-sub">פרק שלם מ־BIG.COM — עם הסאונד המקורי. לחצו נגן.</p>
     </div>
     <div class="ep-player rv">
       <video src="_media/big_episode.mp4" poster="_docimg/big_episode_poster.jpg" controls playsinline preload="none"></video>
@@ -406,12 +468,74 @@
   </div>
 </section>
 
-<!-- ═══════════ 02 · WAR TLV ═══════════ -->
-<section class="world w-war" id="war">
+<!-- ═══════════ 02 · OY VEY ═══════════ -->
+<section class="world w-oy" id="oy">
+  <div class="grain"></div>
   <div class="ghost">02</div>
   <div class="wrap">
     <div class="rv">
-      <div class="wk">02 · המניפסט כמשחק · The Manifesto, Playable</div>
+      <div class="wk">02 · פנטזיה פוגשת לילה תל־אביבי · Fantasy Meets the Tel Aviv Night</div>
+      <div class="wt"><span class="en-f">OY VEY</span></div>
+      <div class="ws">סדרת וידאו בסגנון פילם-80s · An 80s-film video series</div>
+      <div class="wlead">המשימה: להפוך את "מבוכים ודרקונים" לערב תל־אביבי, <em>לקהל היפסטרי.</em></div>
+    </div>
+    <div class="oygrid" style="margin-top:44px">
+      <div class="oymedia rv">
+        <div class="ph"><video src="_media/oy_v1.mp4" poster="_docimg/oy_v1_poster.jpg" preload="metadata" autoplay muted loop playsinline></video><div class="vbadge">VIDEO</div></div>
+        <div class="ph"><img loading="lazy" decoding="async" src="_docimg/oy_hero.jpg" alt="מלכת האלף"></div>
+      </div>
+      <div class="rv">
+        <div class="wbody" style="margin-top:0">
+          <p>המשימה כאן לא הייתה פשוטה — להלביש את "מבוכים ודרקונים" שחור ולשלוח אותו למסיבה, <b>בלי שירגיש מחופש.</b> כמו בכל הסגנון שלי, אני בא מעולם של שילובי תרבויות — אז התחלתי לשלב את עולם הפנטזיה בעולם הקלאב, עם איפיון שמכניס את הסממנים התרסותיים של שני העולמות ל-DNA אחד אחיד.</p>
+          <p>פנטזיה ו-AI הם זיווג מתבקש — אבל גם עולם הלילה המטושטש מתאים ל-AI בצורה מדהימה: גרֵין, ערפל, ניאון, פרצופים שצפים בין אמיתי לדמיוני. הניגוד בין דמות פנטזיה משכנעת לבין הסביבה הסינתטית הוא בדיוק מה שמייצר את הקסם.</p>
+          <p>לכן בחרתי לא לטשטש את גבולות ה-AI אלא להציג אותו בפרונט: <b>המלאכותיות היא לא משהו להסתיר — היא הסגנון.</b> אימנתי DNA ויזואלי שלם (פילם-80s, פלטה, גימור) כדי שכל פרק ייראה כמו אותה יד.</p>
+        </div>
+        <details class="en"><summary>ENGLISH</summary>
+          <p>The mission here was anything but simple — to dress Dungeons &amp; Dragons in black and send it to a party, without it feeling like a costume. As in all of my style, I come from a world of culture-mixing — so I began fusing the fantasy world with the club world, with a characterization that folds the defiant signifiers of both worlds into one unified DNA.</p>
+          <p>Fantasy and AI are a natural pairing — but the blurry world of nightlife suits AI astonishingly well too: grain, haze, neon, faces that float between the real and the imagined. The contrast between a convincing fantasy character and the synthetic environment is exactly what creates the magic.</p>
+          <p>So I chose not to blur the boundaries of the AI but to put it front and center: the artificiality is not something to hide — it is the style. I trained a full visual DNA (80s-film, palette, finish) so every episode looks like the same hand.</p>
+        </details>
+        <div class="offer">
+          <div class="ol">עבור מותג · FOR A BRAND</div>
+          <p>סדרת תוכן עם סגנון חתום — פורמט אנכי ויראלי ו-DNA ויזואלי אחד, פרק אחרי פרק שנראה כמו אותה יד.</p>
+        </div>
+        <div class="tags">
+          <span class="tag">שילוב תרבויות</span><span class="tag">AI בפרונט</span><span class="tag en-f">VEO3 · trained style</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- OY VEY · event promo -->
+    <div class="oy-promo rv">
+      <div class="wk" style="--acc:#16e0d4">פרומו לאירוע · EVENT PROMO</div>
+      <div class="ep-player">
+        <video src="_media/oy_promo.mp4" poster="_docimg/oy_promo_poster.jpg" controls playsinline preload="none"></video>
+        <div class="vbadge">PROMO · SOUND ON</div>
+      </div>
+    </div>
+
+    <!-- OY VEY · cast / character-select feature -->
+    <div class="castcard rv">
+      <div class="cimg"><img loading="lazy" decoding="async" src="_docimg/cast_preview.jpg" alt="BLOODY ROTHSCHILD — בחירת דמות"></div>
+      <div class="cbody">
+        <div class="col">הפיצ'ר · CHOOSE YOUR FIGHTER</div>
+        <div class="cttl">האורחים נכנסים למשחק<br>לפני שהם מגיעים</div>
+        <div class="ctxt">בניתי לאירוע עמוד <b>בחירת דמות</b> משלו — כל אורח בוחר את הדמות שלו מראש ונכנס אל תוך העולם עוד לפני שדרך בדלת. <b>ההשתתפות מתחילה לפני הכניסה.</b></div>
+        <div class="btnrow" style="--acc:#16e0d4">
+          <a class="btn" href="https://wartlv.github.io/tlv-war/cast/" target="_blank" rel="noopener">↗&nbsp; BLOODY ROTHSCHILD · בחרו דמות</a>
+          <a class="btn ghost2" href="https://www.instagram.com/wow.big.comm/" target="_blank" rel="noopener">@wow.big.comm</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 03 · WAR TLV ═══════════ -->
+<section class="world w-war" id="war">
+  <div class="ghost">03</div>
+  <div class="wrap">
+    <div class="rv">
+      <div class="wk">03 · המניפסט כמשחק · The Manifesto, Playable</div>
       <div class="wt"><span class="en-f">WAR TLV</span></div>
       <div class="ws">משחק לחימה בעברית · A Hebrew fighting game</div>
       <div class="wlead">השלב שבו אתם, הקהל, בוחרים מי ה-Heel ומי ה-Face — <em>וזה מה שהופך את הקונספט לחי.</em></div>
@@ -444,91 +568,12 @@
   </div>
 </section>
 
-<!-- ═══════════ 03 · PALA PUNK ═══════════ -->
-<section class="world w-pala" id="pala">
-  <div class="ghost">03</div>
-  <div class="stripe"></div>
-  <div class="wrap">
-    <div class="rv">
-      <div class="wk">03 · בידול אסטרטגי · Strategic Differentiation</div>
-      <div class="wt"><span class="en-f">PALA PUNK</span></div>
-      <div class="ws">ספורט אורבני לפאדל · Urban padel brand</div>
-      <div class="wlead">המותג שגורם לך לא להרגיש שהתחפשת — אלא פשוט <em>להמשיך ללבוש שחור. תמיד.</em></div>
-    </div>
-    <div class="palagrid" style="margin-top:44px">
-      <div class="rv">
-        <div class="wbody" style="margin-top:0">
-          <p>PALA PUNK הוא ניסיון ליצור <b>בידול חזק</b> בין המיתוג הלבן והמוקפד של הטניס לבין הנראות של הפאדל — ספורט חדש שהזהות שלו עדיין נבנית. הפרצה הזו אפשרה לי לקחת סגנון שמתאים לחיי הלילה — מסיבות, קלאבים וכל הלייפסטייל שמתחת למטריית הוולנס.</p>
-          <p>יש אנשים שחיי הלילה הם חלק נורמלי מהחיים — לרוב אנשי הייטק — וההיגיון שלהם הוא לחבר את הספורט לאופי המחתרתי שלהם. הלכתי עם זה רחוק: בחרתי דוגמנית ייצוגית, שרירית, אפילו טיפה גברית, כדי להראות את הליברליות שבאה עם חיי הלילה — חלק מהערכים של המותג.</p>
-          <p>העיצוב מושפע מתרבות רחוב במינימליזם של חיי הלילה — לכן הוא גדול וחד. <b>שחור מָאט מוחלט, פס לילך דק כדיוק היחיד, וספל מאצ'ה כצבע החם היחיד בפריים.</b> לא מותג שצועק; מותג שיודע.</p>
-        </div>
-        <details class="en"><summary>ENGLISH</summary>
-          <p>PALA PUNK is an attempt to draw a sharp line between the white, meticulous branding of tennis and the look of padel — a new sport whose identity is still being formed. That opening let me take a style that belongs to nightlife — parties, clubs, and the whole lifestyle under the wellness umbrella.</p>
-          <p>For some people nightlife is a normal part of life — often in hi-tech — and it makes perfect sense to connect the sport with their underground character. I pushed it far: I cast a model who is striking, muscular, even slightly masculine, to show the liberalism that comes with nightlife — part of the brand's values.</p>
-          <p>The design is street culture in the minimalism of nightlife — so it is big and sharp. Absolute matte black, a single thin lilac stripe, a matcha cup as the only warm color in frame. Not a brand that shouts; a brand that knows.</p>
-        </details>
-        <div class="offer">
-          <div class="ol">עבור מותג · FOR A BRAND</div>
-          <p>זהות שלמה מתוך טענה אחת — שפה ויזואלית חדה שמבדלת אותך מכל מי שנראה כמו כולם.</p>
-        </div>
-        <div class="tags">
-          <span class="tag">בידול אסטרטגי</span><span class="tag">תרבות רחוב × מינימליזם</span><span class="tag en-f">Claude · Gemini · VEO3</span>
-        </div>
-      </div>
-      <div class="palamedia rv">
-        <div class="ph tall"><video src="_media/pala_v1.mp4" poster="_docimg/pala_v1_poster.jpg" preload="metadata" autoplay muted loop playsinline></video><div class="vbadge">VIDEO</div></div>
-        <div class="ph"><img loading="lazy" decoding="async" src="_docimg/pala_hero.jpg" alt="ספל מאצ'ה"></div>
-        <div class="ph"><img loading="lazy" decoding="async" src="_docimg/pala_2.jpg" alt="פאדל על מגרש בטון"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════ 04 · OY VEY ═══════════ -->
-<section class="world w-oy" id="oy">
-  <div class="grain"></div>
+<!-- ═══════════ 04 · ניצ ופלדוס ═══════════ -->
+<section class="world w-comics" id="comics">
   <div class="ghost">04</div>
   <div class="wrap">
     <div class="rv">
-      <div class="wk">04 · פנטזיה פוגשת לילה תל־אביבי · Fantasy Meets the Tel Aviv Night</div>
-      <div class="wt"><span class="en-f">OY VEY</span></div>
-      <div class="ws">סדרת וידאו בסגנון פילם-80s · An 80s-film video series</div>
-      <div class="wlead">המשימה: להפוך את "מבוכים ודרקונים" לערב תל־אביבי, <em>לקהל היפסטרי.</em></div>
-    </div>
-    <div class="oygrid" style="margin-top:44px">
-      <div class="oymedia rv">
-        <div class="ph"><video src="_media/oy_v1.mp4" poster="_docimg/oy_v1_poster.jpg" preload="metadata" autoplay muted loop playsinline></video><div class="vbadge">VIDEO</div></div>
-        <div class="ph"><img loading="lazy" decoding="async" src="_docimg/oy_hero.jpg" alt="מלכת האלף"></div>
-      </div>
-      <div class="rv">
-        <div class="wbody" style="margin-top:0">
-          <p>המשימה כאן לא הייתה פשוטה — להלביש את "מבוכים ודרקונים" שחור ולשלוח אותו למסיבה, <b>בלי שירגיש מחופש.</b> כמו בכל הסגנון שלי, אני בא מעולם של שילובי תרבויות — אז התחלתי לשלב את עולם הפנטזיה בעולם הקלאב, עם איפיון שמכניס את הסממנים התרסותיים של שני העולמות ל-DNA אחד אחיד.</p>
-          <p>פנטזיה ו-AI הם זיווג מתבקש — אבל גם עולם הלילה המטושטש מתאים ל-AI בצורה מדהימה: גרֵין, ערפל, ניאון, פרצופים שצפים בין אמיתי לדמיוני. הניגוד בין דמות פנטזיה משכנעת לבין הסביבה הסינתטית הוא בדיוק מה שמייצר את הקסם.</p>
-          <p>לכן בחרתי לא לטשטש את גבולות ה-AI אלא להציג אותו בפרונט: <b>המלאכותיות היא לא משהו להסתיר — היא הסגנון.</b> אימנתי DNA ויזואלי שלם (פילם-80s, פלטה, גימור) כדי שכל פרק ייראה כמו אותה יד.</p>
-        </div>
-        <details class="en"><summary>ENGLISH</summary>
-          <p>The mission here was anything but simple — to dress Dungeons &amp; Dragons in black and send it to a party, without it feeling like a costume. As in all of my style, I come from a world of culture-mixing — so I began fusing the fantasy world with the club world, with a characterization that folds the defiant signifiers of both worlds into one unified DNA.</p>
-          <p>Fantasy and AI are a natural pairing — but the blurry world of nightlife suits AI astonishingly well too: grain, haze, neon, faces that float between the real and the imagined. The contrast between a convincing fantasy character and the synthetic environment is exactly what creates the magic.</p>
-          <p>So I chose not to blur the boundaries of the AI but to put it front and center: the artificiality is not something to hide — it is the style. I trained a full visual DNA (80s-film, palette, finish) so every episode looks like the same hand.</p>
-        </details>
-        <div class="offer">
-          <div class="ol">עבור מותג · FOR A BRAND</div>
-          <p>סדרת תוכן עם סגנון חתום — פורמט אנכי ויראלי ו-DNA ויזואלי אחד, פרק אחרי פרק שנראה כמו אותה יד.</p>
-        </div>
-        <div class="tags">
-          <span class="tag">שילוב תרבויות</span><span class="tag">AI בפרונט</span><span class="tag en-f">VEO3 · trained style</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════ 05 · ניצ ופלדוס ═══════════ -->
-<section class="world w-comics" id="comics">
-  <div class="ghost">05</div>
-  <div class="wrap">
-    <div class="rv">
-      <div class="wk">05 · מיקס־מדיה מתוך רגע אמיתי · Mixed Media From a Real Moment</div>
+      <div class="wk">04 · מיקס־מדיה מתוך רגע אמיתי · Mixed Media From a Real Moment</div>
       <div class="wt">ניצ ופלדוס</div>
       <div class="ws">Situationship in the Middle East</div>
       <div class="wlead">קומיקס שנולד ברגע שבו נפל טיל — <em>ובאותו זמן התחילה אהבה.</em></div>
@@ -556,6 +601,102 @@
     <div class="tags rv">
       <span class="tag">מיקס־מדיה</span><span class="tag">דמות עקבית</span><span class="tag en-f">Gemini · Runway Act-Two</span>
     </div>
+    <a class="btn rv" href="https://www.instagram.com/p/DVia0RiDe_q/?img_index=1" target="_blank" rel="noopener">↗&nbsp; לצפייה בקומיקס · Instagram</a>
+  </div>
+</section>
+
+<!-- ═══════════ 05 · PALA PUNK ═══════════ -->
+<section class="world w-pala" id="pala">
+  <div class="ghost">05</div>
+  <div class="stripe"></div>
+  <div class="wrap">
+    <div class="rv">
+      <div class="wk">05 · בידול אסטרטגי · Strategic Differentiation</div>
+      <div class="wt"><span class="en-f">PALA PUNK</span></div>
+      <div class="ws">ספורט אורבני לפאדל · Urban padel brand</div>
+      <div class="wlead">המותג שגורם לך לא להרגיש שהתחפשת — אלא פשוט <em>להמשיך ללבוש שחור. תמיד.</em></div>
+    </div>
+    <div class="palagrid" style="margin-top:44px">
+      <div class="rv">
+        <div class="wbody" style="margin-top:0">
+          <p>PALA PUNK הוא ניסיון ליצור <b>בידול חזק</b> בין המיתוג הלבן והמוקפד של הטניס לבין הנראות של הפאדל — ספורט חדש שהזהות שלו עדיין נבנית. הפרצה הזו אפשרה לי לקחת סגנון שמתאים לחיי הלילה — מסיבות, קלאבים וכל הלייפסטייל שמתחת למטריית הוולנס.</p>
+          <p>יש אנשים שחיי הלילה הם חלק נורמלי מהחיים — לרוב אנשי הייטק — וההיגיון שלהם הוא לחבר את הספורט לאופי המחתרתי שלהם. הלכתי עם זה רחוק: בחרתי דוגמנית ייצוגית, שרירית, אפילו טיפה גברית, כדי להראות את הליברליות שבאה עם חיי הלילה — חלק מהערכים של המותג.</p>
+          <p>העיצוב מושפע מתרבות רחוב במינימליזם של חיי הלילה — לכן הוא גדול וחד. <b>שחור מָאט מוחלט, פס לילך דק כדיוק היחיד, וספל מאצ'ה כצבע החם היחיד בפריים.</b> לא מותג שצועק; מותג שיודע.</p>
+        </div>
+        <details class="en"><summary>ENGLISH</summary>
+          <p>PALA PUNK is an attempt to draw a sharp line between the white, meticulous branding of tennis and the look of padel — a new sport whose identity is still being formed. That opening let me take a style that belongs to nightlife — parties, clubs, and the whole lifestyle under the wellness umbrella.</p>
+          <p>For some people nightlife is a normal part of life — often in hi-tech — and it makes perfect sense to connect the sport with their underground character. I pushed it far: I cast a model who is striking, muscular, even slightly masculine, to show the liberalism that comes with nightlife — part of the brand's values.</p>
+          <p>The design is street culture in the minimalism of nightlife — so it is big and sharp. Absolute matte black, a single thin lilac stripe, a matcha cup as the only warm color in frame. Not a brand that shouts; a brand that knows.</p>
+        </details>
+        <div class="offer">
+          <div class="ol">עבור מותג · FOR A BRAND</div>
+          <p>זהות שלמה מתוך טענה אחת — שפה ויזואלית חדה שמבדלת אותך מכל מי שנראה כמו כולם.</p>
+        </div>
+        <div class="tags">
+          <span class="tag">בידול אסטרטגי</span><span class="tag">תרבות רחוב × מינימליזם</span><span class="tag en-f">Claude · Gemini · VEO3</span>
+        </div>
+        <a class="btn" href="https://www.instagram.com/palapunk.co/" target="_blank" rel="noopener" style="--acc:#cbb3ff">↗&nbsp; @palapunk.co · Instagram</a>
+      </div>
+      <div class="palamedia rv">
+        <div class="ph tall"><video src="_media/pala_v1.mp4" poster="_docimg/pala_v1_poster.jpg" preload="metadata" autoplay muted loop playsinline></video><div class="vbadge">VIDEO</div></div>
+        <div class="ph"><img loading="lazy" decoding="async" src="_docimg/pala_hero.jpg" alt="ספל מאצ'ה"></div>
+        <div class="ph"><img loading="lazy" decoding="async" src="_docimg/pala_2.jpg" alt="פאדל על מגרש בטון"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ ALBUM · characters & songs ═══════════ -->
+<section class="album" id="album">
+  <div class="wrap">
+    <div class="rv">
+      <div class="wk" style="--acc:#7b2ff7">האלבום · THE ROSTER</div>
+      <h2 class="album-title">שיר לכל דמות <span class="en-f" style="color:var(--ink3);font-size:.42em;letter-spacing:.1em">/ A SONG PER FIGHTER</span></h2>
+      <p class="album-sub">כל לוחם ב־WAR TLV קיבל <b>פרסונה שלמה</b> — לא רק מראה וסטטים, אלא גם <b>שיר כניסה משלו</b>. זה חלק מהפרסונליזציה: לכל דמות קול. לחצו על דמות כדי לשמוע את השיר שלה.</p>
+    </div>
+    <div class="fgrid rv">
+      <button class="fcard" type="button" data-song="_media/song_b.mp4" style="--acc:#1565c0">
+        <div class="fimg"><img loading="lazy" decoding="async" src="_docimg/fighter_b.jpg" alt="BIG.COM"></div>
+        <div class="fbadge">▶</div>
+        <div class="feq"><span></span><span></span><span></span><span></span></div>
+        <div class="fmeta"><div class="fname">BIG.COM</div><div class="frole">TEL AVIV HEEL</div></div>
+      </button>
+      <button class="fcard" type="button" data-song="_media/song_s.mp4" style="--acc:#e040fb">
+        <div class="fimg"><img loading="lazy" decoding="async" src="_docimg/fighter_s.jpg" alt="האייקון"></div>
+        <div class="fbadge">▶</div>
+        <div class="feq"><span></span><span></span><span></span><span></span></div>
+        <div class="fmeta"><div class="fname" style="direction:rtl">האייקון</div><div class="frole">THE ICON</div></div>
+      </button>
+      <button class="fcard" type="button" data-song="_media/song_i.mp4" style="--acc:#ffcc00">
+        <div class="fimg"><img loading="lazy" decoding="async" src="_docimg/fighter_i.jpg" alt="T.M.R"></div>
+        <div class="fbadge">▶</div>
+        <div class="feq"><span></span><span></span><span></span><span></span></div>
+        <div class="fmeta"><div class="fname">T.M.R</div><div class="frole">THE CHAMPION</div></div>
+      </button>
+      <button class="fcard" type="button" data-song="_media/song_y.mp4" style="--acc:#00e676">
+        <div class="fimg"><img loading="lazy" decoding="async" src="_docimg/fighter_y.jpg" alt="ישר"></div>
+        <div class="fbadge">▶</div>
+        <div class="feq"><span></span><span></span><span></span><span></span></div>
+        <div class="fmeta"><div class="fname" style="direction:rtl">ישר</div><div class="frole">THE SOLUTION</div></div>
+      </button>
+      <button class="fcard" type="button" data-song="_media/song_r.mp4" style="--acc:#cfd3da">
+        <div class="fimg"><img loading="lazy" decoding="async" src="_docimg/fighter_r.jpg" alt="השופט"></div>
+        <div class="fbadge">▶</div>
+        <div class="feq"><span></span><span></span><span></span><span></span></div>
+        <div class="fmeta"><div class="fname" style="direction:rtl">השופט</div><div class="frole">SILENT ENFORCER</div></div>
+      </button>
+      <button class="fcard" type="button" data-song="_media/song_f.mp4" style="--acc:#ff7a1a">
+        <div class="fimg"><img loading="lazy" decoding="async" src="_docimg/fighter_f.jpg" alt="FRISBEE"></div>
+        <div class="fbadge">▶</div>
+        <div class="feq"><span></span><span></span><span></span><span></span></div>
+        <div class="fmeta"><div class="fname">FRISBEE</div><div class="frole">BEACH LEGEND</div></div>
+      </button>
+    </div>
+    <audio id="ALBUM_AUDIO" preload="none"></audio>
+    <div class="offer rv" style="--acc:#7b2ff7;margin-top:34px">
+      <div class="ol">עבור מותג · FOR A BRAND</div>
+      <p>פרסונליזציה עד הקצה — לא רק דמות, אלא זהות סאונדית: שיר, קול וטקס כניסה שהופכים כל דמות למותג שאפשר לזהות בעיניים עצומות.</p>
+    </div>
   </div>
 </section>
 
@@ -567,59 +708,45 @@
       <div class="wk">06 · חשיבת מותג עמוקה · Deep Brand Thinking</div>
       <div class="wt"><span class="en-f">ATRO</span> · אטרו</div>
       <div class="ws">ביום קפה, בערב יין · Coffee by day, wine by night</div>
-      <div class="wlead">הפרויקט היחיד כאן בלי תמונה אחת — <em>כי כולו חשיבה.</em></div>
+      <div class="wlead">הפרויקט היחיד כאן בלי תמונה אחת — <em>כי כולו תהליך.</em></div>
     </div>
     <div class="wbody rv">
       <p>אטרו הוא בית קפה שכונתי בתל אביב — וגם הרבה יותר מזה. ביום קפה, בערב יין, ובאמצע עולם אלטרנטיבי שמנורמל לתוך השכונה: CBD ושמן פטריות לצד בקבוקי היין, בית מרקחת קנאביס מורשה כשכן. <b>האתגר לא היה לעצב — אלא להגדיר.</b> לא פארמה, לא בר — המשהו שביניהם, שמרוויח דווקא מזה שאי אפשר להדביק לו תווית.</p>
-      <p>זה הפרויקט שנבנה הכי הרבה דרך חשיבה עם AI, והיחיד כאן כמעט בלי נראות בכלל. לא ייצרתי דימויים — הגדרתי, פתרתי ופיתחתי מערכת שלמה: מיצוב, ארכיטקטורה, חדשנות מוצר שהיא בעצמה הבידול, כוריאוגרפיה של מסע לקוח, תת־מותג תוכן, היגיון קמעונאי, מודל תפעול ושפת מותג — הכל ב-<b>Brand Bible בן 17 פרקים.</b></p>
-      <p>כאן הערך הוא לא תמונה אלא תשתית: חוקים, מערכות ושפה שאפשר לפתוח לפיהם עסק אמיתי. זו ההוכחה ש-AI הוא לא רק כלי ויזואלי — הוא שותף לחשיבה אסטרטגית עמוקה.</p>
+      <p>זה הפרויקט שנבנה הכי הרבה דרך חשיבה עם AI, והיחיד כאן כמעט בלי נראות בכלל. הערך כאן הוא לא דימוי — אלא <b>תהליך ותשתית</b>: איך לוקחים שאלה עמומה והופכים אותה למערכת מותג שלמה שאפשר לפתוח לפיה עסק אמיתי.</p>
     </div>
     <details class="en rv"><summary>ENGLISH</summary>
       <p>ATRO is a neighborhood café in Tel Aviv — and far more than that. Coffee by day, wine by night, and in between an alternative world normalized into the neighborhood: CBD and mushroom oil beside the wine bottles, a licensed cannabis pharmacy as our neighbor. The challenge wasn't to design — it was to define. Not a pharmacy, not a bar — the thing in between, that profits precisely from being impossible to label.</p>
-      <p>This is the project built most through thinking with AI, and the only one here with almost no visuals at all. I didn't generate images — I defined, solved and developed a complete system: positioning, architecture, product innovation that is itself the differentiation, a customer-journey choreography, a content sub-brand, retail logic, an operating model and a brand voice — all in a 17-chapter Brand Bible.</p>
-      <p>Here the value is not an image but an infrastructure: rules, systems and language a real business can open and run by. This is the proof that AI is not only a visual tool — it is a partner in deep strategic thinking.</p>
+      <p>This is the project built most through thinking with AI, and the only one here with almost no visuals at all. The value here isn't an image — it's a process and an infrastructure: taking a vague question and turning it into a complete brand system a real business can open and run by.</p>
     </details>
 
     <div class="anat">
       <div class="rv">
-        <div class="anh">① הזהות <span class="en-f">IDENTITY</span></div>
-        <div class="idgrid">
-          <div class="idcard"><div class="t">אופי<span class="en-f">CHARACTER</span></div>
-            <p>רגוע, שכונתי, בטוח בעצמו. לא מסביר את עצמו יותר מדי — פשוט כאן. "Neighborhood Spirit, Alternative Soul."</p></div>
-          <div class="idcard"><div class="t">ערכים<span class="en-f">VALUES</span></div>
-            <p>שייכות ("Just Stay"), נרמול האלטרנטיב בלי להטיף, אוצרות על פני מלאי, וקצב איטי — אי של שקט אורבני.</p></div>
-          <div class="idcard"><div class="t">קהל יעד<span class="en-f">AUDIENCE</span></div>
-            <p>שכנים, אנשי הייטק, יוצרים וקהילת ORTA — מי שמחפש "מקום שלישי" בין הבית לעבודה.</p></div>
-        </div>
-      </div>
-      <div class="rv">
-        <div class="anh">② המרכיבים — בקטגוריות ברורות <span class="en-f">THE ELEMENTS, BY CATEGORY</span></div>
-        <div class="stages">
-          <div class="stage"><div class="sn">01</div><div>
-            <div class="st">יום · קפה ופיקניק <span class="en-f">DAY</span></div>
-            <div class="sx"><b>מה:</b> קפה, ספסלי שדרה, אנרגיית בוקר. <b>איך:</b> מרחב לפטופ ופגישה ספונטנית שמתחיל את היום נכון.</div>
+        <div class="anh">התהליך <span class="en-f">FROM A QUESTION TO A SYSTEM</span></div>
+        <div class="proc">
+          <div class="pstep"><div class="pn">01</div><div>
+            <div class="pt">להגדיר, לא לעצב <span class="en-f">DEFINE</span></div>
+            <div class="px">הצעד הראשון לא היה ויזואלי. <b>לא פארמה, לא בר</b> — הגדרתי את המרחב שאין לו תווית, וגיליתי שהעמימות הזו היא בדיוק הנכס.</div>
           </div></div>
-          <div class="stage"><div class="sn">02</div><div>
-            <div class="st">ערב · בר יין שכונתי <span class="en-f">EVENING</span></div>
-            <div class="sx"><b>מה:</b> יינות אצורים, גבינה ולחם. <b>איך:</b> מפלט רומנטי שכונתי כשהשמש יורדת — דייט או סוף יום.</div>
+          <div class="pstep"><div class="pn">02</div><div>
+            <div class="pt">מיצוב בשלוש שכבות <span class="en-f">POSITIONING</span></div>
+            <div class="px"><b>יום</b> — קפה, ספסלי שדרה, אנרגיית בוקר. <b>ערב</b> — בר יין שכונתי. <b>אלטרנטיב</b> — CBD, שמן פטריות ו-wellness עם בית מרקחת מורשה כשכן. מקום אחד שמחליף עור לפי שעה.</div>
           </div></div>
-          <div class="stage"><div class="sn">03</div><div>
-            <div class="st">אלטרנטיב · פטריות ו-CBD <span class="en-f">ALTERNATIVE</span></div>
-            <div class="sx"><b>מה:</b> הפיקוסית (אספרסו+CBD), UPLOAD (שמן פטריות), wellness. <b>איך:</b> שכן בית מרקחת מורשה שנותן גב — נרמול בלי הרצאות.</div>
+          <div class="pstep"><div class="pn">03</div><div>
+            <div class="pt">חדשנות מוצר = הבידול <span class="en-f">PRODUCT</span></div>
+            <div class="px">המוצר עצמו הוא ההבדלה: <b>הפיקוסית</b> (אספרסו+CBD), <b>UPLOAD</b> (שמן פטריות), מארזי <b>The Grid</b> (יין+ריבה+נר), ותת־מותג תוכן <b>M8.RADIO</b> — לא פלייליסט, מנוע Social Proof.</div>
           </div></div>
-          <div class="stage"><div class="sn">04</div><div>
-            <div class="st">מארזים · The Grid <span class="en-f">BUNDLES</span></div>
-            <div class="sx"><b>מה:</b> מדף כאוצרות + מארז (יין+ריבה+נר). <b>איך:</b> מתחרים על החוויה סביב הבקבוק, לא על המחיר.</div>
+          <div class="pstep"><div class="pn">04</div><div>
+            <div class="pt">המערכת המלאה <span class="en-f">THE SYSTEM</span></div>
+            <div class="px">מיצוב, ארכיטקטורה, כוריאוגרפיה של מסע לקוח, היגיון קמעונאי, מודל תפעול ושפת מותג — הכל ב-<b>Brand Bible בן 17 פרקים.</b></div>
           </div></div>
-          <div class="stage"><div class="sn">05</div><div>
-            <div class="st">תרבות · M8.RADIO <span class="en-f">CULTURE</span></div>
-            <div class="sx"><b>מה:</b> סשנים מצולמים ורגעים חיים. <b>איך:</b> מנוע שידור שמייצר Social Proof ונכס דיגיטלי — לא פלייליסט.</div>
+          <div class="pstep"><div class="pn">05</div><div>
+            <div class="pt">התוצר <span class="en-f">THE OUTCOME</span></div>
+            <div class="px">לא תמונה — <b>תשתית</b>. חוקים, מערכות ושפה שאפשר לפתוח לפיהם עסק אמיתי. ההוכחה ש-AI הוא לא רק כלי ויזואלי, אלא שותף לחשיבה אסטרטגית עמוקה.</div>
           </div></div>
         </div>
       </div>
       <div class="rv">
-        <div class="anh">③ הסינתזה <span class="en-f">HOW IT BECOMES ONE BRAND</span></div>
-        <div class="synth" style="margin-top:14px">מקום אחד שמחליף עור לפי שעה — ונשאר מותג אחד, כי כל מרכיב משרת ערך־על אחד: <span class="syn">תישאר</span>. הקפה, היין, הפטריות, המארזים והתרבות הם אותו סיפור.</div>
+        <div class="synth">מקום אחד שמחליף עור לפי שעה — ונשאר מותג אחד, כי כל מרכיב משרת ערך־על אחד: <span class="syn">תישאר</span>. הקפה, היין, הפטריות, המארזים והתרבות הם אותו סיפור.</div>
       </div>
       <div class="offer rv">
         <div class="ol">עבור מותג · FOR A BRAND</div>
@@ -735,6 +862,29 @@
   tog.addEventListener('click',function(e){e.stopPropagation();var o=nav.classList.toggle('open');tog.setAttribute('aria-expanded',o?'true':'false');});
   nav.querySelectorAll('.links a').forEach(function(a){a.addEventListener('click',shut);});
   document.addEventListener('click',function(e){if(nav.classList.contains('open')&&!nav.contains(e.target))shut();});
+})();
+/* album — click a fighter to play their theme (one at a time) */
+(function(){
+  var grid=document.querySelector('.fgrid'); if(!grid)return;
+  var audio=document.getElementById('ALBUM_AUDIO'); if(!audio)return;
+  var cards=[].slice.call(grid.querySelectorAll('.fcard'));
+  var current=null;
+  function stopAll(){cards.forEach(function(c){c.classList.remove('playing');});}
+  cards.forEach(function(c){
+    c.addEventListener('click',function(){
+      var song=c.getAttribute('data-song');
+      if(current===c && !audio.paused){ audio.pause(); c.classList.remove('playing'); current=null; return; }
+      stopAll();
+      audio.src=song; audio.currentTime=0; audio.play().catch(function(){});
+      c.classList.add('playing'); current=c;
+    });
+  });
+  audio.addEventListener('ended',function(){stopAll();current=null;});
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){es.forEach(function(e){
+      if(!e.isIntersecting && !audio.paused){audio.pause();stopAll();current=null;}
+    });},{threshold:0}).observe(document.getElementById('album'));
+  }
 })();
 /* lightbox — click media to enlarge; videos play with original sound (_src) */
 (function(){
