@@ -282,7 +282,9 @@
   /* ═══ OY VEY · in-page cast showcase ═══ */
   .castgrid{margin-top:26px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
   .cchip{position:relative;overflow:hidden;border-radius:12px;border:1px solid rgba(22,224,212,.18);background:#000;
-    aspect-ratio:3/4;isolation:isolate}
+    aspect-ratio:3/4;isolation:isolate;display:block;width:100%;padding:0;margin:0;cursor:pointer;font:inherit;
+    -webkit-tap-highlight-color:transparent;transition:border-color .25s,transform .25s}
+  .cchip:hover,.cchip:focus-visible{border-color:#16e0d4;transform:translateY(-3px);outline:none}
   .cchip img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .4s}
   .cchip:hover img{transform:scale(1.06)}
   .cchip .cclabel{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:8px 6px 7px;text-align:center;
@@ -303,6 +305,8 @@
   .labcard .lt{font-size:1.05rem;font-weight:900;margin-top:12px}
   .labcard .lx{font-size:.92rem;line-height:1.65;color:var(--ink2);margin-top:8px}
   .labcard .lw{font-family:'Archivo';font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--ink3);margin-top:12px}
+  .stackrow{margin-top:40px}
+  .stackrow .tags .tag{font-family:'Archivo'}
 
   /* ═══ 06 ATRO — warm espresso, process-forward ═══ */
   .w-atro{--acc:#e0a35c;background:
@@ -386,6 +390,38 @@
     display:flex;align-items:center;justify-content:center;transition:background .2s}
   .lb-close:hover{background:rgba(255,255,255,.16)}
 
+  /* ═══ OY VEY · CHARACTER SHEET ═══ */
+  .csheet{position:fixed;inset:0;z-index:210;display:none;align-items:center;justify-content:center;padding:clamp(14px,3vw,40px);
+    background:rgba(6,5,4,.93);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .csheet.open{display:flex}
+  .csheet-inner{width:100%;max-width:920px;max-height:90vh;overflow:auto;display:grid;grid-template-columns:1fr;
+    background:#0c0a09;border-radius:20px;border:1px solid rgba(255,255,255,.1);box-shadow:0 40px 120px rgba(0,0,0,.75)}
+  @media(min-width:720px){.csheet-inner{grid-template-columns:.85fr 1.15fr}}
+  .csheet-portrait{position:relative;min-height:280px;background:#000;overflow:hidden}
+  .csheet-portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center}
+  .csheet-body{padding:clamp(24px,4vw,40px);direction:ltr;text-align:left}
+  .cs-cls{font-family:'Archivo';font-weight:800;letter-spacing:.2em;font-size:12px;color:var(--cs-acc,#16e0d4);text-transform:uppercase}
+  .cs-name{font-family:'Archivo Black';font-size:clamp(2.2rem,6vw,3.6rem);line-height:.95;margin-top:8px;color:#fff}
+  .cs-sheetline{font-family:'Archivo';font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--ink3);margin-top:12px;text-transform:uppercase}
+  .cs-one{font-size:1.05rem;font-style:italic;color:var(--ink2);margin-top:12px}
+  .cs-appearance{font-size:11px;color:var(--ink3);letter-spacing:.03em;margin-top:6px}
+  .cs-stats{margin-top:24px;display:grid;gap:9px}
+  .cs-stat{display:grid;grid-template-columns:56px 1fr 26px;align-items:center;gap:10px}
+  .cs-stat b{font-family:'Archivo';font-size:10.5px;font-weight:800;letter-spacing:.1em;color:var(--ink2)}
+  .cs-track{height:8px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden}
+  .cs-fill{height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,var(--syn3),var(--cs-acc,var(--syn1)));transition:width .8s cubic-bezier(.2,.7,.2,1)}
+  .cs-stat span{font-family:'Archivo';font-size:12px;font-weight:700;color:#fff;text-align:right}
+  .cs-block{border-inline-start:3px solid var(--cs-acc,#16e0d4);padding-inline-start:16px;margin-top:22px}
+  .cs-blocktitle{font-family:'Archivo Black';font-size:13px;letter-spacing:.06em;color:#fff}
+  .cs-blocktext{font-size:.95rem;line-height:1.65;color:var(--ink2);margin-top:6px}
+  .cs-pickif{margin-top:22px;background:color-mix(in srgb,var(--cs-acc,#16e0d4) 12%,transparent);
+    border:1px solid color-mix(in srgb,var(--cs-acc,#16e0d4) 38%,transparent);border-radius:12px;padding:12px 16px;
+    font-size:.92rem;color:var(--ink);text-align:center;direction:rtl}
+  .csheet-close{position:absolute;top:clamp(12px,3vw,26px);right:clamp(12px,3vw,26px);z-index:2;width:46px;height:46px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.5);color:#fff;font-size:20px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:background .2s}
+  .csheet-close:hover{background:rgba(255,255,255,.16)}
+
   /* ═══ RESPONSIVE ═══ */
   @media (max-width:880px){
     .palagrid,.oygrid{grid-template-columns:1fr}
@@ -465,8 +501,8 @@
   <div class="hero-inner">
     <div class="hkick">LIOR PELED PRESENTS</div>
     <h1 class="hbig">A LABORATORY<br>OF IDENTITIES</h1>
-    <div class="hsub" data-l="he">שישה עולמות, שהונדסו במעבדה אחת — <b>גללו על אחריותכם.</b></div>
-    <div class="hsub" data-l="en">Six worlds, engineered in one lab — <b>scroll at your own risk.</b></div>
+    <div class="hsub" data-l="he">שישה עולמות שלא היו קיימים — <b>עד שהחלטתי שכן.</b></div>
+    <div class="hsub" data-l="en">Six worlds that didn't exist — <b>until I decided they did.</b></div>
   </div>
   <div class="dots" id="DOTS"></div>
   <a class="scrollcue" href="#big" data-l="he">בהצלחה ↓</a>
@@ -500,7 +536,8 @@
   <div class="ghost" aria-hidden="true">01</div>
   <div class="wrap">
     <div class="rv">
-      <div class="wk">01 · מעבדת זהויות · A Lab of Identities</div>
+      <div class="wk" data-l="he">01 · איפה הכול התחיל</div>
+      <div class="wk" data-l="en">01 · WHERE IT ALL STARTED</div>
       <div class="wt"><span class="en-f">BIG.COM</span></div>
       <div class="ws">היאבקות ↔ חיי לילה תל־אביביים · Wrestling ↔ Tel Aviv nightlife</div>
       <div class="wlead" data-l="he">BIG.COM הוא לא אתר, לא עמוד אינסטגרם ולא סדרת סרטונים — <em>הוא מעבדה של זהויות מוגזמות.</em></div>
@@ -644,18 +681,18 @@
 
     <!-- OY VEY · in-page cast showcase (6 branded portraits) -->
     <div class="castgrid rv">
-      <div class="cchip"><img loading="lazy" decoding="async" src="_docimg/cast_tuhar.jpg" alt="TUHAR — THE HEALER">
-        <div class="cclabel"><div class="ccname">TUHAR</div><div class="cccls">THE HEALER</div></div></div>
-      <div class="cchip"><img loading="lazy" decoding="async" src="_docimg/cast_deborah.jpg" alt="DEBORAH — THE SEER">
-        <div class="cclabel"><div class="ccname">DEBORAH</div><div class="cccls">THE SEER</div></div></div>
-      <div class="cchip"><img loading="lazy" decoding="async" src="_docimg/cast_harel.jpg" alt="HAREL — THE SOLDIER">
-        <div class="cclabel"><div class="ccname">HAREL</div><div class="cccls">THE SOLDIER</div></div></div>
-      <div class="cchip"><img loading="lazy" decoding="async" src="_docimg/cast_leon.jpg" alt="LEON — THE SMALL GIANT">
-        <div class="cclabel"><div class="ccname">LEON</div><div class="cccls">SMALL GIANT</div></div></div>
-      <div class="cchip"><img loading="lazy" decoding="async" src="_docimg/cast_diana.jpg" alt="DIANA — THE HIPPY">
-        <div class="cclabel"><div class="ccname">DIANA</div><div class="cccls">THE HIPPY</div></div></div>
-      <div class="cchip"><img loading="lazy" decoding="async" src="_docimg/cast_meshi.jpg" alt="MESHI — THE THIEF">
-        <div class="cclabel"><div class="ccname">MESHI</div><div class="cccls">THE THIEF</div></div></div>
+      <button type="button" class="cchip" data-cid="01_tuhar"><img loading="lazy" decoding="async" src="_docimg/cast_tuhar.jpg" alt="TUHAR — THE HEALER">
+        <div class="cclabel"><div class="ccname">TUHAR</div><div class="cccls">THE HEALER</div></div></button>
+      <button type="button" class="cchip" data-cid="02_deborah"><img loading="lazy" decoding="async" src="_docimg/cast_deborah.jpg" alt="DEBORAH — THE SEER">
+        <div class="cclabel"><div class="ccname">DEBORAH</div><div class="cccls">THE SEER</div></div></button>
+      <button type="button" class="cchip" data-cid="03_harel"><img loading="lazy" decoding="async" src="_docimg/cast_harel.jpg" alt="HAREL — THE SOLDIER">
+        <div class="cclabel"><div class="ccname">HAREL</div><div class="cccls">THE SOLDIER</div></div></button>
+      <button type="button" class="cchip" data-cid="04_leon"><img loading="lazy" decoding="async" src="_docimg/cast_leon.jpg" alt="LEON — THE SMALL GIANT">
+        <div class="cclabel"><div class="ccname">LEON</div><div class="cccls">SMALL GIANT</div></div></button>
+      <button type="button" class="cchip" data-cid="05_diana"><img loading="lazy" decoding="async" src="_docimg/cast_diana.jpg" alt="DIANA — THE HIPPY">
+        <div class="cclabel"><div class="ccname">DIANA</div><div class="cccls">THE HIPPY</div></div></button>
+      <button type="button" class="cchip" data-cid="06_meshi"><img loading="lazy" decoding="async" src="_docimg/cast_meshi.jpg" alt="MESHI — THE THIEF">
+        <div class="cclabel"><div class="ccname">MESHI</div><div class="cccls">THE THIEF</div></div></button>
     </div>
   </div>
 </section>
@@ -668,8 +705,8 @@
       <div class="wk">03 · המניפסט כמשחק · The Manifesto, Playable</div>
       <div class="wt"><span class="en-f">WAR TLV</span></div>
       <div class="ws">משחק לחימה בעברית · A Hebrew fighting game</div>
-      <div class="wlead" data-l="he">השלב שבו אתם, הקהל, בוחרים מי ה-Heel ומי ה-Face — <em>וזה מה שהופך את הקונספט לחי.</em></div>
-      <div class="wlead" data-l="en">The stage where you, the audience, decide who's the Heel and who's the Face — <em>and that's what makes the concept alive.</em></div>
+      <div class="wlead" data-l="he">כאן אתם — לא אני — <em>מחליטים מי ה-Heel ומי ה-Face.</em></div>
+      <div class="wlead" data-l="en">Here you — <em>not me</em> — decide who's the Heel and who's the Face.</div>
     </div>
     <div class="warrow rv">
       <div class="ph"><img loading="lazy" decoding="async" src="_docimg/war_select.jpg" alt="בחירת דמות"></div>
@@ -768,7 +805,8 @@
   <div class="stripe"></div>
   <div class="wrap">
     <div class="rv">
-      <div class="wk">05 · בידול אסטרטגי · Strategic Differentiation</div>
+      <div class="wk" data-l="he">05 · שחור על שחור</div>
+      <div class="wk" data-l="en">05 · BLACK ON BLACK</div>
       <div class="wt"><span class="en-f">PALA PUNK</span></div>
       <div class="ws">ספורט אורבני לפאדל · Urban padel brand</div>
       <div class="wlead" data-l="he">המותג שגורם לך לא להרגיש שהתחפשת — אלא פשוט <em>להמשיך ללבוש שחור. תמיד.</em></div>
@@ -812,6 +850,8 @@
         <div class="ph"><img loading="lazy" decoding="async" src="_docimg/pala_hero.jpg" alt="ספל מאצ'ה"></div>
         <div class="ph"><img loading="lazy" decoding="async" src="_docimg/pala_2.jpg" alt="פאדל על מגרש בטון"></div>
         <div class="ph"><video src="_media/pala_v2.mp4" data-full="_media/pala_v2_src.mp4" poster="_docimg/pala_v2_poster.jpg" preload="metadata" autoplay muted loop playsinline></video><div class="vbadge">VIDEO</div></div>
+        <div class="cap" style="grid-column:1/-1" data-l="he">וידאו: השיר "טבע" — הילה רוח</div>
+        <div class="cap" style="grid-column:1/-1" data-l="en">Video: "Teva" — Hila Ruach</div>
       </div>
     </div>
   </div>
@@ -824,57 +864,56 @@
       <div class="wk" style="--acc:#16e0d4">היכולות · CAPABILITIES</div>
       <h2 class="lab-title" data-l="he">מאחורי המעבדה <span class="en-f" style="color:var(--ink3);font-size:.42em;letter-spacing:.1em">/ BEHIND THE LAB</span></h2>
       <h2 class="lab-title" data-l="en">BEHIND THE LAB</h2>
-      <p class="lab-sub" data-l="he">כל עולם למעלה הוא תוצר — כאן הכלים והשיטות. לא הפרומפטים ולא ה"מתכונים", אלא סוג העבודה: מה נדרש כדי שדמות AI תישאר עקבית לאורך עשרות סרטונים, שסגנון שלם יילמד ויוחל, ושמותג ייבנה כמערכת ולא כפוסט.</p>
-      <p class="lab-sub" data-l="en">Every world above is a result — this is the tooling and method behind it. Not prompts or "recipes," but the kind of work: what it takes for an AI character to stay consistent across dozens of videos, for a full style to be trained and applied, and for a brand to be built as a system, not a post.</p>
+      <p class="lab-sub" data-l="he"><b>בונה AI-native וטכנולוג יצירתי</b> — אני לא רק מנחה AI, אני מהנדס את המערכות סביבו: סוכנים מותאמים אישית, pipelines רב-מודליים ומוצרים אינטראקטיביים מלאים — הכול חי ומיושם.</p>
+      <p class="lab-sub" data-l="en"><b>AI-native builder &amp; creative technologist</b> — I don't just prompt AI, I engineer the systems around it: custom agents, multi-model pipelines, and full interactive products, all shipped and live.</p>
     </div>
     <div class="labgrid rv">
       <div class="labcard">
-        <div class="lk">🧬</div>
-        <div class="lt" data-l="he">DNA ויזואלי מאומן</div>
-        <div class="lt" data-l="en">Trained visual DNA</div>
-        <div class="lx" data-l="he">מערכת סגנון שלמה — פלטה, גימור, אווירה — כך שעולם שלם נראה כמו יד אחת, פרק אחרי פרק.</div>
-        <div class="lx" data-l="en">A full style system — palette, finish, mood — so an entire world reads as one hand, episode after episode.</div>
-        <div class="lw">OY VEY · BIG.COM</div>
-      </div>
-      <div class="labcard">
-        <div class="lk">🎭</div>
-        <div class="lt" data-l="he">עקביות דמות נעולה</div>
-        <div class="lt" data-l="en">Locked character consistency</div>
-        <div class="lx" data-l="he">זהות אחת — מראה, פרסונה, שפת גוף — נשמרת זהה על פני עשרות תמונות וסרטונים דרך תיאור מדויק ותמונת רפרנס.</div>
-        <div class="lx" data-l="en">One identity — look, persona, body language — held identical across dozens of stills and videos through precise description and a reference image.</div>
-        <div class="lw">BIG.COM · ניצ ופלדוס</div>
-      </div>
-      <div class="labcard">
-        <div class="lk">🗺️</div>
-        <div class="lt" data-l="he">מערכת מותג מלאה</div>
-        <div class="lt" data-l="en">Full brand systems</div>
-        <div class="lx" data-l="he">לוקחים שאלה עמומה והופכים אותה למיצוב, ארכיטקטורת מוצר, מסע לקוח ושפה — ב-Brand Bible שלם שאפשר לפתוח לפיו עסק.</div>
-        <div class="lx" data-l="en">Taking a vague question and turning it into positioning, product architecture, customer journey and language — a full Brand Bible a business can be opened by.</div>
-        <div class="lw">ATRO</div>
-      </div>
-      <div class="labcard">
         <div class="lk">🕹️</div>
-        <div class="lt" data-l="he">מנוע מ-0</div>
-        <div class="lt" data-l="en">Engine, from zero</div>
-        <div class="lx" data-l="he">בניית מוצר אינטראקטיבי מלא — מצלמה דינמית, מערכת קרב בתזמון, מד "סופר" — שרץ בדפדפן ובנייד.</div>
-        <div class="lx" data-l="en">Building a full interactive product — dynamic camera, timing-based combat, a "super" meter — running in the browser and on mobile.</div>
-        <div class="lw">WAR TLV</div>
+        <div class="lt" data-l="he">הנדסת מוצר Full-Stack</div>
+        <div class="lt" data-l="en">Full-stack product engineering</div>
+        <div class="lx" data-l="he">משחק לחימה שנבנה מ-0 — בדפדפן ובנייד — ב-HTML5 Canvas ו-JS טהור: game loop, פיזיקה, hitboxes, מהלכים מיוחדים עם input-buffer, הגנה אקטיבית בתזמון, מצלמה דינמית ויריב AI.</div>
+        <div class="lx" data-l="en">A fighting game built from scratch — browser and mobile — in vanilla JS and HTML5 Canvas: game loop, physics, hitboxes, input-buffered special moves, timing-based active defense, dynamic camera, an AI opponent.</div>
+        <div class="lw">WAR TLV · LIVE</div>
       </div>
       <div class="labcard">
-        <div class="lk">🎬</div>
-        <div class="lt" data-l="he">בימוי סצנה ב-AI</div>
-        <div class="lt" data-l="en">AI scene direction</div>
-        <div class="lx" data-l="he">כל כניסה, קרב ופרומו מתוכננים כרגע — זווית מצלמה, קהל, תזמון, דיאלוג — ומדויקים עד שהם קוראים כמיתולוגיה, לא כפלט.</div>
-        <div class="lx" data-l="en">Every entrance, fight and promo is designed as a moment — camera angle, crowd, timing, dialogue — refined until it reads as mythology, not output.</div>
-        <div class="lw">BIG.COM · OY VEY</div>
+        <div class="lk">🔒</div>
+        <div class="lt" data-l="he">אפליקציות Web עם State</div>
+        <div class="lt" data-l="en">Stateful web apps</div>
+        <div class="lx" data-l="he">אפליקציית אירוע בזמן-אמת — עמוד בחירת דמות עם נעילה חיה לפי שולחן, כך ששני אורחים לא יכולים לבחור את אותה דמות. גם האתר הזה הוא הבנייה שלי: קובץ עצמאי אחד, דו-לשוני, responsive.</div>
+        <div class="lx" data-l="en">A real-time event app — a character-select page with table-based live locking, so two guests can't claim the same character. This portfolio is also my build: one self-contained, bilingual, responsive file.</div>
+        <div class="lw">CAST APP · THIS SITE</div>
+      </div>
+      <div class="labcard">
+        <div class="lk">🧠</div>
+        <div class="lt" data-l="he">בניית סוכני ומערכות AI</div>
+        <div class="lt" data-l="en">AI systems &amp; agent building</div>
+        <div class="lx" data-l="he">מהנדס מנועים/סוכנים מותאמים אישית שהופכים קלט גולמי — נתוני עסק, בריף — למערכת מובנית: מערכת מותג שלמה, מנוע סגנון ונכסים חוזר.</div>
+        <div class="lx" data-l="en">Architects custom engines/agents that turn raw input — business data, a brief — into a structured system: a full brand system, a repeatable style-and-asset engine.</div>
+        <div class="lw">ATRO</div>
       </div>
       <div class="labcard">
         <div class="lk">🔀</div>
         <div class="lt" data-l="he">תזמור רב-מודלי</div>
         <div class="lt" data-l="en">Multi-model orchestration</div>
-        <div class="lx" data-l="he">כלים שונים לתפקידים שונים — לוגיקה ובנייה, תמונה, וידאו, סאונד — משולבים לכדי תוצר אחד עקבי.</div>
-        <div class="lx" data-l="en">Different tools for different jobs — logic and build, image, video, sound — combined into one consistent output.</div>
+        <div class="lx" data-l="he">מרכיב pipelines, לא פרומפט בודד: מנתב כל משימה למודל הנכון — מודל חשיבה/קוד ללוגיקה, מודלים נפרדים לתמונה ולווידאו, סאונד — ותופר את הפלטים יחד עם ffmpeg לתוצר עקבי אחד.</div>
+        <div class="lx" data-l="en">Composes pipelines, not single prompts: routes each job to the right model — a reasoning/coding model for logic, separate image and video models, audio — then stitches outputs with ffmpeg into one consistent deliverable.</div>
         <div class="lw">כל העולמות · ALL WORLDS</div>
+      </div>
+      <div class="labcard">
+        <div class="lk">🎯</div>
+        <div class="lt" data-l="he">הנדסת פרומפט וקונטקסט</div>
+        <div class="lt" data-l="en">Prompt / context engineering</div>
+        <div class="lx" data-l="he">שליטה דטרמיניסטית במודלים סטוכסטיים: זהות דמות אחת נשמרת זהה על פני עשרות תמונות וסרטונים דרך תיאור מדויק ובקרת רפרנס.</div>
+        <div class="lx" data-l="en">Deterministic control over stochastic models: one character's identity held identical across dozens of stills and videos through precise specification and reference control.</div>
+        <div class="lw">BIG.COM · OY VEY</div>
+      </div>
+    </div>
+    <div class="stackrow rv">
+      <div class="wk" style="--acc:#16e0d4;font-size:11px" data-l="he">הכלים</div>
+      <div class="wk" style="--acc:#16e0d4;font-size:11px" data-l="en">THE STACK</div>
+      <div class="tags" style="margin-top:10px">
+        <span class="tag en-f">Claude</span><span class="tag en-f">Gemini</span><span class="tag en-f">VEO3</span><span class="tag en-f">Runway</span><span class="tag en-f">ffmpeg</span><span class="tag en-f">HTML5 Canvas</span><span class="tag en-f">JavaScript</span>
       </div>
     </div>
   </div>
@@ -1053,6 +1092,25 @@
   </div>
 </footer>
 
+<!-- ═══════════ OY VEY · CHARACTER SHEET ═══════════ -->
+<div class="csheet" id="CSHEET" aria-hidden="true" role="dialog" aria-modal="true">
+  <button class="csheet-close" id="CSHEETX" aria-label="סגור">✕</button>
+  <div class="csheet-inner" id="CSHEETIN">
+    <div class="csheet-portrait"><img id="CS_IMG" alt=""></div>
+    <div class="csheet-body">
+      <div class="cs-cls" id="CS_CLS"></div>
+      <div class="cs-name" id="CS_NAME"></div>
+      <div class="cs-sheetline" id="CS_SHEETLINE"></div>
+      <div class="cs-one" id="CS_ONE"></div>
+      <div class="cs-appearance" id="CS_APP"></div>
+      <div class="cs-stats" id="CS_STATS"></div>
+      <div class="cs-block"><div class="cs-blocktitle" id="CS_ABILITY_NAME"></div><div class="cs-blocktext" id="CS_ABILITY_DESC"></div></div>
+      <div class="cs-block"><div class="cs-blocktitle">BACKSTORY</div><div class="cs-blocktext" id="CS_BACK"></div></div>
+      <div class="cs-pickif" id="CS_PICKIF"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════ LIGHTBOX ═══════════ -->
 <div class="lb" id="LB" aria-hidden="true" role="dialog" aria-modal="true">
   <button class="lb-close" id="LBX" aria-label="סגור">✕</button>
@@ -1228,7 +1286,8 @@
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
   }
   var nodes=[].slice.call(document.querySelectorAll('.world img,.world video')).filter(function(n){
-    return !n.closest('.ep-player'); /* controls players (e.g. OY VEY promo) play inline, not in the lightbox */
+    /* controls players (e.g. OY VEY promo) play inline; cast portraits open the character sheet instead */
+    return !n.closest('.ep-player') && !n.closest('.cchip');
   });
   nodes.forEach(function(n){
     n.classList.add('zoom');
@@ -1243,6 +1302,113 @@
   lb.addEventListener('click',function(e){if(e.target===lb)close();});
   document.addEventListener('keydown',function(e){
     if(!lb.classList.contains('open'))return;
+    if(e.key==='Escape')close();
+    else trapTab(e);
+  });
+})();
+/* OY VEY character sheet — mirrors the live cast-select page (tlv-war/cast/), portfolio-styled */
+(function(){
+  var sheet=document.getElementById('CSHEET'); if(!sheet)return;
+  var x=document.getElementById('CSHEETX');
+  var AXES=['STR','DEX','CON','INT','WIS','CHA'];
+  var OYCAST={
+    '01_tuhar':{name:'TUHAR',cls:'THE HEALER',accent:'#7FE3B0',
+      sheetLine:'Half-elf · Life Cleric 3 · HP 24 · AC 10',
+      oneLiner:'born between two worlds, saving people in both',
+      appearance:'38 (ageless) · 1.70m · blue eyes · blonde hair',
+      stats:{STR:0,DEX:2,CON:6,INT:8,WIS:10,CHA:4},
+      ability:{name:'DISCIPLE OF LIFE',desc:'Every healing spell lands harder — plus channel divinity to mend the wounded or turn the undead.'},
+      backstory:'Born to a fay father and a human mother, he grew up moving between both worlds. He studied magic and medicine and joined the organization to put both to use for the greater good.',
+      pickIf:'בחר/י אם את/ה זה שדואג לכולם בערב.'},
+    '02_deborah':{name:'DEBORAH',cls:'THE SEER',accent:'#8CC5FF',
+      sheetLine:'Elf · Chronurgy Wizard 3 · HP 23 · AC 9',
+      oneLiner:'born from a test tube, still learning to bend time itself',
+      appearance:'??? · 1.63m · purple eyes · black hair',
+      stats:{STR:2,DEX:0,CON:8,INT:10,WIS:6,CHA:4},
+      ability:{name:'CHRONAL SHIFT',desc:'Forces a creature to reroll its die — twice a rest — and reads the room three seconds ahead.'},
+      backstory:'Born from a test tube, given magic and the power to bend time itself. She\'s still learning the edges of it — and determined to prove to the organization she\'s more than just her powers.',
+      pickIf:'בחר/י אם את/ה תמיד יודע/ת מה יקרה אחרי.'},
+    '03_harel':{name:'HAREL',cls:'THE SOLDIER',accent:'#7FE0E6',
+      sheetLine:'Human · Champion Fighter 3 · HP 31 · AC 17',
+      oneLiner:'the only one who walked out of the anomaly',
+      appearance:'22 · 1.87m · brown eyes · black hair',
+      stats:{STR:10,DEX:6,CON:8,INT:2,WIS:4,CHA:0},
+      ability:{name:'ACTION SURGE',desc:'One extra action per short rest, crits on 19 too, and mends himself mid-fight with Second Wind.'},
+      backstory:'Served in a special forces unit until an anomaly wiped out his entire squad — he was the only one who walked out. The organization recruited him on the spot. Quick, trained, a powerhouse on the battlefield. Parties, less so.',
+      pickIf:'בחר/י אם את/ה לא נופל/ת גם כשכולם נפלו.'},
+    '04_leon':{name:'LEON',cls:'THE SMALL GIANT',accent:'#FFB067',
+      sheetLine:'Dwarf · Wild Magic Barbarian · HP 38 · AC 18',
+      oneLiner:'quiet giant with a magical rage he never asked for',
+      appearance:'53 · 1.45m · green eyes · gray hair',
+      stats:{STR:8,DEX:6,CON:10,INT:0,WIS:2,CHA:4},
+      ability:{name:'MAGICAL RAGE',desc:'Entering rage rolls a d8 for a random magical surge — and he can sense magic within 10ft.'},
+      backstory:'In his early twenties he got caught smuggling for a cult. After serving his time he had a change of heart, and now pulls other kids out of the same web of lies. The organization took him in once they realized there\'s real magic in his blood — maybe left over from the cult. Who knows.',
+      pickIf:'בחר/י אם את/ה השקט הכי חזק בחדר.'},
+    '05_diana':{name:'DIANA',cls:'THE HIPPY',accent:'#D59BFF',
+      sheetLine:'Half-orc · Moon Druid 3 · HP 24 · AC 14',
+      oneLiner:'a psychedelic trip cracked the world open — she never looked away',
+      appearance:'28 · 1.92m · hazel eyes · brown hair',
+      stats:{STR:4,DEX:8,CON:6,INT:2,WIS:10,CHA:0},
+      ability:{name:'MOONBEAM',desc:'Channels scorching lunar light — or shifts into animal form twice a rest.'},
+      backstory:'After a major psychedelic trip she gained the sight to see the magic hiding behind everything — and became the target of otherworldly things because of it. An organization pulled her out. Now she works missions for them in return.',
+      pickIf:'בחר/י אם את/ה רואה קסם במה שאחרים חולפים על פניו.'},
+    '06_meshi':{name:'MESHI',cls:'THE THIEF',accent:'#C24A8A',
+      sheetLine:'Halfling · Thief Rogue 3 · HP 18 · AC 16',
+      oneLiner:'already three steps toward the exit',
+      appearance:'18 · 1.42m · hazel eyes · ginger hair',
+      stats:{STR:0,DEX:10,CON:2,INT:6,WIS:4,CHA:8},
+      ability:{name:'SNEAK ATTACK',desc:'2d6 bonus damage with advantage, plus a free dash, hide, or disengage every turn.'},
+      backstory:'Born and raised an orphan, jumping from house to house, trusting only herself. When she accidentally tried to rob the organization, they saw exactly what she was capable of — and recruited her instead.',
+      pickIf:'בחר/י אם את/ה סומך/ת רק על עצמך.'}
+  };
+  var lastFocus=null;
+  function focusables(){return [].slice.call(sheet.querySelectorAll('button,[href],[tabindex]')).filter(function(el){return el.offsetParent!==null;});}
+  function open(id){
+    var c=OYCAST[id]; if(!c)return;
+    document.documentElement.style.setProperty('--cs-acc',c.accent);
+    var img=document.getElementById('CS_IMG');
+    img.src='_docimg/cast_'+id.split('_')[1]+'.jpg'; img.alt=c.name;
+    document.getElementById('CS_CLS').textContent=c.cls;
+    document.getElementById('CS_NAME').textContent=c.name;
+    document.getElementById('CS_SHEETLINE').textContent=c.sheetLine;
+    document.getElementById('CS_ONE').textContent='“'+c.oneLiner+'”';
+    document.getElementById('CS_APP').textContent=c.appearance;
+    document.getElementById('CS_ABILITY_NAME').textContent=c.ability.name;
+    document.getElementById('CS_ABILITY_DESC').textContent=c.ability.desc;
+    document.getElementById('CS_BACK').textContent=c.backstory;
+    document.getElementById('CS_PICKIF').textContent=c.pickIf;
+    var box=document.getElementById('CS_STATS'); box.innerHTML='';
+    AXES.forEach(function(ax){
+      var v=c.stats[ax]||0;
+      var row=document.createElement('div'); row.className='cs-stat';
+      row.innerHTML='<b>'+ax+'</b><div class="cs-track"><div class="cs-fill"></div></div><span>'+v+'</span>';
+      box.appendChild(row);
+      (function(row,v){requestAnimationFrame(function(){setTimeout(function(){row.querySelector('.cs-fill').style.width=(v*10)+'%';},60);});})(row,v);
+    });
+    lastFocus=document.activeElement;
+    sheet.classList.add('open'); sheet.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    x.focus();
+  }
+  function close(){
+    sheet.classList.remove('open'); sheet.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+    if(lastFocus&&lastFocus.focus)lastFocus.focus();
+  }
+  function trapTab(e){
+    if(e.key!=='Tab'||!sheet.classList.contains('open'))return;
+    var f=focusables(); if(!f.length)return;
+    var first=f[0], last=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  }
+  [].slice.call(document.querySelectorAll('.cchip')).forEach(function(btn){
+    btn.addEventListener('click',function(){open(btn.getAttribute('data-cid'));});
+  });
+  x.addEventListener('click',close);
+  sheet.addEventListener('click',function(e){if(e.target===sheet)close();});
+  document.addEventListener('keydown',function(e){
+    if(!sheet.classList.contains('open'))return;
     if(e.key==='Escape')close();
     else trapTab(e);
   });
