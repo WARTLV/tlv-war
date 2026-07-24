@@ -65,6 +65,11 @@
   .langtog button{border:0;background:transparent;color:var(--ink3);padding:5px 10px;border-radius:13px;cursor:pointer;
     letter-spacing:.06em;transition:color .2s,background .2s}
   .langtog button.on{color:#0c0a09;background:var(--ink)}
+  .mailtog{display:flex;align-items:center;justify-content:center;width:32px;height:32px;margin-inline-start:8px;
+    flex:none;border:1px solid rgba(255,255,255,.16);border-radius:16px;color:var(--ink3);
+    transition:color .2s,border-color .2s}
+  .mailtog:hover{color:var(--ink);border-color:rgba(255,255,255,.32)}
+  .mailtog svg{width:15px;height:15px;stroke:currentColor;fill:none}
 
   /* dual-language show/hide — !important class-scoped rules beat any component's own
      display:flex/grid (author-normal beats UA-normal [hidden], so [hidden] alone isn't enough) */
@@ -346,9 +351,6 @@
   .cbtn.solid{background:var(--acc);color:#0c0a09;box-shadow:0 12px 32px color-mix(in srgb,var(--acc) 35%,transparent)}
   .cbtn.ghosty{border:1px solid rgba(255,255,255,.25)}
   .foot{margin-top:60px;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--ink3)}
-  .visitcount{margin-top:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--ink3);opacity:.75}
-  .visitcount[hidden]{display:none}
-
   /* ═══ CONTACT FORM ═══ */
   .cform{max-width:30em;margin:48px auto 0;text-align:start}
   .cform .cf-row{margin-bottom:16px}
@@ -499,6 +501,9 @@
   <div class="langtog" id="LANGTOG" role="group" aria-label="Language">
     <button type="button" data-set="he" class="on">HE</button><button type="button" data-set="en">EN</button>
   </div>
+  <a class="mailtog" href="mailto:liorpeled93@gmail.com" aria-label="שלחו מייל · Email">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18v12H3z"/><path d="M3 7l9 6 9-6"/></svg>
+  </a>
   <button class="navtog" id="NAVTOG" aria-label="תפריט" aria-expanded="false"><span></span><span></span><span></span></button>
 </nav>
 
@@ -1133,7 +1138,6 @@
     </form>
 
     <div class="foot">LIOR PELED · HYPER-SYNTHETIC POP · 2026</div>
-    <div class="visitcount" id="VCOUNT" hidden></div>
   </div>
 </footer>
 
@@ -1282,23 +1286,6 @@
       })
       .finally(function(){btn.disabled=false;});
   });
-})();
-/* visitor counter — GoatCounter (cookieless, anonymous). Reads the public total-count JSON.
-   NOTE: replace GC_CODE below with Lior's real GoatCounter site code once he creates the free account. */
-(function(){
-  var GC_CODE='REPLACE_ME'; /* e.g. "liorpeled" → https://liorpeled.goatcounter.com */
-  if(GC_CODE==='REPLACE_ME')return; /* not configured yet — stay hidden, no broken UI */
-  var el=document.getElementById('VCOUNT'); if(!el)return;
-  fetch('https://'+GC_CODE+'.goatcounter.com/counter/TOTAL.json')
-    .then(function(r){return r.json();})
-    .then(function(d){
-      var n=(d&&d.count)?String(d.count).replace(/\D/g,''):null;
-      if(!n)return;
-      var isEn=document.documentElement.classList.contains('lang-en');
-      el.textContent=isEn?('◦ '+n+' IDENTITIES ENTERED THE LAB'):('◦ נכנסו למעבדה · '+n);
-      el.hidden=false;
-    })
-    .catch(function(){/* stay hidden on any failure */});
 })();
 /* mobile nav toggle */
 (function(){
@@ -1502,11 +1489,5 @@
   });
 })();
 </script>
-<!-- visitor counter (GoatCounter, free, cookieless) — NOT yet active.
-     1) create a free site at https://www.goatcounter.com (~1 min, no credit card)
-     2) put its site code in GC_CODE above (the JS block right before mobile-nav-toggle)
-     3) un-comment the line below with that same code
-<script data-goatcounter="https://GC_CODE.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
--->
 </body>
 </html>
