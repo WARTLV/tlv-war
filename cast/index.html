@@ -324,6 +324,7 @@
       <div class="block"><h4 id="shAbilityName"></h4><p id="shAbilityDesc"></p></div>
       <div class="block"><h4>BACKSTORY</h4><p id="shBack"></p></div>
       <div class="pickif" id="shPickIf"></div>
+      <div class="pickif" id="shPreviewNote" hidden>תצוגה מקדימה · הבחירה האמיתית מתבצעת באירוע</div>
       <div class="actions">
         <button class="pick-btn" id="pickBtn">זו הדמות שלי</button>
         <button id="backBtn">חזרה</button>
@@ -360,6 +361,10 @@ const sheet = document.getElementById('sheet');
 let current = null;      // character open in the sheet
 let profile = STORE.getProfile();   // {name, table} | null
 
+// ?preview=1 — reached from the portfolio link. Browsable roster + character sheets,
+// but NEVER writes a profile or a pick, so it can't lock a character for the real event.
+const PREVIEW = new URLSearchParams(location.search).has('preview');
+
 /* ---- brand logo probes (header + gate; fall back quietly) ---- */
 [['brandLogo'],['gateLogo']].forEach(([id])=>{
   const el = document.getElementById(id);
@@ -378,7 +383,10 @@ let profile = STORE.getProfile();   // {name, table} | null
 /* ================= background music ================= */
 const bgm = document.getElementById('bgm');
 const muteBtn = document.getElementById('muteBtn');
-let muted = localStorage.getItem('oyvey_muted') === '1';
+const mutedPref = localStorage.getItem('oyvey_muted'); // explicit prior choice, if any
+// preview visitors default to muted (polite for a portfolio click-through) unless they've
+// explicitly toggled sound before; real-event behavior (default unmuted) is untouched.
+let muted = PREVIEW ? (mutedPref === null ? true : mutedPref === '1') : (mutedPref === '1');
 bgm.volume = 0.35;
 function reflectMute(){ muteBtn.textContent = muted ? '🔇' : '🔊'; bgm.muted = muted; }
 function startMusic(){
@@ -426,8 +434,20 @@ function enterApp(){
   renderPickChip();
 }
 
+// preview mode (from the portfolio) — no name/table gate, no identity, browse-only.
+function enterPreviewMode(){
+  gate.hidden = true;
+  document.getElementById('profileChip').hidden = true;
+  document.getElementById('rosterHelp').textContent =
+    'תצוגה מקדימה של בחירת הדמות · לחצו על דמות כדי לצפות בה. הבחירה האמיתית מתבצעת באירוע.';
+  buildRoster();
+  renderPickChip();
+}
+
 // this device's pick, only if it belongs to the CURRENT table (switching tables drops it visually)
+// — in preview mode this always returns null, so a browsing visitor never sees/affects a real lock.
 function myPickHere(){
+  if (PREVIEW) return null;
   const mp = STORE.myPick();
   return (mp && profile && String(mp.table)===String(profile.table)) ? mp : null;
 }
@@ -450,11 +470,11 @@ document.getElementById('cancelPickBtn').addEventListener('click', ()=>{
 /* ================= roster ================= */
 function buildRoster(){
   const picks = profile ? STORE.getPicks(profile.table) : {};
-  const mine = STORE.myPick();
+  const mine = PREVIEW ? null : STORE.myPick(); // preview never reflects lock/ownership state
   roster.innerHTML = '';
   CAST.forEach((c,i)=>{
     const takenBy = picks[c.id];
-    const isMine = mine && mine.charId===c.id && String(mine.table)===String(profile.table);
+    const isMine = mine && profile && mine.charId===c.id && String(mine.table)===String(profile.table);
     const card = document.createElement('button');
     card.className = 'card noimg' + (takenBy ? ' taken':'') + (isMine ? ' mine':'');
     card.setAttribute('data-id', c.id);
@@ -518,16 +538,25 @@ function openSheet(id){
   const isMine = mine && mine.charId===c.id;
   const hasOtherPick = mine && mine.charId!==c.id;
   const pb = document.getElementById('pickBtn');
+  const previewNote = document.getElementById('shPreviewNote');
   pb.classList.remove('done');
   pb.disabled = false;
-  if (isMine){ pb.textContent = '✓ הדמות שלך'; pb.classList.add('done'); pb.disabled = true; }
-  else if (hasOtherPick){
-    const otherChar = CAST.find(x=>x.id===mine.charId);
-    pb.textContent = 'כבר בחרת את ' + (otherChar ? otherChar.name : '') + ' — בטל/י כדי לבחור אחרת';
-    pb.disabled = true;
+  if (PREVIEW){
+    // browse-only: no claiming, no localStorage writes — just show the character.
+    pb.hidden = true;
+    previewNote.hidden = false;
+  } else {
+    pb.hidden = false;
+    previewNote.hidden = true;
+    if (isMine){ pb.textContent = '✓ הדמות שלך'; pb.classList.add('done'); pb.disabled = true; }
+    else if (hasOtherPick){
+      const otherChar = CAST.find(x=>x.id===mine.charId);
+      pb.textContent = 'כבר בחרת את ' + (otherChar ? otherChar.name : '') + ' — בטל/י כדי לבחור אחרת';
+      pb.disabled = true;
+    }
+    else if (takenBy){ pb.textContent = 'כבר נבחר ע"י ' + takenBy; pb.disabled = true; }
+    else { pb.textContent = 'זו הדמות שלי'; }
   }
-  else if (takenBy){ pb.textContent = 'כבר נבחר ע"י ' + takenBy; pb.disabled = true; }
-  else { pb.textContent = 'זו הדמות שלי'; }
 
   sheet.classList.add('open');
   sheet.scrollTop = 0;
@@ -542,6 +571,7 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape' && sheet.classList
 
 /* ================= pick ================= */
 document.getElementById('pickBtn').addEventListener('click', ()=>{
+  if (PREVIEW) return; // belt-and-suspenders — the button is hidden in preview, but never claim from here
   if(!current || !profile) return;
   if (myPickHere()) return; // guard: one character per player (button is disabled in this case too)
   const res = STORE.claim(profile.table, current.id, profile.name);
@@ -574,8 +604,9 @@ document.getElementById('cfBack').addEventListener('click', ()=>{
 });
 
 /* ================= boot ================= */
-if (profile){ enterApp(); }        // returning patron — skip gate
-else { fTable.value=''; }          // first visit — gate stays up
+if (PREVIEW){ enterPreviewMode(); }  // reached from the portfolio — browse only, no gate, no writes
+else if (profile){ enterApp(); }     // returning patron — skip gate
+else { fTable.value=''; }            // first visit — gate stays up
 </script>
 </body>
 </html>

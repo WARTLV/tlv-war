@@ -346,6 +346,27 @@
   .cbtn.solid{background:var(--acc);color:#0c0a09;box-shadow:0 12px 32px color-mix(in srgb,var(--acc) 35%,transparent)}
   .cbtn.ghosty{border:1px solid rgba(255,255,255,.25)}
   .foot{margin-top:60px;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--ink3)}
+  .visitcount{margin-top:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--ink3);opacity:.75}
+  .visitcount[hidden]{display:none}
+
+  /* ═══ CONTACT FORM ═══ */
+  .cform{max-width:30em;margin:48px auto 0;text-align:start}
+  .cform .cf-row{margin-bottom:16px}
+  .cform label{display:block;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+  .cform input,.cform textarea{width:100%;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.2);
+    color:var(--ink);font-family:'Heebo',sans-serif;font-size:15px;padding:9px 2px;transition:border-color .2s}
+  .cform input:focus,.cform textarea:focus{outline:none;border-color:var(--acc)}
+  .cform textarea{resize:vertical;min-height:84px;line-height:1.5}
+  .cf-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+  .cform .cf-submit{margin-top:6px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.18em;
+    text-transform:uppercase;color:#0c0a09;background:var(--acc);border:0;border-radius:24px;padding:13px 30px;
+    cursor:pointer;transition:transform .2s,opacity .2s}
+  .cform .cf-submit:hover{transform:translateY(-2px)}
+  .cform .cf-submit:disabled{opacity:.5;cursor:default;transform:none}
+  .cform .cf-msg{margin-top:14px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;min-height:16px}
+  .cform .cf-msg.ok{color:var(--acc)}
+  .cform .cf-msg.err{color:#e08a8a}
 
   /* ═══ HAMBURGER (mobile) ═══ */
   .navtog{display:none;margin-inline-start:auto;width:42px;height:42px;border:0;background:transparent;cursor:pointer;
@@ -668,8 +689,8 @@
         <div class="ctxt" data-l="he">בניתי לאירוע עמוד <b>בחירת דמות</b> משלו — כל אורח בוחר את הדמות שלו מראש ונכנס אל תוך העולם עוד לפני שדרך בדלת. <b>ההשתתפות מתחילה לפני הכניסה.</b> שש הדמויות למטה — כל אחת עם יכולת חתומה, סיפור רקע ונתוני D&amp;D אמיתיים.</div>
         <div class="ctxt" data-l="en">I built the event its own <b>character-select</b> page — every guest picks their character in advance and steps into the world before they even walk through the door. <b>Participation starts before entry.</b> The six below — each with a signature ability, backstory and real D&amp;D stats.</div>
         <div class="btnrow">
-          <a class="btn" href="https://wartlv.github.io/tlv-war/cast/" target="_blank" rel="noopener" data-l="he">↗&nbsp; BLOODY ROTHSCHILD · בחרו דמות</a>
-          <a class="btn" href="https://wartlv.github.io/tlv-war/cast/" target="_blank" rel="noopener" data-l="en">↗&nbsp; BLOODY ROTHSCHILD · CHOOSE A CHARACTER</a>
+          <a class="btn" href="https://wartlv.github.io/tlv-war/cast/?preview=1" target="_blank" rel="noopener" data-l="he">↗&nbsp; BLOODY ROTHSCHILD · בחרו דמות</a>
+          <a class="btn" href="https://wartlv.github.io/tlv-war/cast/?preview=1" target="_blank" rel="noopener" data-l="en">↗&nbsp; BLOODY ROTHSCHILD · CHOOSE A CHARACTER</a>
           <a class="btn ghost2" href="https://www.instagram.com/wow.big.comm/" target="_blank" rel="noopener">@wow.big.comm</a>
         </div>
       </div>
@@ -1086,7 +1107,33 @@
            To restore once a fresh PDF is rendered from PORTFOLIO.html, un-comment:
       <a class="cbtn ghosty" href="lior-peled-portfolio.pdf" download>PDF&nbsp;↓</a> -->
     </div>
+
+    <!-- quick contact form — FormSubmit (no backend needed); one-time activation click required, see HANDOFF.md -->
+    <form class="cform rv" id="CFORM" action="https://formsubmit.co/ajax/liorpeled93@gmail.com" method="POST" novalidate>
+      <input type="text" name="_honey" class="cf-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input type="hidden" name="_subject" value="הודעה חדשה מהפורטפוליו · New portfolio message">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <div class="cf-row">
+        <label><span data-l="he">שם</span><span data-l="en">NAME</span></label>
+        <input type="text" name="name" id="CF_NAME" autocomplete="name" data-ph-he="השם שלך" data-ph-en="Your name">
+      </div>
+      <div class="cf-row">
+        <label><span data-l="he">אימייל לחזרה</span><span data-l="en">EMAIL TO REPLY</span></label>
+        <input type="email" name="email" id="CF_EMAIL" required autocomplete="email" placeholder="you@example.com">
+      </div>
+      <div class="cf-row">
+        <label><span data-l="he">הודעה</span><span data-l="en">MESSAGE</span></label>
+        <textarea name="message" id="CF_MESSAGE" required data-ph-he="שאלה? פרויקט? ספר/י לי." data-ph-en="Question? A project? Tell me."></textarea>
+      </div>
+      <button type="submit" class="cf-submit">
+        <span data-l="he">שליחה ↗</span><span data-l="en">SEND ↗</span>
+      </button>
+      <div class="cf-msg" id="CF_MSG" role="status" aria-live="polite"></div>
+    </form>
+
     <div class="foot">LIOR PELED · HYPER-SYNTHETIC POP · 2026</div>
+    <div class="visitcount" id="VCOUNT" hidden></div>
   </div>
 </footer>
 
@@ -1198,16 +1245,60 @@
 (function(){
   var tog=document.getElementById('LANGTOG'); if(!tog)return;
   var html=document.documentElement;
+  var phEls=[].slice.call(document.querySelectorAll('[data-ph-he]'));
   function setLang(l){
     html.classList.toggle('lang-en',l==='en');
     html.lang=l; /* keeps screen-reader pronunciation correct — layout direction stays RTL either way */
     tog.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-set')===l);});
+    phEls.forEach(function(el){el.placeholder=el.getAttribute(l==='en'?'data-ph-en':'data-ph-he')||'';});
     try{localStorage.setItem('portfolio_lang',l);}catch(e){}
   }
   setLang(html.classList.contains('lang-en')?'en':'he');
   tog.querySelectorAll('button').forEach(function(b){
     b.addEventListener('click',function(){setLang(b.getAttribute('data-set'));});
   });
+})();
+/* contact form — AJAX submit via FormSubmit (formsubmit.co), no backend needed.
+   NOTE: on the very first real submission, FormSubmit emails a one-time activation link to
+   liorpeled93@gmail.com — until that link is clicked, messages are held/not delivered. */
+(function(){
+  var form=document.getElementById('CFORM'); if(!form)return;
+  var msg=document.getElementById('CF_MSG'), btn=form.querySelector('.cf-submit');
+  var isEn=function(){return document.documentElement.classList.contains('lang-en');};
+  function setMsg(text,cls){msg.textContent=text;msg.className='cf-msg'+(cls?' '+cls:'');}
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(form.querySelector('.cf-hp').value){return;} /* honeypot tripped — silently drop */
+    btn.disabled=true;
+    setMsg(isEn()?'Sending…':'שולח…','');
+    fetch(form.action,{method:'POST',headers:{'Accept':'application/json'},body:new FormData(form)})
+      .then(function(r){if(!r.ok)throw new Error('bad status');return r.json();})
+      .then(function(){
+        setMsg(isEn()?'Thanks — message sent ✓':'תודה — ההודעה נשלחה ✓','ok');
+        form.reset();
+      })
+      .catch(function(){
+        setMsg(isEn()?'Something went wrong — email me directly instead.':'משהו השתבש — שלח/י לי מייל ישירות במקום.','err');
+      })
+      .finally(function(){btn.disabled=false;});
+  });
+})();
+/* visitor counter — GoatCounter (cookieless, anonymous). Reads the public total-count JSON.
+   NOTE: replace GC_CODE below with Lior's real GoatCounter site code once he creates the free account. */
+(function(){
+  var GC_CODE='REPLACE_ME'; /* e.g. "liorpeled" → https://liorpeled.goatcounter.com */
+  if(GC_CODE==='REPLACE_ME')return; /* not configured yet — stay hidden, no broken UI */
+  var el=document.getElementById('VCOUNT'); if(!el)return;
+  fetch('https://'+GC_CODE+'.goatcounter.com/counter/TOTAL.json')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var n=(d&&d.count)?String(d.count).replace(/\D/g,''):null;
+      if(!n)return;
+      var isEn=document.documentElement.classList.contains('lang-en');
+      el.textContent=isEn?('◦ '+n+' IDENTITIES ENTERED THE LAB'):('◦ נכנסו למעבדה · '+n);
+      el.hidden=false;
+    })
+    .catch(function(){/* stay hidden on any failure */});
 })();
 /* mobile nav toggle */
 (function(){
@@ -1411,5 +1502,11 @@
   });
 })();
 </script>
+<!-- visitor counter (GoatCounter, free, cookieless) — NOT yet active.
+     1) create a free site at https://www.goatcounter.com (~1 min, no credit card)
+     2) put its site code in GC_CODE above (the JS block right before mobile-nav-toggle)
+     3) un-comment the line below with that same code
+<script data-goatcounter="https://GC_CODE.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+-->
 </body>
 </html>
