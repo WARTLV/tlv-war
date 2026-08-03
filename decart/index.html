@@ -100,13 +100,21 @@ h1 { font-family: var(--display); font-weight: 800; font-size: clamp(26px, 5.4vw
   background: linear-gradient(180deg, rgba(10,7,4,.55) 0%, rgba(10,7,4,0) 20%, rgba(10,7,4,0) 40%,
                               rgba(10,7,4,.72) 74%, rgba(10,7,4,.95) 100%);
 }
-.cover-logo { position: absolute; top: 26px; left: 50%; transform: translateX(-50%); width: 92px; height: auto; filter: drop-shadow(0 2px 10px rgba(0,0,0,.7)); }
+.cover-logo { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); width: min(70vw, 280px); height: auto; filter: drop-shadow(0 2px 14px rgba(0,0,0,.75)); }
 .cover-unmute {
-  position: absolute; top: 24px; inset-inline-end: 20px; width: 40px; height: 40px; border-radius: 50%;
+  position: absolute; top: 20px; inset-inline-end: 16px; width: 80px; height: 80px; border-radius: 50%;
   background: rgba(10,7,4,.55); border: 1px solid rgba(241,230,211,.4); color: #fff;
-  font-size: 15px; cursor: pointer; backdrop-filter: blur(3px); z-index: 3;
+  font-size: 30px; line-height: 1; cursor: pointer; backdrop-filter: blur(3px); z-index: 3;
+  display: flex; align-items: center; justify-content: center;
 }
 .cover-unmute:hover { border-color: var(--gold); }
+/* while muted, a soft ring invites the tap that browsers require before audio can start */
+.cover-unmute.is-muted::after {
+  content: ""; position: absolute; inset: -7px; border-radius: 50%;
+  border: 1px solid rgba(217,162,59,.6); animation: ring 2.2s ease-out infinite;
+}
+@keyframes ring { 0% { transform: scale(.9); opacity: .9; } 70% { transform: scale(1.2); opacity: 0; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .cover-unmute.is-muted::after { animation: none; } }
 
 .cover-bottom {
   position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
@@ -116,10 +124,10 @@ h1 { font-family: var(--display); font-weight: 800; font-size: clamp(26px, 5.4vw
 /* burned-in style captions (English only — the clip is in English) so the point still
    lands for anyone watching on mute. Deliberately not the default browser caption box. */
 .cover-cap {
-  margin: 0; min-height: 2.9em; display: flex; align-items: flex-end; justify-content: center;
-  font-size: clamp(15px, 4vw, 18px); line-height: 1.45; font-weight: 600; color: #fff;
-  max-width: 21ch; text-wrap: balance;
-  text-shadow: 0 1px 3px rgba(0,0,0,.95), 0 2px 16px rgba(0,0,0,.8);
+  margin: 0; min-height: 3.2em; display: flex; align-items: flex-end; justify-content: center;
+  font-size: clamp(28px, 7.6vw, 35px); line-height: 1.3; font-weight: 700; color: #fff;
+  max-width: 16ch; text-wrap: balance;
+  text-shadow: 0 1px 4px rgba(0,0,0,.95), 0 2px 18px rgba(0,0,0,.85);
   opacity: 0; transition: opacity .22s ease;
 }
 .cover-cap.show { opacity: 1; }
@@ -325,11 +333,60 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
 
   var introVid = document.getElementById('introVid');
   var introUnmute = document.getElementById('introUnmute');
-  introUnmute.addEventListener('click', function() {
-    introVid.muted = !introVid.muted;
-    introUnmute.innerHTML = introVid.muted ? '&#128263;' : '&#128266;';
-    if (!introVid.muted) introVid.play().catch(function() {});
+  var wantsSound = true;   // what the viewer wants
+  var coverInView = true;  // audio only ever plays while the cover is on screen
+
+  function syncAudio() {
+    var on = wantsSound && coverInView;
+    introVid.muted = !on;
+    introUnmute.innerHTML = on ? '&#128266;' : '&#128263;';
+    introUnmute.setAttribute('aria-label', on ? 'mute' : 'unmute');
+    introUnmute.classList.toggle('is-muted', !on);
+  }
+
+  introUnmute.addEventListener('click', function(e) {
+    e.stopPropagation();
+    wantsSound = !wantsSound;
+    syncAudio();
+    if (wantsSound) introVid.play().catch(function() {});
   });
+
+  // Try to open with sound. Browsers block unmuted autoplay without a prior
+  // user gesture, so fall back to muted and take the first tap as permission.
+  function armFirstGesture() {
+    function onGesture(e) {
+      var onBtn = e.target && e.target.closest && e.target.closest('.cover-unmute');
+      document.removeEventListener('pointerdown', onGesture, true);
+      document.removeEventListener('keydown', onGesture, true);
+      if (onBtn) return;              // the button's own handler decides
+      wantsSound = true; syncAudio();
+      introVid.play().catch(function() {});
+    }
+    document.addEventListener('pointerdown', onGesture, true);
+    document.addEventListener('keydown', onGesture, true);
+  }
+
+  introVid.muted = false;
+  var attempt = introVid.play();
+  if (attempt && attempt.then) {
+    attempt.then(function() { wantsSound = true; syncAudio(); })
+           .catch(function() {
+             wantsSound = false; syncAudio();
+             introVid.play().catch(function() {});
+             armFirstGesture();
+           });
+  } else { syncAudio(); armFirstGesture(); }
+
+  // Scrolling the cover away stops the sound (and the playback) automatically.
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(entries) {
+      var vis = entries[entries.length - 1].intersectionRatio >= 0.4;
+      if (vis === coverInView) return;
+      coverInView = vis;
+      syncAudio();
+      if (vis) { introVid.play().catch(function() {}); } else { introVid.pause(); }
+    }, { threshold: [0, 0.2, 0.4, 0.6, 1] }).observe(document.querySelector('.cover'));
+  }
 
   // English-only captions for the intro clip, so a muted viewer still gets the line.
   // Cue 1 starts at 0 so something is always readable even if autoplay is blocked.
