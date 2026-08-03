@@ -105,9 +105,9 @@ h1 { font-family: var(--display); font-weight: 800; font-size: clamp(26px, 5.4vw
 }
 .cover-logo { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); width: min(70vw, 280px); height: auto; filter: drop-shadow(0 2px 14px rgba(0,0,0,.75)); }
 .cover-unmute {
-  position: absolute; top: 20px; inset-inline-end: 16px; width: 80px; height: 80px; border-radius: 50%;
+  position: absolute; top: 20px; inset-inline-end: 18px; width: 52px; height: 52px; border-radius: 50%;
   background: rgba(10,7,4,.55); border: 1px solid rgba(241,230,211,.4); color: #fff;
-  font-size: 30px; line-height: 1; cursor: pointer; backdrop-filter: blur(3px); z-index: 3;
+  font-size: 20px; line-height: 1; cursor: pointer; backdrop-filter: blur(3px); z-index: 3;
   display: flex; align-items: center; justify-content: center;
 }
 .cover-unmute:hover { border-color: var(--gold); }
@@ -433,8 +433,8 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
   // English-only captions for the intro clip, so a muted viewer still gets the line.
   // Cue 1 starts at 0 so something is always readable even if autoplay is blocked.
   var CUES = [
-    { from: 0,    to: 3.05, text: "Hey Decart. We're OY.VEY." },
-    { from: 3.05, to: 99,   text: "This is our world." }
+    { from: 0,    to: 4.05, text: "Hey Decart. We're OY.VEY." },
+    { from: 4.05, to: 99,   text: "This is our world." }
   ];
   var capEl = document.getElementById('capLine');
   var lastCue = -2;
@@ -443,14 +443,18 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
     for (var i = 0; i < CUES.length; i++) {
       if (t >= CUES[i].from && t < CUES[i].to) { idx = i; break; }
     }
-    if (idx !== lastCue) {
-      lastCue = idx;
-      if (idx === -1) { capEl.classList.remove('show'); }
-      else { capEl.textContent = CUES[idx].text; capEl.classList.add('show'); }
-    }
-    requestAnimationFrame(paintCue);
+    if (idx === lastCue) return;
+    lastCue = idx;
+    if (idx === -1) { capEl.classList.remove('show'); }
+    else { capEl.textContent = CUES[idx].text; capEl.classList.add('show'); }
   }
-  requestAnimationFrame(paintCue);
+  // Driven off the video clock, not requestAnimationFrame: rAF stops entirely
+  // whenever the page isn't compositing, which would leave the captions blank.
+  paintCue();
+  introVid.addEventListener('timeupdate', paintCue);
+  introVid.addEventListener('seeked', paintCue);
+  introVid.addEventListener('loadedmetadata', paintCue);
+  setInterval(paintCue, 150);
 
   function renderChar(lang) {
     if (!selectedChar) return;
