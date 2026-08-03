@@ -160,7 +160,25 @@ section.item { padding: 40px 0; border-top: 1px solid var(--line); display: grid
 .get li::before { content: "—"; color: var(--gold); flex: none; }
 
 .cta-row { margin-top: 18px; }
-.cta { display: inline-flex; align-items: center; gap: 9px; padding: 13px 24px; background: var(--ruby); color: #fff; text-decoration: none; font-size: 14px; font-weight: 700; border-radius: 4px; }
+.cta {
+  display: inline-flex; align-items: center; gap: 9px; padding: 13px 24px; background: var(--ruby);
+  color: #fff; text-decoration: none; font-size: 14px; font-weight: 700; border-radius: 4px;
+  border: 0; font-family: inherit; cursor: pointer;
+}
+.cta:hover { filter: brightness(1.08); }
+
+/* contact card revealed by the CTA, in place */
+.contact {
+  margin-top: 14px; max-width: 400px; background: var(--bg-raised); border: 1px solid var(--line);
+  border-radius: 6px; padding: 15px 18px; animation: reveal-in .25s ease;
+}
+.contact[hidden] { display: none; }
+.ct-name { font-family: var(--display); font-weight: 800; font-size: 17px; color: var(--gold); margin-bottom: 6px; }
+.ct-row { display: flex; gap: 14px; align-items: baseline; padding: 9px 0; text-decoration: none; border-top: 1px solid var(--line); }
+.ct-row + .ct-row { border-top: 1px solid var(--line); }
+.ct-k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); flex: none; min-width: 52px; }
+.ct-v { font-size: 15.5px; color: var(--ink); word-break: break-word; }
+.ct-row:hover .ct-v { color: var(--gold); }
 
 footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
 
@@ -294,7 +312,14 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
       <p>D&amp;D has been a generative engine since 1974: an operator improvising a world for a table of users, with a die for temperature. Its one weakness is that the theater of the mind stays inside one head — nobody else in the room ever sees the picture. That's the part technology can finally solve.</p>
       <p>We looked closely at what you've built, and that's what brought us to you — not a list of requirements. And the room this happens in isn't the usual audience for this kind of thing: most of them have never seen anything like it, and none of them are expecting it. That gets filmed, and it travels a long way past the room.</p>
       <p><strong>We're not coming with a spec.</strong> We'd like to sit down and work out together what's worth building, so this night happens the right way.</p>
-      <div class="cta-row"><a class="cta" href="mailto:liorpeled93@gmail.com?subject=OY.VEY%20%C3%97%20Decart">Let's talk &#8594;</a></div>
+      <div class="cta-row">
+        <button class="cta" type="button" data-contact aria-expanded="false">Let's talk &#8594;</button>
+        <div class="contact" hidden>
+          <div class="ct-name">Lior Peled</div>
+          <a class="ct-row" href="tel:+972548036035"><span class="ct-k">Phone</span><span class="ct-v" dir="ltr">054-803-6035</span></a>
+          <a class="ct-row" href="mailto:liorpeled93@gmail.com"><span class="ct-k">Email</span><span class="ct-v" dir="ltr">liorpeled93@gmail.com</span></a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -319,7 +344,14 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
       <p>מבוכים ודרקונים הוא מנוע גנרטיבי מאז 1974: מפעיל שממציא עולם לשולחן של משתמשים, וקובייה שמשמשת טמפרטורה. החולשה היחידה שלו היא ש-theater of the mind נשאר בתוך ראש אחד — אף אחד אחר בחדר לא רואה את התמונה. זה בדיוק החלק שהטכנולוגיה יכולה סוף-סוף לפתור.</p>
       <p>הסתכלנו מקרוב על מה שבניתם, וזה מה שהביא אותנו אליכם — לא רשימת דרישות. והחדר שבו זה יקרה הוא לא הקהל הרגיל של הדברים האלה: רובם לא ראו מעולם משהו כזה, ואף אחד מהם לא מצפה לזה. זה מצולם, וזה נוסע רחוק מעבר לחדר.</p>
       <p><strong>אנחנו לא באים עם ספסיפיקציה.</strong> אנחנו רוצים לשבת ולהבין ביחד מה שווה לבנות, כדי שהערב הזה יקרה בצורה הנכונה.</p>
-      <div class="cta-row"><a class="cta" href="mailto:liorpeled93@gmail.com?subject=OY.VEY%20%C3%97%20Decart">בואו נדבר &#8592;</a></div>
+      <div class="cta-row">
+        <button class="cta" type="button" data-contact aria-expanded="false">בואו נדבר &#8592;</button>
+        <div class="contact" hidden>
+          <div class="ct-name">ליאור פלד</div>
+          <a class="ct-row" href="tel:+972548036035"><span class="ct-k">טלפון</span><span class="ct-v" dir="ltr">054-803-6035</span></a>
+          <a class="ct-row" href="mailto:liorpeled93@gmail.com"><span class="ct-k">אימייל</span><span class="ct-v" dir="ltr">liorpeled93@gmail.com</span></a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -484,6 +516,15 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
     });
   });
   document.getElementById('rvClose').addEventListener('click', closeReveal);
+
+  // "Let's talk" reveals the contact card next to it
+  document.querySelectorAll('.cta[data-contact]').forEach(function(b) {
+    b.addEventListener('click', function() {
+      var card = b.parentNode.querySelector('.contact');
+      card.hidden = !card.hidden;
+      b.setAttribute('aria-expanded', card.hidden ? 'false' : 'true');
+    });
+  });
 
   btn.addEventListener('click', function() {
     setLang(btn.dataset.current === 'en' ? 'he' : 'en');
