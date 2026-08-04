@@ -171,6 +171,22 @@ section.item { padding: 40px 0; border-top: 1px solid var(--line); display: grid
 .callout { background: var(--bg-raised); border-inline-start: 3px solid var(--magenta); padding: 15px 18px; margin: 18px 0; border-radius: 4px; }
 .callout p { margin: 0; font-size: 15px; color: var(--ink); }
 
+/* read-more: each section leads with one paragraph, the rest expands in place */
+.more[hidden] { display: none; }
+.more { animation: reveal-in .25s ease; }
+.morebtn {
+  background: none; border: 0; padding: 4px 0; margin: 2px 0 0; cursor: pointer;
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--gold); border-bottom: 1px solid rgba(217,162,59,.35);
+}
+.morebtn:hover { border-bottom-color: var(--gold); }
+
+/* minimal stat row — carries the numbers without turning into a dashboard */
+.stats { display: flex; gap: 30px; flex-wrap: wrap; margin: 16px 0 10px; }
+.stat-n { font-family: var(--mono); font-size: 18px; color: var(--gold); }
+.stat-l { font-size: 12px; color: var(--ink-dim); margin-top: 3px; }
+.stats-note { font-size: 13.5px; color: var(--ink-faint); margin: 0 0 14px; max-width: 56ch; }
+
 .get { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
 .get li { display: flex; gap: 11px; font-size: 16px; }
 .get li::before { content: "—"; color: var(--gold); flex: none; }
@@ -245,12 +261,13 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
     <div class="num">01</div>
     <div>
       <h2>Who we are</h2>
-      <p>OY.VEY runs live Dungeons &amp; Dragons nights for a paying audience in Tel Aviv. The brand grew out of the city's nightlife, not out of the gaming community: the room is 25-to-40-year-olds from design, tech and the creative industries, and most of them have never played a role-playing game in their life.</p>
-      <p>We took the classic game and put it where people already go out. There's a bar. There's a drink in your hand, good music, and the feel of a real night in the city. We refresh the rules to fit that room, and a ten-minute onboarding puts a complete beginner inside the story — which is how fantasy opens up to people who were sure it was never meant for them.</p>
-      <p><strong>We're on our fourth event now. Every one of them has sold out, and sold out fast</strong> — and the community around it is starting to grow and hold together.</p>
-      <p>Fantasy and AI are a natural pairing, and our audience feels that connection immediately. So we keep testing what else can bring the two worlds together.</p>
-      <p>We didn't run a few prompts. We trained a visual style of our own — 80s film stock, a locked palette, grain, finish — so that every episode and every character looks like the same hand made it. The scenes, the episodes, even the theme song came out of generative tools, and then through a finish that blurs where they came from.</p>
+      <p>OY.VEY runs live Dungeons &amp; Dragons nights for a paying audience in Tel Aviv. Our crowd comes from gaming, design and hi-tech — and what makes us different is that we put that world <strong>directly inside the city's nightlife</strong>, as a natural part of a night out rather than something separate from it. There's a bar, there's good music, and the game belongs to the evening. It works in the other direction too: we bring in people from the nightlife itself, who were sure this game was never meant for them, and give them a way in.</p>
+      <div class="more" hidden>
+      <p><strong>We're on our fourth event now. Every one of them has sold out, and sold out fast</strong> — and the community around it is starting to grow and hold together. A ten-minute onboarding puts a complete beginner inside the story.</p>
+      <p>Fantasy and AI are a natural pairing, and our audience feels that connection immediately. We didn't run a few prompts: we trained a visual style of our own — 80s film stock, a locked palette, grain, finish — so that every episode and every character looks like the same hand made it. The scenes, the episodes, even the theme song came out of generative tools, and then through a finish that blurs where they came from.</p>
       <p class="dim">We chose not to hide any of that. The artificiality isn't something to hide — it's the style.</p>
+      </div>
+      <button class="morebtn" type="button" data-more="Read more" data-less="Show less" aria-expanded="false">Read more</button>
     </div>
   </section>
   <section class="item">
@@ -267,12 +284,13 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
     <div class="num">01</div>
     <div>
       <h2>מי אנחנו</h2>
-      <p>OY.VEY מפיקה ערבי מבוכים ודרקונים חיים מול קהל משלם בתל אביב. המותג נבנה מתוך תרבות הבילוי של העיר, לא מתוך קהילת הגיימינג: בחדר יושבים בני 25 עד 40 מעולמות העיצוב, הטק והתעשיות היצירתיות, ורובם לא שיחקו משחק תפקידים מימיהם.</p>
-      <p>לקחנו את המשחק הקלאסי והכנסנו אותו לאן שאנשים ממילא יוצאים. יש בר. יש כוס ביד, מוזיקה טובה ואווירה של לילה אמיתי בעיר. אנחנו מרעננים את חוקי המשחק כדי שיתאימו לחדר הזה, ואונבורדינג של עשר דקות מכניס מתחיל גמור לתוך העלילה — וככה עולם הפנטזיה נפתח לאנשים שהיו בטוחים שהוא לא בשבילם.</p>
-      <p><strong>אנחנו עכשיו באירוע הרביעי שלנו. כולם נמכרו עד הכיסא האחרון, ומהר</strong> — והקהילה סביב זה מתחילה לצמוח ולהתגבש.</p>
-      <p>פנטזיה ו-AI הם זיווג מתבקש, והקהל שלנו מתחבר לזה מיד. משם אנחנו רק ממשיכים לבדוק מה עוד יכול לחבר בין שני העולמות.</p>
-      <p>לא הרצנו כמה פרומפטים. אימנו סגנון ויזואלי משלנו — פילם של שנות ה-80, פלטה נעולה, גרֵין, גימור — כדי שכל פרק וכל דמות ייראו כאילו יצאו מאותה יד. הסצנות, הפרקים ואפילו השיר יצאו מכלים גנרטיביים, ועברו גימור שמטשטש מאיפה הם באו.</p>
+      <p>OY.VEY מפיקה ערבי מבוכים ודרקונים חיים מול קהל משלם בתל אביב. הקהל שלנו מגיע מעולמות הגיימינג, העיצוב וההייטק — והייחוד שלנו הוא שאנחנו מכניסים את העולם הזה <strong>ישירות לתוך תרבות הבילוי של העיר</strong>, כחלק טבעי מלילה בעיר ולא כמשהו מנותק ממנו. יש בר, יש מוזיקה טובה, והמשחק שייך לערב. וזה עובד גם בכיוון ההפוך: אנחנו מביאים פנימה אנשים מחיי הלילה עצמם, כאלה שהיו בטוחים שהמשחק הזה לא בשבילם, ופותחים להם דלת.</p>
+      <div class="more" hidden>
+      <p><strong>אנחנו עכשיו באירוע הרביעי שלנו. כולם נמכרו עד הכיסא האחרון, ומהר</strong> — והקהילה סביב זה מתחילה לצמוח ולהתגבש. אונבורדינג של עשר דקות מכניס מתחיל גמור לתוך העלילה.</p>
+      <p>פנטזיה ו-AI הם זיווג מתבקש, והקהל שלנו מתחבר לזה מיד. לא הרצנו כמה פרומפטים: אימנו סגנון ויזואלי משלנו — פילם של שנות ה-80, פלטה נעולה, גרֵין, גימור — כדי שכל פרק וכל דמות ייראו כאילו יצאו מאותה יד. הסצנות, הפרקים ואפילו השיר יצאו מכלים גנרטיביים, ועברו גימור שמטשטש מאיפה הם באו.</p>
       <p class="dim">בחרנו לא להסתיר את זה. המלאכותיות היא לא משהו להסתיר — היא הסגנון.</p>
+      </div>
+      <button class="morebtn" type="button" data-more="קרא עוד" data-less="הצג פחות" aria-expanded="false">קרא עוד</button>
     </div>
   </section>
   <section class="item">
@@ -314,9 +332,12 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
     <div>
       <h2>The show we're building</h2>
       <p>The night itself is a Dungeons &amp; Dragons session, and the players around the table are stage people from the city — musicians, comedians, performers. What they have in common isn't that they play D&amp;D. It's that they know how to hold a room and take it with them.</p>
+      <div class="more" hidden>
       <p>There are two audiences. One sits with us on tickets we sell. The other is much larger and watches later — the sixty people in the room are the size of the set, not the size of the audience. What comes out of the night: a full podcast-style episode that carries the whole show, and a set of vertical clips cut from it.</p>
       <p>Our main goal is to pull people inside the story. Part of that happens on its own, through imagination — that's what this game has always done. The rest is a visual layer, generated by AI, showing what's happening in the adventure while it happens. In the room it runs on a screen behind the table. <strong>For the audience watching online, it's what makes the story visible at all</strong> — and that's the harder, more important half.</p>
       <p>The show is built to hold a story and to be hard to look away from at the same time: imagination meeting technology. That's why we're looking for a partner at the front of this — one that knows how to tell a story live.</p>
+      </div>
+      <button class="morebtn" type="button" data-more="Read more" data-less="Show less" aria-expanded="false">Read more</button>
       <div class="callout"><p>We&rsquo;re here to blur the line between what&rsquo;s real and what&rsquo;s imagined.</p></div>
     </div>
   </section>
@@ -324,10 +345,16 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
     <div class="num">04</div>
     <div>
       <h2>What we're looking for</h2>
-      <p>Concretely: a partner that can generate visuals in real time — matched to the adventure as it unfolds, and driven by the actual players and characters sitting around the table. <strong>Everything we make with AI today is prepared in advance.</strong> This is the one thing we can't do on our own.</p>
+      <p>We're looking for a partner on two fronts. The first is <strong>the technology</strong>: visuals generated in real time, matched to the adventure as it unfolds and driven by the actual players and characters at the table. Everything we make with AI today is prepared in advance — live is the one thing we can't do on our own. The second is <strong>production funding</strong>, so the night gets made at the level it deserves: crew and cameras, casting, editing, and the venue.</p>
+      <div class="more" hidden>
+      <p>What comes back to you is marketing that lands directly inside your own audience. The room is gaming, design and hi-tech people — the ones you're already trying to reach — and beside them a nightlife crowd meeting this for the first time, on camera. That combination is hard to buy: people who understand exactly what they're looking at, next to people who had no idea it was possible.</p>
       <p>D&amp;D has been a generative engine since 1974: an operator improvising a world for a table of users, with a die for temperature. Its one weakness is that the theater of the mind stays inside one head — nobody else in the room ever sees the picture. That's the part technology can finally solve.</p>
-      <p>We looked closely at what you've built, and that's what brought us to you — not a list of requirements. And the room this happens in isn't the usual audience for this kind of thing: most of them have never seen anything like it, and none of them are expecting it. That gets filmed, and it travels a long way past the room.</p>
+      <p>We're also building the infrastructure to produce this in English, which is where the format's real scale sits:</p>
+        <div class="stats"><div><div class="stat-n">2.86M</div><div class="stat-l">Critical Role subscribers</div></div><div><div class="stat-n">1.41B</div><div class="stat-l">views to date</div></div><div><div class="stat-n">1M+</div><div class="stat-l">Dropout paying subscribers</div></div></div>
+        <p class="stats-note">The English-language audience for this format. In 2026 the makers of D&amp;D launched a show of their own — the category is no longer niche.</p>
       <p><strong>We're not coming with a spec.</strong> We'd like to sit down and work out together what's worth building, so this night happens the right way.</p>
+      </div>
+      <button class="morebtn" type="button" data-more="Read more" data-less="Show less" aria-expanded="false">Read more</button>
       <div class="cta-row">
         <button class="cta" type="button" data-contact aria-expanded="false">Let's talk &#8594;</button>
         <div class="contact" hidden>
@@ -346,9 +373,12 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
     <div>
       <h2>השואו שאנחנו בונים</h2>
       <p>הערב עצמו הוא סשן מבוכים ודרקונים, והשחקנים סביב השולחן הם אנשי במה מהעיר — מוזיקאים, קומיקאים, אנשי הופעה. המשותף להם הוא לא שהם משחקים D&amp;D, אלא שהם יודעים להחזיק חדר ולסחוף אותו איתם.</p>
+      <div class="more" hidden>
       <p>יש לנו שני קהלים. אחד יושב איתנו במקום, על כרטיסים שאנחנו מוכרים. השני גדול בהרבה וצופה אחר כך — 60 האנשים בחדר הם גודל הסט, לא גודל הקהל. ומה שיוצא מהערב: פרק מלא בסגנון פודקאסט שמחזיק את השואו כולו, ולצידו סדרת קליפים ורטיקליים שנחתכים ממנו.</p>
       <p>המטרה המרכזית שלנו היא להכניס את הקהל לתוך הסיפור. חלק מזה קורה מעצמו, דרך הדמיון — זה מה שהמשחק הזה תמיד ידע לעשות. את השאר עושה שכבה ויזואלית שנוצרת ב-AI ומראה מה קורה בהרפתקה בזמן שזה קורה. בחדר היא רצה על מסך מאחורי השולחן. <strong>לקהל שצופה ברשת היא מה שהופך את הסיפור לגלוי בכלל</strong> — וזה החצי הקשה והחשוב יותר.</p>
       <p>המופע בנוי להחזיק עלילה ובו בזמן להיות כזה שקשה להוריד ממנו את העיניים: דמיון שפוגש טכנולוגיה. ולכן אנחנו מחפשים שותפה שנמצאת בחזית של זה, ויודעת לספר סיפור בלייב.</p>
+      </div>
+      <button class="morebtn" type="button" data-more="קרא עוד" data-less="הצג פחות" aria-expanded="false">קרא עוד</button>
       <div class="callout"><p>אנחנו פה כדי לטשטש את ההבדל בין מציאות לדמיון.</p></div>
     </div>
   </section>
@@ -356,10 +386,16 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
     <div class="num">04</div>
     <div>
       <h2>מה אנחנו מחפשים</h2>
-      <p>ובאופן מוחשי: שותפה שיודעת לג'נרט ויז'ואל בזמן אמת — כזה שמתאים להרפתקה בזמן שהיא קורית, ונשען על השחקנים והדמויות שיושבים סביב השולחן. <strong>כל מה שאנחנו עושים היום עם AI מוכן מראש.</strong> זה הדבר היחיד שאנחנו לא יכולים לעשות לבד.</p>
+      <p>אנחנו מחפשים שותפה בשני מישורים. הראשון הוא <strong>הטכנולוגיה</strong>: ויז'ואל שנוצר בזמן אמת, מתאים להרפתקה בזמן שהיא קורית, ונשען על השחקנים והדמויות שיושבים סביב השולחן. כל מה שאנחנו עושים היום עם AI מוכן מראש — חי זה הדבר היחיד שאנחנו לא יכולים לעשות לבד. השני הוא <strong>מימון ההפקה</strong>, כדי שהערב ייווצר ברמה שהוא ראוי לה: צוות ומצלמות, קאסטינג, עריכה ומקום.</p>
+      <div class="more" hidden>
+      <p>מה שחוזר אליכם זה שיווק שנוחת ישירות בתוך הקהל שלכם. בחדר יושבים אנשי גיימינג, עיצוב והייטק — בדיוק מי שאתם כבר מנסים להגיע אליו — ולצידם קהל בילוי שנתקל בזה בפעם הראשונה, על מצלמה. את השילוב הזה קשה לקנות: אנשים שמבינים בדיוק מה הם רואים, לצד אנשים שלא ידעו שזה בכלל אפשרי.</p>
       <p>מבוכים ודרקונים הוא מנוע גנרטיבי מאז 1974: מפעיל שממציא עולם לשולחן של משתמשים, וקובייה שמשמשת טמפרטורה. החולשה היחידה שלו היא ש-theater of the mind נשאר בתוך ראש אחד — אף אחד אחר בחדר לא רואה את התמונה. זה בדיוק החלק שהטכנולוגיה יכולה סוף-סוף לפתור.</p>
-      <p>הסתכלנו מקרוב על מה שבניתם, וזה מה שהביא אותנו אליכם — לא רשימת דרישות. והחדר שבו זה יקרה הוא לא הקהל הרגיל של הדברים האלה: רובם לא ראו מעולם משהו כזה, ואף אחד מהם לא מצפה לזה. זה מצולם, וזה נוסע רחוק מעבר לחדר.</p>
+      <p>אנחנו גם בונים את התשתית להפיק את זה באנגלית, ושם נמצא סדר הגודל האמיתי של הפורמט:</p>
+        <div class="stats"><div><div class="stat-n">2.86M</div><div class="stat-l">מנויי Critical Role</div></div><div><div class="stat-n">1.41B</div><div class="stat-l">צפיות עד היום</div></div><div><div class="stat-n">1M+</div><div class="stat-l">מנויים משלמים ב-Dropout</div></div></div>
+        <p class="stats-note">הקהל דובר האנגלית של הפורמט הזה. ב-2026 גם היוצרים של D&amp;D עצמם השיקו סדרה משלהם — הקטגוריה כבר לא נישה.</p>
       <p><strong>אנחנו לא באים עם ספסיפיקציה.</strong> אנחנו רוצים לשבת ולהבין ביחד מה שווה לבנות, כדי שהערב הזה יקרה בצורה הנכונה.</p>
+      </div>
+      <button class="morebtn" type="button" data-more="קרא עוד" data-less="הצג פחות" aria-expanded="false">קרא עוד</button>
       <div class="cta-row">
         <button class="cta" type="button" data-contact aria-expanded="false">בואו נדבר &#8592;</button>
         <div class="contact" hidden>
@@ -536,6 +572,17 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
     });
   });
   document.getElementById('rvClose').addEventListener('click', closeReveal);
+
+  // read-more toggles inside each section
+  document.querySelectorAll('.morebtn').forEach(function(b) {
+    b.addEventListener('click', function() {
+      var box = b.previousElementSibling;
+      var wasOpen = !box.hidden;
+      box.hidden = wasOpen;
+      b.textContent = wasOpen ? b.dataset.more : b.dataset.less;
+      b.setAttribute('aria-expanded', wasOpen ? 'false' : 'true');
+    });
+  });
 
   // "Let's talk" reveals the contact card next to it
   document.querySelectorAll('.cta[data-contact]').forEach(function(b) {
