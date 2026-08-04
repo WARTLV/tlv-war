@@ -207,7 +207,16 @@ section.item { padding: 40px 0; border-top: 1px solid var(--line); display: grid
   border-radius: 6px; padding: 15px 18px; animation: reveal-in .25s ease;
 }
 .contact[hidden] { display: none; }
-.ct-name { font-family: var(--display); font-weight: 800; font-size: 17px; color: var(--gold); margin-bottom: 6px; }
+/* closing: the line, then the brand sign-off, then how to reach us */
+.closer { font-size: 17.5px; color: var(--ink); max-width: 34ch; margin: 22px 0 0; text-wrap: balance; }
+.tagline {
+  font-family: var(--display); font-weight: 800; font-size: clamp(15px, 3.6vw, 19px);
+  letter-spacing: .1em; color: var(--ruby); margin: 16px 0 4px; line-height: 1.35;
+}
+
+.ct-name { font-family: var(--display); font-weight: 800; font-size: 17px; color: var(--gold); margin-bottom: 2px; }
+.ct-role { font-family: var(--mono); font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 10px; }
+.ct-bio { font-size: 14px; line-height: 1.6; color: var(--ink-dim); margin: 0 0 12px; }
 .ct-row { display: flex; gap: 14px; align-items: baseline; padding: 9px 0; text-decoration: none; border-top: 1px solid var(--line); }
 .ct-row + .ct-row { border-top: 1px solid var(--line); }
 .ct-k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); flex: none; min-width: 52px; }
@@ -367,10 +376,14 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
       <p><strong>We're not coming with a spec.</strong> We'd like to sit down and work out together what's worth building, so this night happens the right way.</p>
       </div>
       <button class="morebtn" type="button" data-more="Read more" data-less="Show less" aria-expanded="false">Read more</button>
+      <p class="closer">Let&rsquo;s talk about marketing that comes from a community and a culture.</p>
+      <p class="tagline">LET&rsquo;S MAKE TEL AVIV FREAK AGAIN</p>
       <div class="cta-row">
-        <button class="cta" type="button" data-contact aria-expanded="false">Let's talk &#8594;</button>
+        <button class="cta" type="button" data-contact aria-expanded="false">Talk to us &#8594;</button>
         <div class="contact" hidden>
           <div class="ct-name">Lior Peled</div>
+          <div class="ct-role">Culture entrepreneur, OY.VEY</div>
+          <p class="ct-bio">I create alternative nights for Tel Aviv and the communities that grow around them &mdash; taking worlds that sit outside the city&rsquo;s nightlife and making them belong inside it.</p>
           <a class="ct-row" href="tel:+972548036035"><span class="ct-k">Phone</span><span class="ct-v" dir="ltr">054-803-6035</span></a>
           <a class="ct-row" href="mailto:liorpeled93@gmail.com"><span class="ct-k">Email</span><span class="ct-v" dir="ltr">liorpeled93@gmail.com</span></a>
         </div>
@@ -419,10 +432,14 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
       <p><strong>אנחנו לא באים עם ספסיפיקציה.</strong> אנחנו רוצים לשבת ולהבין ביחד מה שווה לבנות, כדי שהערב הזה יקרה בצורה הנכונה.</p>
       </div>
       <button class="morebtn" type="button" data-more="קרא עוד" data-less="הצג פחות" aria-expanded="false">קרא עוד</button>
+      <p class="closer">בואו נדבר על שיווק מתוך קהילה ותרבות.</p>
+      <p class="tagline">LET&rsquo;S MAKE TEL AVIV FREAK AGAIN</p>
       <div class="cta-row">
-        <button class="cta" type="button" data-contact aria-expanded="false">בואו נדבר &#8592;</button>
+        <button class="cta" type="button" data-contact aria-expanded="false">דברו איתנו &#8592;</button>
         <div class="contact" hidden>
           <div class="ct-name">ליאור פלד</div>
+          <div class="ct-role">יזם תרבות, OY.VEY</div>
+          <p class="ct-bio">אני מייצר ערבים אלטרנטיביים לתל אביב ואת הקהילות שנבנות סביבם — לוקח עולמות שיושבים מחוץ לחיי הלילה של העיר, וגורם להם להשתייך אליהם.</p>
           <a class="ct-row" href="tel:+972548036035"><span class="ct-k">טלפון</span><span class="ct-v" dir="ltr">054-803-6035</span></a>
           <a class="ct-row" href="mailto:liorpeled93@gmail.com"><span class="ct-k">אימייל</span><span class="ct-v" dir="ltr">liorpeled93@gmail.com</span></a>
         </div>
@@ -462,8 +479,50 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
   // The music sits under her dialogue while the cover is on screen, then comes up
   // slightly once it is the only thing playing. Never loud enough to take focus.
   var VOL_UNDER_VIDEO = 0.10, VOL_ALONE = 0.20;
-  var volTimer = null;
-  function rampTo(target) {
+
+  // Played through Web Audio where available: <audio loop> re-triggers the MP3's ~25ms
+  // encoder padding on every pass, which is an audible gap every half minute. A decoded
+  // buffer loops sample-accurately, and gain ramps are smoother than stepping .volume.
+  var actx = null, mgain = null, msrc = null, mbuf = null, volTimer = null;
+
+  function musicInit() {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (actx || !AC) return;
+    try {
+      actx = new AC();
+      mgain = actx.createGain();
+      mgain.gain.value = 0;
+      mgain.connect(actx.destination);
+      fetch('music.mp3').then(function(r) { return r.arrayBuffer(); })
+        .then(function(b) { return actx.decodeAudioData(b); })
+        .then(function(buf) { mbuf = buf; if (wantsSound) musicPlay(); })
+        .catch(function() { actx = null; mgain = null; });  // fall back to <audio>
+    } catch (e) { actx = null; mgain = null; }
+  }
+
+  function musicPlay() {
+    if (actx && mbuf) {
+      if (actx.state === 'suspended') actx.resume().catch(function() {});
+      if (!msrc) {
+        msrc = actx.createBufferSource();
+        msrc.buffer = mbuf;
+        msrc.loop = true; msrc.loopStart = 0; msrc.loopEnd = mbuf.duration;
+        msrc.connect(mgain); msrc.start(0);
+      }
+      return;
+    }
+    bgm.muted = false;
+    if (bgm.paused) bgm.play().catch(function() {});
+  }
+
+  function musicVolume(target) {
+    if (actx && mgain) {
+      var t = actx.currentTime;
+      mgain.gain.cancelScheduledValues(t);
+      mgain.gain.setValueAtTime(mgain.gain.value, t);
+      mgain.gain.linearRampToValueAtTime(target, t + 0.8);
+      return;
+    }
     clearInterval(volTimer);
     volTimer = setInterval(function() {
       var d = target - bgm.volume;
@@ -472,13 +531,24 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
     }, 40);
   }
 
+  function musicStop() {
+    if (actx && mgain) { musicVolume(0); return; }
+    bgm.pause();
+  }
+
+  function musicIsDown() {
+    if (actx && mbuf) return actx.state === 'suspended' || !msrc;
+    return bgm.paused || bgm.ended;
+  }
+
   function syncAudio() {
     var videoOn = wantsSound && coverInView;   // her voice, only on the cover
     introVid.muted = !videoOn;
-    bgm.muted = !wantsSound;                   // music runs the whole page
     if (wantsSound) {
-      rampTo(coverInView ? VOL_UNDER_VIDEO : VOL_ALONE);
-      bgm.play().catch(function() {});
+      musicPlay();
+      musicVolume(coverInView ? VOL_UNDER_VIDEO : VOL_ALONE);
+    } else {
+      musicStop();
     }
     introUnmute.innerHTML = wantsSound ? '&#128266;' : '&#128263;';
     introUnmute.setAttribute('aria-label', wantsSound ? 'mute' : 'unmute');
@@ -488,7 +558,7 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
   introUnmute.addEventListener('click', function(e) {
     e.stopPropagation();
     wantsSound = !wantsSound;
-    if (!wantsSound) bgm.pause();
+    musicInit();
     syncAudio();
     if (wantsSound && coverInView) introVid.play().catch(function() {});
   });
@@ -501,14 +571,15 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
       document.removeEventListener('pointerdown', onGesture, true);
       document.removeEventListener('keydown', onGesture, true);
       if (onBtn) return;              // the button's own handler decides
-      wantsSound = true; syncAudio();
+      wantsSound = true; musicInit(); syncAudio();
       if (coverInView) introVid.play().catch(function() {});
     }
     document.addEventListener('pointerdown', onGesture, true);
     document.addEventListener('keydown', onGesture, true);
   }
 
-  bgm.volume = VOL_UNDER_VIDEO;
+  bgm.volume = 0;
+  musicInit();
   introVid.muted = false;
   var attempt = introVid.play();
   if (attempt && attempt.then) {
@@ -529,7 +600,10 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
   function coverIsVisible() {
     var r = coverEl.getBoundingClientRect();
     var shown = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
-    return shown > 0 && shown / Math.min(r.height, window.innerHeight) >= 0.4;
+    var ratio = shown > 0 ? shown / Math.min(r.height, window.innerHeight) : 0;
+    // Hysteresis. With a single threshold, scrolling slowly across it flips the state
+    // repeatedly and the music audibly pumps between the two volumes.
+    return coverInView ? ratio > 0.25 : ratio > 0.55;
   }
   function checkCover() {
     var vis = coverIsVisible();
@@ -554,12 +628,10 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
   // pausing the clip or backgrounding the tab can suspend it. Rather than trust that it
   // stays alive, keep checking and restart it whenever the viewer still wants sound.
   setInterval(function() {
-    if (!wantsSound) return;
-    bgm.muted = false;
-    if (bgm.paused || bgm.ended) bgm.play().catch(function() {});
+    if (wantsSound && musicIsDown()) musicPlay();
   }, 1000);
   document.addEventListener('visibilitychange', function() {
-    if (!document.hidden && wantsSound) bgm.play().catch(function() {});
+    if (!document.hidden && wantsSound) musicPlay();
   });
 
   // English-only captions for the intro clip, so a muted viewer still gets the line.
