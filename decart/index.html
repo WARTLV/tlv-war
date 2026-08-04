@@ -502,6 +502,12 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
 
   function musicPlay() {
     if (actx && mbuf) {
+      // Web Audio owns playback from here. The <audio> element may already have been
+      // started while the buffer was still decoding — leaving it running would play a
+      // second, slightly out-of-phase copy of the track.
+      clearInterval(volTimer);
+      if (!bgm.paused) bgm.pause();
+      bgm.volume = 0;
       if (actx.state === 'suspended') actx.resume().catch(function() {});
       if (!msrc) {
         msrc = actx.createBufferSource();
@@ -517,6 +523,7 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
 
   function musicVolume(target) {
     if (actx && mgain) {
+      clearInterval(volTimer);          // stop any in-flight fallback ramp
       var t = actx.currentTime;
       mgain.gain.cancelScheduledValues(t);
       mgain.gain.setValueAtTime(mgain.gain.value, t);
