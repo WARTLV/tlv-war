@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>OY.VEY × DECART</title>
@@ -237,6 +240,8 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
   .caststrip img { height: 148px; }
 }
 </style>
+</head>
+<body>
 
 <div class="cover">
   <div class="covervid-wrap">
@@ -725,6 +730,7 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
     btn.textContent = lang === 'en' ? 'עברית' : 'English';
     btn.dataset.current = lang;
     document.title = titles[lang];
+    document.documentElement.lang = lang;
     if (selectedChar) renderChar(lang);
   }
 
@@ -765,3 +771,6 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
   setLang('en');
 })();
 </script>
+
+</body>
+</html>
