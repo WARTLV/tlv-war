@@ -549,6 +549,19 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
   setInterval(checkCover, 200);
   checkCover();
 
+  // The music is meant to run the length of the document. Mobile browsers routinely
+  // stop a background <audio> anyway — iOS shares one audio session with the video, and
+  // pausing the clip or backgrounding the tab can suspend it. Rather than trust that it
+  // stays alive, keep checking and restart it whenever the viewer still wants sound.
+  setInterval(function() {
+    if (!wantsSound) return;
+    bgm.muted = false;
+    if (bgm.paused || bgm.ended) bgm.play().catch(function() {});
+  }, 1000);
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden && wantsSound) bgm.play().catch(function() {});
+  });
+
   // English-only captions for the intro clip, so a muted viewer still gets the line.
   // Cue 1 starts at 0 so something is always readable even if autoplay is blocked.
   var CUES = [
