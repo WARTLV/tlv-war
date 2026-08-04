@@ -500,8 +500,14 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
     } catch (e) { actx = null; mgain = null; }
   }
 
+  // One predicate for "Web Audio is the active engine". These checks previously
+  // disagreed: volume routed to the gain node as soon as the context existed, while
+  // playback waited for the buffer — so during decode the audible element sat at zero
+  // and the gain node had no source. That window was silent.
+  function webAudioReady() { return !!(actx && mgain && mbuf); }
+
   function musicPlay() {
-    if (actx && mbuf) {
+    if (webAudioReady()) {
       // Web Audio owns playback from here. The <audio> element may already have been
       // started while the buffer was still decoding — leaving it running would play a
       // second, slightly out-of-phase copy of the track.
@@ -522,7 +528,7 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
   }
 
   function musicVolume(target) {
-    if (actx && mgain) {
+    if (webAudioReady()) {
       clearInterval(volTimer);          // stop any in-flight fallback ramp
       var t = actx.currentTime;
       mgain.gain.cancelScheduledValues(t);
@@ -539,12 +545,13 @@ footer { padding: 34px 28px 56px; border-top: 1px solid var(--line); font-family
   }
 
   function musicStop() {
-    if (actx && mgain) { musicVolume(0); return; }
+    if (webAudioReady()) { musicVolume(0); return; }
+    clearInterval(volTimer);
     bgm.pause();
   }
 
   function musicIsDown() {
-    if (actx && mbuf) return actx.state === 'suspended' || !msrc;
+    if (webAudioReady()) return actx.state === 'suspended' || !msrc;
     return bgm.paused || bgm.ended;
   }
 
