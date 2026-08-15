@@ -143,7 +143,16 @@
   .s-one{color:var(--muted);font-size:15px;font-style:italic;margin:8px 0 6px}
   .s-appearance{color:#7c7191;font-size:12px;letter-spacing:.04em;margin:0 0 16px}
   .s-appearance:empty{display:none}
+  /* "what do these mean?" — the roster is full of D&D newcomers, so the stat
+     legend is one tap away instead of assumed knowledge. Stays open across sheets. */
+  .explain-btn{font-family:var(--body);text-transform:none;letter-spacing:0;
+    font-size:12.5px;font-weight:600;padding:8px 13px;border-radius:999px;background:#1d1728;
+    border:1px solid #3a2f45;color:#cbb8dc;margin:0 0 12px}
+  .explain-btn:hover{border-color:var(--magenta-hot);color:#fff}
   .stats{display:grid;gap:10px;margin:0 0 20px}
+  .stat-desc{display:none;font:400 12.5px/1.5 var(--body);color:#9a8fb0;
+    margin:-3px 0 3px;padding-inline-start:2px}
+  .stats.explain .stat-desc{display:block}
   .stat{display:grid;grid-template-columns:104px 1fr 26px;align-items:center;gap:10px;direction:ltr}
   .stat-lbl{display:flex;flex-direction:column;line-height:1.2;overflow:hidden}
   .stat b{font:700 11px/1 var(--body);letter-spacing:.1em;color:#c7bcda;text-transform:uppercase}
@@ -337,6 +346,7 @@
       <p class="s-sheet" id="shSheetLine"></p>
       <p class="s-one" id="shOne"></p>
       <p class="s-appearance" id="shAppearance"></p>
+      <button class="explain-btn" id="explainBtn" type="button"></button>
       <div class="stats" id="shStats"></div>
       <div class="block"><h4 id="shAbilityName"></h4><p id="shAbilityDesc"></p></div>
       <div class="block"><h4 id="shBackHead"></h4><p id="shBack"></p></div>
@@ -405,6 +415,16 @@ const UI = {
     langBtn: "EN",
     takenPill: '"נבחר"', minePill: '"שלך ✓"',
     statNames: { STR:"כוח", DEX:"זריזות", CON:"חוסן", INT:"אינטליגנציה", WIS:"חוכמה", CHA:"כריזמה" },
+    statDescs: {
+      STR: "כוח פיזי גולמי — להרים, לשבור דלת, להכות חזק.",
+      DEX: "מהירות וקואורדינציה — להתחמק ממכה, לכוון, לזוז בלי רעש.",
+      CON: "כמה את/ה סופג/ת — בריאות, אורך נשימה, לא ליפול.",
+      INT: "ידע והיגיון — לזכור עובדות, לפצח חידה, להבין קסם.",
+      WIS: "תפיסה ואינטואיציה — לשים לב לפרטים, לקרוא אנשים, לא ליפול בפח.",
+      CHA: "נוכחות ושכנוע — לדבר, לבלף, להוביל חדר.",
+    },
+    explainShow: "❓ מה המשמעות של הנתונים?",
+    explainHide: "✕ הסתר הסבר",
   },
   en: {
     gateIntro: "Fill in your name and table number to pick your character for the night.",
@@ -437,6 +457,16 @@ const UI = {
     langBtn: "עב",
     takenPill: '"TAKEN"', minePill: '"YOURS ✓"',
     statNames: { STR:"Strength", DEX:"Dexterity", CON:"Constitution", INT:"Intelligence", WIS:"Wisdom", CHA:"Charisma" },
+    statDescs: {
+      STR: "Raw physical power — lifting, breaking down a door, hitting hard.",
+      DEX: "Speed and coordination — dodging, aiming, moving quietly.",
+      CON: "How much you can take — health, stamina, staying on your feet.",
+      INT: "Knowledge and logic — recalling facts, solving puzzles, understanding magic.",
+      WIS: "Perception and instinct — noticing details, reading people, not getting fooled.",
+      CHA: "Presence and persuasion — talking, bluffing, leading a room.",
+    },
+    explainShow: "❓ What do these stats mean?",
+    explainHide: "✕ Hide explanation",
   },
 };
 let LANG = (localStorage.getItem('oyvey_lang') === 'en') ? 'en' : 'he';
@@ -469,6 +499,7 @@ function applyLang(lang){
     document.getElementById('editProfile').textContent = t().editBtn;
     document.getElementById('cancelPickBtn').textContent = t().cancelPick;
   }
+  renderExplainBtn();
   buildRoster();
   renderPickChip();
   if (current && sheet.classList.contains('open')) openSheet(current.id);
@@ -477,6 +508,8 @@ document.getElementById('langToggle').addEventListener('click', () => applyLang(
 
 const roster = document.getElementById('roster');
 const sheet = document.getElementById('sheet');
+// once a newcomer opens the stat legend it stays open for every other character they browse
+let explainOn = localStorage.getItem('oyvey_explain') === '1';
 let current = null;      // character open in the sheet
 let profile = STORE.getProfile();   // {name, table} | null
 
@@ -635,11 +668,16 @@ function openSheet(id){
   document.getElementById('backBtn').textContent = t().sheetBack;
 
   const box = document.getElementById('shStats'); box.innerHTML='';
+  box.classList.toggle('explain', explainOn);
+  renderExplainBtn();
   AXES.forEach(ax=>{
     const v = c.stats[ax] ?? 0;
     const row = document.createElement('div'); row.className='stat';
     row.innerHTML = `<span class="stat-lbl"><b>${ax}</b><i>${t().statNames[ax]}</i></span><div class="track"><div class="fill"></div></div><span>${v}</span>`;
     box.appendChild(row);
+    const desc = document.createElement('div'); desc.className='stat-desc';
+    desc.textContent = t().statDescs[ax];
+    box.appendChild(desc);
     requestAnimationFrame(()=>{ setTimeout(()=>{ row.querySelector('.fill').style.width = (v*10)+'%'; }, 60); });
   });
 
@@ -670,6 +708,17 @@ function closeSheet(){
   sheet.classList.remove('open'); document.body.style.overflow='';
   document.getElementById('langToggle').hidden = false;
 }
+
+/* ---- stat legend toggle ---- */
+function renderExplainBtn(){
+  document.getElementById('explainBtn').textContent = explainOn ? t().explainHide : t().explainShow;
+}
+document.getElementById('explainBtn').addEventListener('click', ()=>{
+  explainOn = !explainOn;
+  localStorage.setItem('oyvey_explain', explainOn ? '1' : '0');
+  document.getElementById('shStats').classList.toggle('explain', explainOn);
+  renderExplainBtn();
+});
 
 document.getElementById('closeBtn').addEventListener('click', closeSheet);
 document.getElementById('backBtn').addEventListener('click', closeSheet);
