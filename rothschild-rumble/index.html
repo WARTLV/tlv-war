@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#07151F">
+  <title>רוטשילד ראמבל — WAR TLV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Heebo:wght@400;600;700;900&display=swap">
+  <link rel="stylesheet" href="css/main.css?v=17">
+</head>
+<body>
+  <main id="app">
+
+    <!-- TITLE -->
+    <section id="title" class="screen active">
+      <div class="title-glow"></div>
+      <small class="brand">WAR TLV PRESENTS</small>
+      <h1 class="logo">רוטשילד<br>ר<span>א</span>מבל</h1>
+      <p class="tag">Beat-'em-up בשדרות תל אביב</p>
+      <button type="button" id="start" class="cta">כניסה <b>←</b></button>
+      <small class="hint">בחרו לוחם · נקו את השדרה · הביסו 3 בוסים</small>
+      <p class="orientation-note"><span class="rot-ico">↻</span> המשחק בנוי למסך אופקי — סובבו את הטלפון לרוחב לפני שמתחילים</p>
+    </section>
+
+    <!-- SELECT -->
+    <section id="select" class="screen">
+      <div class="hero-stage" id="heroStage">
+        <div class="hero-slash s1"></div>
+        <div class="hero-slash s2"></div>
+        <div class="hero-beam"></div>
+        <div class="hero-name" id="heroStageName">BIG.COM</div>
+        <img class="hero-render" id="heroRender" src="assets/bigcom-hero.webp" alt="BIG.COM">
+        <div class="hero-floor"></div>
+      </div>
+      <div class="select-panel">
+        <small class="select-kicker">WAR TLV ROSTER</small>
+        <h2 class="select-title" id="panelName">BIG.COM</h2>
+        <p class="select-role" id="panelRole">המוביל של רוטשילד ראמבל</p>
+        <div class="stat-block">
+          <div class="stat-row"><span class="stat-label">כוח</span><span class="stat-val" id="statAtkV"></span></div>
+          <div class="segbar"><div class="segf" id="statAtk"></div></div>
+          <div class="stat-row"><span class="stat-label">הגנה</span><span class="stat-val" id="statDefV"></span></div>
+          <div class="segbar"><div class="segf" id="statDef"></div></div>
+          <div class="stat-row"><span class="stat-label">מהירות</span><span class="stat-val" id="statSpdV"></span></div>
+          <div class="segbar"><div class="segf" id="statSpd"></div></div>
+        </div>
+        <p class="select-trait" id="panelTrait">⚡ <b>מהלך מיוחד:</b> סנוקרת רוטשילד</p>
+        <button type="button" id="fightBtn" class="cta fight-cta">צאו לרחוב <b>←</b></button>
+      </div>
+    </section>
+
+    <!-- GAME -->
+    <section id="game" class="screen">
+      <div id="arena">
+        <canvas id="stage"></canvas>
+
+        <div id="courierWarning" aria-live="polite">קפצו!</div>
+        <div id="message" aria-live="polite"></div>
+
+        <header class="hud">
+          <div class="hud-side hud-left">
+            <span id="heroName" class="hud-name">BIG.COM</span>
+            <i class="bar hp" role="progressbar" aria-label="חיים" aria-valuemin="0" aria-valuemax="100"><b id="heroHpBar"></b></i>
+            <i class="bar energy" role="progressbar" aria-label="אנרגיית ספיישל" aria-valuemin="0" aria-valuemax="100"><b id="heroEnergyBar"></b></i>
+            <div class="hud-ally" id="allyHealth">
+              <span id="allyName" class="hud-ally-name">FRISBEE</span>
+              <i class="bar hp ally" role="progressbar" aria-label="חיי בן הברית" aria-valuemin="0" aria-valuemax="100"><b id="allyHpBar"></b></i>
+            </div>
+          </div>
+          <div class="hud-mid">
+            <small id="areaName">הבימה</small>
+            <i class="bar route" role="progressbar" aria-label="התקדמות" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><b id="routeBar"></b></i>
+            <strong id="gateLabel">0/3</strong>
+          </div>
+          <div class="hud-side hud-right" id="bossHealth">
+            <span id="bossName">—</span>
+            <i class="bar hp boss" role="progressbar" aria-label="חיי היריב" aria-valuemin="0" aria-valuemax="100"><b id="bossHpBar"></b></i>
+          </div>
+          <button type="button" id="btnPause" class="pause-btn" aria-label="השהיה">II</button>
+        </header>
+
+        <div class="controls" dir="ltr">
+          <div id="stickZone" class="stick-zone" aria-label="תנועה" role="slider" aria-valuenow="0">
+            <div id="stickKnob" class="stick-knob"></div>
+          </div>
+          <div class="actions" role="group" aria-label="פעולות קרב">
+            <button type="button" id="btnGuard" class="act guard" aria-label="הגנה" aria-pressed="false">הגנה</button>
+            <button type="button" id="btnSpecial" class="act special" aria-label="ספיישל" aria-disabled="true">ספיישל</button>
+            <button type="button" id="btnUppercut" class="act uppercut" aria-label="אפרקאט">אפרקאט</button>
+            <button type="button" id="btnKick" class="act kick" aria-label="בעיטה">בעיטה</button>
+            <button type="button" id="btnJump" class="act jump" aria-label="קפיצה">קפיצה</button>
+            <button type="button" id="btnPunch" class="act punch" aria-label="אגרוף">אגרוף</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAUSE -->
+      <div id="pauseOverlay" class="overlay">
+        <div class="panel">
+          <h2>הפסקה</h2>
+          <button type="button" id="pauseResume" class="cta">המשיכו</button>
+          <button type="button" id="pauseLefty" class="secondary">החלף לשמאלי</button>
+          <button type="button" id="pauseQuit" class="secondary">חזרה לבחירה</button>
+        </div>
+      </div>
+
+      <!-- DEFEAT -->
+      <div id="defeatOverlay" class="overlay">
+        <div class="panel">
+          <small>STAGE FAILED</small>
+          <h2>נפלתם בשדרה</h2>
+          <button type="button" id="defeatRetry" class="cta">נסו שוב</button>
+          <button type="button" id="defeatQuit" class="secondary">חזרה לבחירה</button>
+        </div>
+      </div>
+
+      <!-- RESULTS -->
+      <div id="resultsOverlay" class="overlay">
+        <div class="panel">
+          <small>STAGE CLEAR</small>
+          <h2>כבשתם את רוטשילד</h2>
+          <p id="resultsText"></p>
+          <button type="button" id="resultsAgain" class="cta">שחקו שוב</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MUST live outside #app: #app is display:none in portrait (see
+       @media (orientation: portrait) in main.css), and display:none on a
+       parent hides its whole subtree — an aside nested inside #app would be
+       hidden together with the very screen it's supposed to replace, leaving
+       a blank black page with nothing telling the player to rotate. -->
+  <aside id="rotate">
+    <span class="rotate-icon" aria-hidden="true">📱</span>
+    <strong>סובבו את המכשיר</strong>
+    <small>המשחק אופקי — סובבו את הטלפון לרוחב והמשחק יתחיל</small>
+  </aside>
+
+  <script src="js/audio.js?v=17"></script>
+  <script src="js/engine.js?v=17"></script>
+  <script src="js/roster.js?v=17"></script>
+  <script src="js/ai.js?v=17"></script>
+  <script src="js/world.js?v=17"></script>
+  <script src="js/ui.js?v=17"></script>
+  <script src="js/main.js?v=17"></script>
+</body>
+</html>
