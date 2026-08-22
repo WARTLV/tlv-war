@@ -7,7 +7,7 @@
   <title>רוטשילד ראמבל — WAR TLV</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Heebo:wght@400;600;700;900&display=swap">
-  <link rel="stylesheet" href="css/main.css?v=17">
+  <link rel="stylesheet" href="css/main.css?v=28">
 </head>
 <body>
   <main id="app">
@@ -57,6 +57,7 @@
 
         <div id="courierWarning" aria-live="polite">קפצו!</div>
         <div id="message" aria-live="polite"></div>
+        <div id="comboPop" aria-live="polite"></div>
 
         <header class="hud">
           <div class="hud-side hud-left">
@@ -108,6 +109,7 @@
       <!-- DEFEAT -->
       <div id="defeatOverlay" class="overlay">
         <div class="panel">
+          <img id="defeatWordart" class="wordart" src="assets/presentation/ko.png" alt="K.O.">
           <small>STAGE FAILED</small>
           <h2>נפלתם בשדרה</h2>
           <button type="button" id="defeatRetry" class="cta">נסו שוב</button>
@@ -118,6 +120,8 @@
       <!-- RESULTS -->
       <div id="resultsOverlay" class="overlay">
         <div class="panel">
+          <img id="resultsHero" class="results-hero" src="assets/roster-frames/bigcom/victory/F02.png" alt="">
+          <img id="resultsWordart" class="wordart" src="assets/presentation/victory-he.png" alt="ניצחון">
           <small>STAGE CLEAR</small>
           <h2>כבשתם את רוטשילד</h2>
           <p id="resultsText"></p>
@@ -125,6 +129,12 @@
         </div>
       </div>
     </section>
+
+    <!-- BOSS INTRO CARD — see ui.js bossCard() -->
+    <div id="bossCard" aria-live="polite">
+      <div id="bossCardPortraits"></div>
+      <strong id="bossCardName"></strong>
+    </div>
   </main>
 
   <!-- MUST live outside #app: #app is display:none in portrait (see
@@ -138,12 +148,12 @@
     <small>המשחק אופקי — סובבו את הטלפון לרוחב והמשחק יתחיל</small>
   </aside>
 
-  <script src="js/audio.js?v=17"></script>
-  <script src="js/engine.js?v=17"></script>
-  <script src="js/roster.js?v=17"></script>
-  <script src="js/ai.js?v=17"></script>
-  <script src="js/world.js?v=17"></script>
-  <script src="js/ui.js?v=17"></script>
-  <script src="js/main.js?v=17"></script>
+  <script src="js/audio.js?v=28"></script>
+  <script src="js/engine.js?v=28"></script>
+  <script src="js/roster.js?v=28"></script>
+  <script src="js/ai.js?v=28"></script>
+  <script src="js/world.js?v=28"></script>
+  <script src="js/ui.js?v=28"></script>
+  <script src="js/main.js?v=28"></script>
 </body>
 </html>

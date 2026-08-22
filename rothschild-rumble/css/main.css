@@ -247,6 +247,22 @@ h1, h2 { font-family: var(--font-display); font-weight: 400; margin: 0; letter-s
 #courierWarning.from-right { left: 76%; }
 #courierWarning.from-left { left: 24%; }
 
+/* v10: combo counter — the engine already computed a full rising-damage
+   combo string (Actor.comboCount, engine.js) and emitted it on every onHit,
+   but nothing displayed it. Pinned near the hero's own HUD corner (not
+   center-screen, which #message/#courierWarning already own) so it reads as
+   "your combo" rather than a global banner. */
+#comboPop {
+  position: absolute; top: 96px; left: max(14px, var(--safe-l));
+  font-family: var(--font-display); font-size: clamp(16px, 3vw, 26px); color: var(--warn-yellow);
+  text-shadow: 0 0 10px rgba(230,180,73,.7), 2px 2px 0 rgba(7,21,31,.9);
+  opacity: 0; transform: scale(.7); transition: opacity .12s, transform .12s;
+  pointer-events: none; z-index: 7; letter-spacing: .02em; white-space: nowrap;
+}
+#comboPop.show { opacity: 1; transform: scale(1); }
+#comboPop.pop { animation: comboPop .22s ease-out; }
+@keyframes comboPop { 0% { transform: scale(1.4); } 100% { transform: scale(1); } }
+
 /* controls */
 .controls {
   position: absolute; inset: 0; z-index: 6; pointer-events: none;
@@ -308,6 +324,34 @@ body.lefty .actions { inset-inline-end: auto; inset-inline-start: calc(10px + va
 .secondary {
   background: transparent; border: 1px solid rgba(244,217,157,.3); color: var(--cream);
   font-family: var(--font-display); padding: 9px 20px; border-radius: 4px; font-size: 15px;
+}
+
+/* v11: CODEX-ART-BRIEF-v7.md P2 presentation assets — word-art + BIG.COM's
+   victory pose on the results/defeat panels, capped so they never dominate
+   a short landscape-phone panel (390px-tall viewports are the real floor). */
+.overlay .wordart { max-width: min(70vw, 260px); max-height: 68px; object-fit: contain; align-self: center; }
+.overlay .results-hero { max-height: min(26vh, 140px); width: auto; align-self: center; object-fit: contain; }
+
+/* boss-intro card — toast-like transient banner (same show/hide idiom as
+   #message) for CODEX-ART-BRIEF-v7.md's boss-card portraits. Sits above
+   #message (which a boss-start toast doesn't fire alongside — see main.js
+   onBossStart) so no z-index conflict in practice either way. */
+#bossCard {
+  position: absolute; top: 18%; left: 50%; transform: translateX(-50%) translateY(-10px) scale(.92);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; z-index: 8;
+  text-align: center;
+}
+#bossCard.show { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+#bossCardPortraits { display: flex; gap: 8px; }
+#bossCardPortraits img {
+  width: clamp(56px, 9vw, 92px); height: clamp(56px, 9vw, 92px); object-fit: cover;
+  border-radius: 50%; border: 2px solid var(--warn-yellow); box-shadow: 0 0 16px rgba(0,0,0,.5);
+}
+#bossCardName {
+  font-family: var(--font-display); font-size: clamp(15px, 2.6vw, 22px); color: var(--cream);
+  letter-spacing: .04em; text-shadow: 0 2px 6px rgba(7,21,31,.9);
+  background: rgba(7,21,31,.7); padding: 3px 14px; border-radius: 4px;
 }
 
 /* portrait guard */

@@ -74,7 +74,11 @@
     icon: [
       { move: 'kick', range: 130, telegraph: 26 },
       { move: 'uppercut', range: 96, telegraph: 30 },
-      { move: 'special', range: 156, telegraph: 40, cond: a => a.energy >= 55 }
+      { move: 'special', range: 156, telegraph: 40, cond: a => a.energy >= 55 },
+      { move: 'finisher', range: 126, telegraph: 52, cond: a => a.energy >= 100 }
+      ,{ move: 'energy_super', range: 360, telegraph: 58, cond: a => a.energy >= 100 }
+      ,{ move: 'charged_strike', range: 112, telegraph: 48, cond: a => a.energy >= 75 }
+      ,{ move: 'tekken_special', range: 132, telegraph: 44, cond: a => a.energy >= 85 }
     ],
     frisbee: [
       { move: 'punch', range: 100, telegraph: 18 },
@@ -84,12 +88,20 @@
     tmr: [
       { move: 'uppercut', range: 100, telegraph: 28 },
       { move: 'kick', range: 132, telegraph: 22 },
-      { move: 'special', range: 158, telegraph: 42, cond: a => a.energy >= 55 }
+      { move: 'special', range: 158, telegraph: 42, cond: a => a.energy >= 55 },
+      { move: 'finisher', range: 126, telegraph: 52, cond: a => a.energy >= 100 }
+      ,{ move: 'energy_super', range: 360, telegraph: 58, cond: a => a.energy >= 100 }
+      ,{ move: 'charged_strike', range: 112, telegraph: 48, cond: a => a.energy >= 75 }
+      ,{ move: 'tekken_special', range: 132, telegraph: 44, cond: a => a.energy >= 85 }
     ],
     referee: [
       { move: 'punch', range: 100, telegraph: 20 },
       { move: 'uppercut', range: 98, telegraph: 30 },
-      { move: 'special', range: 158, telegraph: 40, cond: a => a.energy >= 55 }
+      { move: 'special', range: 158, telegraph: 40, cond: a => a.energy >= 55 },
+      { move: 'finisher', range: 126, telegraph: 52, cond: a => a.energy >= 100 }
+      ,{ move: 'energy_super', range: 360, telegraph: 58, cond: a => a.energy >= 100 }
+      ,{ move: 'charged_strike', range: 112, telegraph: 48, cond: a => a.energy >= 75 }
+      ,{ move: 'tekken_special', range: 132, telegraph: 44, cond: a => a.energy >= 85 }
     ],
     // רוטוויילר רוטשילד — the "in-between" elite (see roster.js
     // buildRottweiler). No special move (never defined one), so the
@@ -98,7 +110,11 @@
     rottweiler: [
       { move: 'bite', range: 92, telegraph: 20 },
       { move: 'claw', range: 104, telegraph: 22 },
-      { move: 'charge', range: 140, telegraph: 16 }
+      { move: 'charge', range: 140, telegraph: 16 },
+      { move: 'finisher', range: 126, telegraph: 48, cond: a => a.energy >= 100 }
+      ,{ move: 'energy_super', range: 360, telegraph: 56, cond: a => a.energy >= 100 }
+      ,{ move: 'charged_strike', range: 112, telegraph: 46, cond: a => a.energy >= 75 }
+      ,{ move: 'tekken_special', range: 132, telegraph: 42, cond: a => a.energy >= 85 }
     ]
   };
 
@@ -175,8 +191,11 @@
       }
       return;
     } else if (dist <= engageRange && Math.abs(dlane) < 0.22) {
-      const useSpecial = actor.energy >= 55 && Math.random() < 0.3;
-      ai.pendingMove = useSpecial ? 'special' : (Math.random() < 0.55 ? 'punch' : 'kick');
+      const useEnergySuper = actor.energy >= 100 && actor.def.moves.energy_super && Math.random() < 0.25;
+      const useFinisher = !useEnergySuper && actor.energy >= 100 && actor.def.moves.finisher && Math.random() < 0.45;
+      const useCharged = !useEnergySuper && !useFinisher && actor.energy >= 75 && actor.def.moves.charged_strike && Math.random() < 0.3;
+      const useSpecial = !useFinisher && !useCharged && actor.energy >= 55 && Math.random() < 0.3;
+      ai.pendingMove = useEnergySuper ? 'energy_super' : (useFinisher ? 'finisher' : (useCharged ? 'charged_strike' : (useSpecial ? 'special' : (Math.random() < 0.55 ? 'punch' : 'kick'))));
       ai.phase = 'telegraph'; ai.timer = 18 + Math.floor(Math.random() * 10);
       return;
     }

@@ -22,8 +22,18 @@
   'use strict';
 
   // ── World constants (logical units = CSS px at scale 1) ────────────────────
-  const GRAVITY      = 0.92;   // matches GAME-DESIGN.md jump spec
+  const GRAVITY      = 0.92;   // matches GAME-DESIGN.md jump spec (apex ~240px, airtime ~0.76s @21/.92 — intentional, unchanged)
   const JUMP_V        = 21;
+  // v10: jump horizontal motion — GAME-DESIGN.md only ever specified vertical
+  // physics; nothing ever wrote to vx on jump, so every jump was perfectly
+  // vertical with zero forward travel and zero air control (confirmed: ground
+  // movement in update() writes straight to this.x, never through vx — see
+  // the "grounded free control" block). This is the real bug behind "הקפיצה
+  // עובדת מוזר", not the vertical timing, which matches the design doc exactly.
+  const JUMP_FWD_MULT = 0.85;  // fraction of moveSpeed carried into vx on takeoff
+  const AIR_ACCEL      = 0.28; // per-tick vx nudge from held direction while airborne
+  const AIR_MAX_MULT   = 1.0;  // air-steering can't exceed normal ground top speed
+  const LANDING_LOCK_TICKS = 4; // brief momentum-carry window right after touchdown
   const LANE_MIN       = 0.66; // top of the walkable band (screen-height fraction)
   const LANE_MAX       = 0.92; // bottom of the walkable band (feet line)
   const LANE_SPEED_PX  = 130;  // full lane traversal reference speed (px/tick-equivalent, scaled by dt)
@@ -39,6 +49,18 @@
   const DASH_BACK_IFRAMES = 14;  // back-dash: real i-frames, it's the defensive option
   const JUGGLE_CAP        = 4;   // max consecutive airborne hits on one victim
   const COMBO_WINDOW_TICKS = 24; // ~400ms to land the next hit and keep the chain
+
+  // ── v11: LF2-style fall accumulation (github.com/Project-F/F.LF,
+  // LF/global.js — GC.fall.KO=60, GC.recover.fall=-0.45; LF/character.js
+  // resets health.fall to 0 once a knockdown cycle completes). A hit that
+  // isn't itself a "launcher" (no `launch` on the move) still adds its
+  // `fall` weight to the victim; once the running total crosses FALL_KO the
+  // NEXT hit forces a knockdown regardless of that hit's own kind — a jab
+  // string alone can eventually put someone down, same as real LF2. Decays
+  // passively every tick so only a real combo (not isolated pokes) builds it.
+  const FALL_KO = 60;
+  const FALL_RECOVER_RATE = 0.45;
+  const FORCED_FALL_LAUNCH = 8; // softer arc than a dedicated uppercut/launch move
 
   // ── v3: wave grunts walk in from off-screen instead of popping into
   // existence in front of the player (see Campaign._startGate/_tickEntrances
@@ -62,7 +84,7 @@
   // overwrites the state back to walk/idle before the hitbox window ever
   // opens — a real bug caught via __debug during v3 verification, not a
   // hypothetical.
-  const ATTACK_STATES = [ST.PUNCH, ST.KICK, ST.UPPERCUT, ST.SPECIAL, 'divekick', 'runattack', 'weapon_swing', 'weapon_throw', 'bite', 'claw', 'charge'];
+  const ATTACK_STATES = [ST.PUNCH, ST.KICK, ST.UPPERCUT, ST.SPECIAL, 'finisher', 'energy_super', 'charged_strike', 'tekken_special', 'divekick', 'runattack', 'weapon_swing', 'weapon_throw', 'bite', 'claw', 'charge'];
   const isAttack = s => ATTACK_STATES.indexOf(s) >= 0;
   const isLocked = s => isAttack(s) || s === ST.HURT || s === ST.KNOCKDOWN || s === ST.KO;
 
@@ -242,6 +264,7 @@
       this.moveSpeed = def.speed || 3.4;
       this.attack = null;          // active move def
       this.contacted = false;      // damage applied this swing already
+      this.landingLockT = 0;       // v10: ticks left carrying landing momentum before normal ground control resumes
       this.controls = { left: false, right: false, up: false, down: false, jump: false, guard: false };
       this.energy = 0; this.maxEnergy = 100;
       this.hurtT = 0;
@@ -268,6 +291,9 @@
       this.comboCount = 0;          // consecutive LANDED hits within the combo window (this actor as attacker)
       this.comboWindowT = 0;        // ticks left to land the next chained hit before the combo drops
       this.juggleCount = 0;         // consecutive airborne hits taken (this actor as victim) — caps juggles
+      this.reactionKind = null;      // high/mid/low/launch/crumple visual bank
+      this.fallValue = 0;            // v11: LF2-style accumulated stagger — see FALL_KO above
+      this.walkingBack = false;      // v11: true while WALK-state movement opposes `facing` — see poseSrc()
       // v3: off-screen wave entrances (Campaign._tickEntrances owns these
       // while `entering` is true — see world.js)
       this.entering = false;
@@ -301,39 +327,55 @@
       if (this.state === ST.HURT || this.state === ST.KNOCKDOWN || this.state === ST.KO || this.state === 'grabbed') return false;
       const mv = this.def.moves && this.def.moves[kind];
       if (!mv) return false;
-      if (kind === 'special') {
-        if (this.energy < (mv.energyCost || 55)) return false;
-        this.energy -= (mv.energyCost || 55);
+      if (mv.energyCost) {
+        if (this.energy < mv.energyCost) return false;
+        this.energy -= mv.energyCost;
       }
       const frameTicks = mv.frameTicks || 4;
       const frames = mv.frames || [];
       const n = Math.max(1, frames.length);
       const contactIdx = n >= 5 ? 3 : Math.min(2, n - 1);
+      const contactFrames = mv.contactFrames || [contactIdx];
       this.state = kind; this.frameT = 0; this.contacted = false;
       this.attack = {
-        kind, frames, frameTicks, contactIdx,
+        kind, frames, frameTicks, contactIdx, contactFrames,
+        contactWindow: -1,
         totalTicks: n * frameTicks,
         contactStart: contactIdx * frameTicks,
         contactEnd: (contactIdx + 1) * frameTicks,
         dmg: Math.round(this.power * (mv.mult || 1)),
         range: mv.range || 90,
         launch: mv.launch || 0,
+        finalLaunch: mv.finalLaunch || 0,
+        finalKnockback: mv.finalKnockback || 0,
         knockback: mv.knockback || 0,
         energyGain: mv.energyGain || 0,
-        cleave: !!mv.cleave
+        cleave: !!mv.cleave,
+        reaction: mv.reaction || null,
+        fall: mv.fall != null ? mv.fall : 12
       };
       this.facingLock = true;
       if (this.onMove) this.onMove(this, mv);
       return true;
     }
 
-    // hitbox is live only during the contact window, once per swing
+    // Standard moves have one contact frame. Finishers supply several
+    // contactFrames; each frame opens a fresh hit window so the 12-pose
+    // sequence is a real multi-hit string, not merely a long animation.
     hitBox() {
-      if (!this.attack || this.contacted) return null;
-      if (this.frameT < this.attack.contactStart || this.frameT >= this.attack.contactEnd) return null;
+      if (!this.attack) return null;
+      const frameIdx = Math.floor(this.frameT / this.attack.frameTicks);
+      const windowIdx = this.attack.contactFrames.indexOf(frameIdx);
+      if (windowIdx < 0) return null;
+      if (windowIdx !== this.attack.contactWindow) {
+        this.attack.contactWindow = windowIdx;
+        this.contacted = false;
+      }
+      if (this.contacted) return null;
       const w = this.attack.range;
       const x = this.facing === DIR.RIGHT ? this.x : this.x - w;
-      return { x, y: 0, w, h: 999, lane: this.lane, actor: this };
+      return { x, y: 0, w, h: 999, lane: this.lane, actor: this,
+        finalContact: windowIdx === this.attack.contactFrames.length - 1 };
     }
     hurtBox() {
       return { x: this.x - PUSH_W, y: 0, w: PUSH_W * 2, h: 999, lane: this.lane, actor: this };
@@ -344,13 +386,24 @@
       opts = opts || {};
       if (this.invulnT > 0 || this.state === ST.KO) return;
       this.hp = Math.max(0, this.hp - dmg);
+      // v11: a hit that isn't a dedicated launcher still builds toward one —
+      // see FALL_KO above. Crossing the threshold promotes THIS hit to a
+      // forced (softer) knockdown even though its own move never set `launch`.
+      let launch = opts.launch;
+      if (!launch) {
+        this.fallValue += opts.fall || 0;
+        if (this.fallValue >= FALL_KO) { launch = FORCED_FALL_LAUNCH; this.fallValue = 0; }
+      } else {
+        this.fallValue = 0;
+      }
+      this.reactionKind = opts.reaction || (launch ? 'launch' : (opts.heavy ? 'crumple' : 'mid'));
       if (this.hp <= 0) {
         this.state = ST.KO; this.frameT = 0; this.attack = null; this.alive = false;
         this.vz = 6; return;
       }
-      if (opts.launch) {
+      if (launch) {
         this.state = ST.KNOCKDOWN; this.frameT = 0; this.attack = null;
-        this.vz = opts.launch; this.knockdownT = 46;
+        this.vz = launch; this.knockdownT = 46;
       } else {
         this.state = ST.HURT; this.frameT = 0; this.attack = null;
         this.hurtT = opts.heavy ? 20 : 11;
@@ -375,6 +428,14 @@
       if (isLocked(this.state) && !this.attackFinished()) return false;
       if (this.state === ST.HURT || this.state === ST.KNOCKDOWN || this.state === ST.KO) return false;
       if (this.grabTarget) return false; // can't jump while dragging a grabbed enemy — throw or knee first
+      // v10: seed forward momentum from whatever direction is held at
+      // takeoff (a running jump carries more than a standing one, matching
+      // the ground-speed bonus from `running`) — this is what the airborne
+      // branch in update() then integrates into this.x every tick.
+      const c = this.controls;
+      const dirHeld = (c.right ? 1 : 0) - (c.left ? 1 : 0);
+      const spd = this.moveSpeed * (this.running ? RUN_SPEED_MULT : 1) * JUMP_FWD_MULT;
+      this.vx = dirHeld ? dirHeld * spd : 0;
       this.vz = JUMP_V;
       this.z = Math.max(0.01, this.z + this.vz);
       this.changeStateForce(ST.JUMP);
@@ -421,6 +482,7 @@
       if (this.hurtT > 0) this.hurtT--;
       if (this.invulnT > 0) this.invulnT--;
       if (this.comboWindowT > 0) { this.comboWindowT--; if (this.comboWindowT === 0) this.comboCount = 0; }
+      if (this.fallValue > 0) this.fallValue = Math.max(0, this.fallValue - FALL_RECOVER_RATE);
       if (this.grabAnimT > 0) { this.grabAnimT--; if (this.grabAnimT === 0) this.grabAnim = null; }
 
       // v3 grab/throw (Lior's Little Fighter ask): a grabbed victim's x/lane
@@ -473,9 +535,32 @@
       // jump physics (airborne, not attacking)
       if (!this.grounded()) {
         this.vz -= GRAVITY; this.z = Math.max(0, this.z + this.vz);
+        // v10: limited air-steering — LF-style, curves the arc rather than
+        // redirecting it instantly. Only nudges vx toward held input, capped
+        // at normal ground top speed, so takeoff momentum still dominates.
+        const airDx = (this.controls.right ? 1 : 0) - (this.controls.left ? 1 : 0);
+        if (airDx) this.vx = clamp(this.vx + airDx * AIR_ACCEL, -this.moveSpeed * AIR_MAX_MULT, this.moveSpeed * AIR_MAX_MULT);
         this.x += this.vx;
         if (bounds) this.x = clamp(this.x, bounds.lo, bounds.hi);
-        if (this.grounded()) { this.vz = 0; this.vx = 0; this.changeStateForce(ST.IDLE); }
+        if (this.grounded()) {
+          this.vz = 0;
+          this.vx *= 0.6; // v10: momentum decays instead of hard-stopping — carried through the landing-lock window below
+          this.landingLockT = LANDING_LOCK_TICKS;
+          this.changeStateForce(ST.IDLE);
+        }
+        return;
+      }
+
+      // v10: brief post-landing window where leftover horizontal momentum
+      // keeps carrying the actor before normal ground control takes back
+      // over — without this, the decayed vx above would just sit unused
+      // (grounded movement below writes straight to this.x from controls,
+      // never reads vx), so the landing would still feel like a hard stop.
+      if (this.landingLockT > 0) {
+        this.landingLockT--;
+        this.x += this.vx;
+        this.vx = this.landingLockT > 0 ? this.vx * 0.6 : 0; // zero out cleanly on the last tick — ground control never reads vx, so leaving a stale residual would just be sloppy state
+        if (bounds) this.x = clamp(this.x, bounds.lo, bounds.hi);
         return;
       }
 
@@ -508,12 +593,24 @@
       else if (this.targetHint && this.targetHint.alive) this.facing = this.targetHint.x >= this.x ? DIR.RIGHT : DIR.LEFT;
       if (dx) {
         const fwd = dx > 0 ? DIR.RIGHT : DIR.LEFT;
+        // v11: retreating from the current target (kiting/spacing) — real
+        // LF2-style walk-back art, not the forward cycle reversed. NOT keyed
+        // off `this.facing`: the line right above always snaps facing to
+        // match dx itself the instant a direction is held, so `fwd` and
+        // `facing` can never actually differ here — that comparison would
+        // never fire. `targetHint` (nearest enemy, set every tick in
+        // world.js/ai.js) is the only signal that's independent of raw
+        // input direction, so "moving away from your target" is what
+        // "walking backward" actually means in this control scheme.
+        this.walkingBack = !!(this.targetHint && this.targetHint.alive &&
+          Math.sign(dx) !== Math.sign(this.targetHint.x - this.x || 1));
         let spd = this.moveSpeed * (fwd === this.facing || this.kind !== 'hero' ? 1 : 0.82);
         if (this.running && fwd === this.facing) spd *= RUN_SPEED_MULT; else this.running = false;
         this.x += Math.sign(dx) * spd * Math.abs(dx);
         if (bounds) this.x = clamp(this.x, bounds.lo, bounds.hi);
       } else {
         this.running = false;
+        this.walkingBack = false;
       }
       if (dy) {
         this.lane = clamp(this.lane + Math.sign(dy) * (LANE_SPEED_PX / 1000) * Math.abs(dy), 0, 1);
@@ -547,8 +644,24 @@
       // of what state the hero is otherwise in, since tryGrab()/_tickGrab()
       // never touch hero.state at all (only the victim's state changes).
       if (this.grabTarget && p.grabHold) return this._cycle(p.grabHold);
-      if (this.state === ST.JUMP && p.jump) return this._cycle(p.jump);
+      // v11: BIG.COM-only jump-arc frames (CODEX-ART-BRIEF-v7.md P1) — landing
+      // itself force-changes state to IDLE the instant it happens (see the
+      // airborne branch in update()), so the landing pose is keyed off
+      // `landingLockT` directly, not off state===JUMP. Rise/fall key off vz
+      // while actually airborne. Falls back to the old single-frame `p.jump`
+      // for every other fighter (nobody else has this dedicated art).
+      if (this.landingLockT > 0 && p.jumpLand) return this._cycle(p.jumpLand);
+      if (this.state === ST.JUMP) {
+        if (this.vz > 0 && p.jumpRise) return this._cycle(p.jumpRise);
+        if (this.vz <= 0 && p.jumpFall) return this._cycle(p.jumpFall);
+        if (p.jump) return this._cycle(p.jump);
+      }
+      if (this.state === ST.WALK && this.walkingBack && p.walkBack) return this._cycle(p.walkBack);
       if (this.state === ST.WALK && p.walk) return this._cycle(p.walk);
+      if ((this.state === ST.HURT || this.state === ST.KNOCKDOWN) && this.reactionKind) {
+        const key = 'hurt' + this.reactionKind.charAt(0).toUpperCase() + this.reactionKind.slice(1);
+        if (p[key]) return this._cycle(p[key]);
+      }
       if ((this.state === ST.HURT || this.state === ST.KNOCKDOWN || this.state === 'grabbed') && p.hurt) return this._cycle(p.hurt);
       if (this.state === ST.KO && (p.ko || p.hurt)) return this._cycle(p.ko || p.hurt);
       if (this.state === ST.GUARD && p.guard) return this._cycle(p.guard);
@@ -727,7 +840,7 @@
     _resolveAttacks() {
       const all = this.allActors();
       for (const att of all) {
-        if (!att.alive || att.contacted) continue;
+        if (!att.alive) continue;
         const hb = att.hitBox();
         if (!hb) continue;
         // hero/ally swing at enemies; grunt/boss swing at the hero or any ally
@@ -763,7 +876,11 @@
       const a = att.attack;
       const dmg = ri(Math.max(1, a.dmg - 3), a.dmg + 3);
       const guarding = vic.state === ST.GUARD;
-      let finalDmg = guarding ? Math.max(1, Math.round(dmg * 0.25)) : dmg;
+      // v10: chip damage tightened from 25%→10% to match LF2's real, verified
+      // constant (GC.defend.injury.factor = 0.1, read directly from F.LF's
+      // engine source, github.com/Project-F/F.LF LF/global.js) — guarding in
+      // LF2 is a genuinely strong defensive option, not a soft mitigation.
+      let finalDmg = guarding ? Math.max(1, Math.round(dmg * 0.1)) : dmg;
 
       // combo string (hero only): consecutive LANDED hits within
       // COMBO_WINDOW_TICKS of each other chain into rising damage, capped at
@@ -782,7 +899,10 @@
 
       const dirFrom = att.facing === DIR.RIGHT ? 1 : -1;
       if (!guarding) {
-        vic.takeHit(finalDmg, { launch: a.launch, knockback: a.knockback || 6, heavy: a.launch > 0 || a.kind === 'special', dirFrom });
+        const launch = hb.finalContact && a.finalLaunch ? a.finalLaunch : a.launch;
+        const knockback = hb.finalContact && a.finalKnockback ? a.finalKnockback : (a.knockback || 6);
+        const reaction = launch > 0 ? 'launch' : (a.reaction || (a.kind === 'kick' ? 'low' : (a.kind === 'punch' ? 'high' : ((a.kind === 'special' || a.kind === 'finisher' || a.kind === 'energy_super') ? 'crumple' : 'mid'))));
+        vic.takeHit(finalDmg, { launch, knockback, reaction, heavy: launch > 0 || a.kind === 'special' || a.kind === 'finisher' || a.kind === 'tekken_special', dirFrom, fall: a.fall });
       } else {
         // guard chips 25% through as damage but doesn't break the stance
         // (no state change, no hurtstun lock) — holding guard stays safe-ish, not free
@@ -790,18 +910,23 @@
         vic.vx += -att.facing * 1.5;
         if (vic.hp <= 0) { vic.state = ST.KO; vic.frameT = 0; vic.attack = null; vic.alive = false; vic.vz = 6; }
       }
-      if (a.energyGain && att.kind === 'hero') att.grantEnergy(a.energyGain);
-      else if (att.kind === 'hero') att.grantEnergy(10);
+      // A finisher spends the full meter and cannot recharge itself from its
+      // own six hits. Ordinary attacks preserve the existing gain/fallback.
+      if (att.kind === 'hero' && a.kind !== 'finisher' && a.kind !== 'energy_super' && a.kind !== 'charged_strike' && a.kind !== 'tekken_special') {
+        if (a.energyGain) att.grantEnergy(a.energyGain);
+        else att.grantEnergy(10);
+      }
       const col = att.def.auraColor || '#ffcc55';
       // v6.1: a landed special swaps in the energy-ball sprite ('nova' —
       // same FX_LIFE-tracked type as everything else, just a distinct art
       // asset) instead of the plain hit-spark, per CODEX-ART-BRIEF-v6-gaps.md P1.
-      const fxType = guarding ? 'guard' : (a.kind === 'special' ? 'nova' : 'spark');
-      this.spawnFx(fxType, vic.x, vic.lane, col, a.launch ? 1.3 : (att.comboCount > 1 ? 1.1 : 0.85));
+      const fxType = guarding ? 'guard' : ((a.kind === 'special' || a.kind === 'energy_super' || (a.kind === 'finisher' && hb.finalContact)) ? 'nova' : 'spark');
+      this.spawnFx(fxType, vic.x, vic.lane, col, (a.launch || hb.finalContact) ? 1.3 : (att.comboCount > 1 ? 1.1 : 0.85));
       // hitstop grows slightly with the combo count for juicier feedback on longer strings
       this.hitstop = HITSTOP_TICKS + (att.kind === 'hero' ? Math.min(att.comboCount - 1, 3) : 0);
       if (att.onHitLanded) att.onHitLanded(vic, finalDmg);
-      this.onHit({ attacker: att, victim: vic, dmg: finalDmg, guarded: guarding, launch: !!a.launch, special: a.kind === 'special', combo: att.comboCount, juggle: vic.juggleCount });
+      this.onHit({ attacker: att, victim: vic, dmg: finalDmg, guarded: guarding, launch: !!a.launch,
+        special: a.kind === 'special' || a.kind === 'energy_super', combo: att.comboCount, juggle: vic.juggleCount });
     }
 
     draw() {

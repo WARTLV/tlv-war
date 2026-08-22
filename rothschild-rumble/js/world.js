@@ -11,11 +11,14 @@
   const RUMBLE = root.RUMBLE, ROSTER = root.ROSTER, AI = root.AI;
 
   const CHAPTER_LEN = 1500;
-  const CHAPTERS = 3; // v3: 3 bosses, T.M.R → Referee → Icon (see roster.js BOSS_ORDER) — FRISBEE moved to the crate-ally beat instead of a boss slot
+  // v11: 3→6 districts (CODEX-ART-BRIEF-v7.md P0 delivered) — see roster.js
+  // BOSS_ORDER, now one array of boss ids per chapter (chapters 4-6 pair up
+  // the existing three bosses rather than adding new ones).
+  const CHAPTERS = 6;
   const FINISH_X = CHAPTERS * CHAPTER_LEN + 260;
   const WORLD_W = FINISH_X + 500;
   const BIKE_LANE = 0.30;
-  const DISTRICTS = ['הבימה', 'השדרה', 'הקיוסק'];
+  const DISTRICTS = ['הבימה', 'השדרה', 'הקיוסק', 'בית העצמאות', 'מגדלי רוטשילד', 'נווה צדק'];
   const CRATE_HP = 34;
   const CRATE_W = 74;
   const PALETTE = {
@@ -134,25 +137,41 @@
   // (sky/mid/near). drawStage below falls back to the original procedural
   // skyline/mid/tree/prop drawing whenever the current district's images
   // haven't finished loading yet, so there's never a blank frame.
-  const DISTRICT_BG_PREFIX = ['habima', 'boulevard', 'kiosk'];
+  // v11: districts 4-6 (independence/towers/nevetzedek) were delivered into
+  // assets/scenes-v7/ — a separate folder from the original three (v6.1's
+  // assets/scenes-v6/) — so the path builder now looks up each prefix's own
+  // folder instead of assuming scenes-v6 for everything.
+  const DISTRICT_BG_PREFIX = ['habima', 'boulevard', 'kiosk', 'independence', 'towers', 'nevetzedek'];
+  const DISTRICT_BG_FOLDER = {
+    habima: 'scenes-v6', boulevard: 'scenes-v6', kiosk: 'scenes-v6',
+    independence: 'scenes-v7', towers: 'scenes-v7', nevetzedek: 'scenes-v7'
+  };
   const BG_LAYERS = ['sky', 'mid', 'near'];
   // how much of each layer's own leftover width (past the viewport) the
   // district's progress consumes — low = distant/barely drifts, high =
   // foreground/slides more. Creates parallax depth without needing
   // seamlessly tileable art (these are one-shot panorama plates).
   const BG_DRIFT = { sky: 0.12, mid: 0.4, near: 1 };
-  const districtBgPath = (prefix, layer) => `assets/scenes-v6/${prefix}-${layer}.png`;
+  const districtBgPath = (prefix, layer) => `assets/${DISTRICT_BG_FOLDER[prefix] || 'scenes-v6'}/${prefix}-${layer}.png`;
 
-  // draws one background layer covering the full viewport height, offset
+  // draws one background layer with a true "cover" fit (max of width/height
+  // scale, like CSS background-size:cover — the plates are already used
+  // that way on the title screen, see css/main.css's #title), offset
   // horizontally by driftFrac*progress of its own scale-up width past the
-  // viewport. Returns false (draws nothing) if the image hasn't loaded yet.
+  // viewport. v10: was height-fit only, which left a hard vertical gap on
+  // any viewport wider than the plate's own 2.33:1 aspect (ultrawide
+  // monitors, a short docked devtools window) — cover never leaves a gap;
+  // it just also crops vertically (centered) on those wider views, same
+  // trade-off CSS cover always makes. Returns false (draws nothing) if the
+  // image hasn't loaded yet.
   function drawDistrictLayer(ctx, view, img, driftFrac, progress) {
     if (!(img && img.complete && img.naturalWidth)) return false;
-    const scale = view.h / img.naturalHeight;
-    const dw = img.naturalWidth * scale;
-    const maxOffset = Math.max(0, dw - view.w);
-    const offset = maxOffset * driftFrac * progress;
-    ctx.drawImage(img, -offset, 0, dw, view.h);
+    const scale = Math.max(view.w / img.naturalWidth, view.h / img.naturalHeight);
+    const dw = img.naturalWidth * scale, dh = img.naturalHeight * scale;
+    const maxOffsetX = Math.max(0, dw - view.w);
+    const offsetX = maxOffsetX * driftFrac * progress;
+    const offsetY = (dh - view.h) / 2;
+    ctx.drawImage(img, -offsetX, -offsetY, dw, dh);
     return true;
   }
 
@@ -240,6 +259,18 @@
     const FADE_FROM = 0.85;
     const fadeT = nextIdx !== distIdx ? clamp01((localProg - FADE_FROM) / (1 - FADE_FROM)) : 0;
 
+    // v10: warm the NEXT district's images the moment we enter this one —
+    // not just once we're 85% through it. loadImg() is a cached, idempotent
+    // kickoff (engine.js), so calling it every frame costs nothing once the
+    // fetch is in flight or done; this just moves the fetch's START time
+    // from "225 world units before the boundary" to "the whole chapter",
+    // which is what actually kills the fade-to-black→procedural-city→
+    // snap-back-to-photoreal cycle the images-not-loaded-yet path used to
+    // produce at every single district crossing.
+    if (nextIdx !== distIdx) {
+      BG_LAYERS.forEach(layer => RUMBLE.loadImg(districtBgPath(DISTRICT_BG_PREFIX[nextIdx], layer)));
+    }
+
     let bgReady = true;
     BG_LAYERS.forEach(layer => {
       const im = RUMBLE.loadImg(districtBgPath(DISTRICT_BG_PREFIX[distIdx], layer));
@@ -249,7 +280,14 @@
     if (bgReady) {
       BG_LAYERS.forEach(layer => {
         const curImg = RUMBLE.loadImg(districtBgPath(DISTRICT_BG_PREFIX[distIdx], layer));
-        ctx.globalAlpha = 1 - fadeT;
+        // v10: the outgoing plate stays at full alpha 1 for the whole
+        // crossfade — only the incoming plate ramps 0→1. Drawing BOTH at
+        // fractional alpha (the old `1 - fadeT` here) compounds under
+        // canvas's source-over blending, so the combined coverage bottomed
+        // out around 75% at fadeT=0.5 — the entire frame visibly washed out
+        // toward the ink background mid-transition, on top of a real
+        // crossfade look most players wouldn't otherwise have questioned.
+        ctx.globalAlpha = 1;
         drawDistrictLayer(ctx, view, curImg, BG_DRIFT[layer], localProg);
         if (fadeT > 0) {
           const nextImg = RUMBLE.loadImg(districtBgPath(DISTRICT_BG_PREFIX[nextIdx], layer));
@@ -330,8 +368,19 @@
       });
     }
 
-    // sidewalk band
-    const sideY = view.h * LANE.min1 - 4 * sc;
+    // sidewalk band — v10: when a real district photo is active, start this
+    // lower than the procedural-fallback value (view.h*0.80 vs the original
+    // LANE.min1≈0.68) so more of the near-layer's own painted ground
+    // (benches/lampposts/trees standing on it) actually shows instead of
+    // being sliced off by a flat opaque band ~12% of screen height above
+    // where it needs to be. 0.80 isn't a perfect fit for all three current
+    // plates (their own ground lines land anywhere from 0.78 to 1.0 of
+    // image height — an art-content inconsistency, not fixable here; see
+    // docs/CODEX-ART-BRIEF-v7.md's new hard requirement that every future
+    // district plate share one locked 0.78 ground line) but it's a
+    // meaningfully closer compromise than the old fixed 0.68, which was
+    // tuned only for the flat procedural city this replaces.
+    const sideY = view.h * (bgReady ? 0.80 : LANE.min1) - 4 * sc;
     ctx.fillStyle = PALETTE.stucco;
     ctx.fillRect(0, sideY, view.w, view.h - sideY);
 
@@ -596,6 +645,12 @@
       this.wallHi = this.gates[0].x + 300;
       this.finishX = FINISH_X;
       this._activeEnemies = [];
+      // v10: watchdog against a stuck wave/elite/boss room — see _startGate's
+      // reset and tick()'s check below. Nothing in the game guaranteed every
+      // spawned enemy stays reachable (AI pathing edge case, an off-screen
+      // entrant that never resolves, etc.); without this a stuck room reads
+      // to the player as "the boss never showed up."
+      this._gateTicks = 0;
       this.currentDistrict = -1;
       this.city = generateCity();
       this.bossesCleared = 0;
@@ -696,6 +751,12 @@
       } else {
         const remaining = this._activeEnemies.filter(e => e.alive).length;
         if (remaining === 0) this._clearGate();
+        // v10: watchdog — 45s (2700 ticks @60fps) is far longer than any
+        // real fight (a full boss takes maybe 20-30s), so hitting this means
+        // something is actually stuck (unreachable entrant, AI pathing
+        // corner case), not just a slow player. Force-clear rather than
+        // silently soft-locking a boss the player can see but never fights.
+        else if (++this._gateTicks > 2700) { this._activeEnemies.forEach(e => { e.alive = false; }); this._clearGate(); }
       }
       const distIdx = Math.min(DISTRICTS.length - 1, Math.floor(hero.x / CHAPTER_LEN));
       if (distIdx !== this.currentDistrict) {
@@ -748,6 +809,7 @@
     _startGate(g) {
       this.roomLocked = true;
       this.wallHi = g.x + 70;
+      this._gateTicks = 0; // v10: watchdog restart — see tick()
       if (g.type === 'wave') {
         const lanes = [0.32, 0.56, 0.78, 0.44];
         this._activeEnemies = [];
@@ -793,11 +855,22 @@
         this._activeEnemies = [dog];
         if (this.callbacks.onEliteStart) this.callbacks.onEliteStart(g, def);
       } else {
-        const def = ROSTER.buildBoss(g.bossId, g.gateIndex);
-        const boss = new RUMBLE.Actor(def, g.x + 210, 0.55, RUMBLE.DIR.LEFT, 'boss');
-        this.world.addEnemy(boss);
-        this._activeEnemies = [boss];
-        if (this.callbacks.onBossStart) this.callbacks.onBossStart(g, def);
+        // v11: g.bossId is now always an array (1-3 ids — see roster.js
+        // BOSS_ORDER, chapters 4-6 pair up bosses in one gate). Spread
+        // multiple bosses across lanes/x so they don't spawn stacked on
+        // top of each other.
+        const ids = g.bossId;
+        const lanes = ids.length > 1 ? [0.40, 0.68, 0.55] : [0.55];
+        this._activeEnemies = [];
+        const defs = ids.map((bid, i) => {
+          const def = ROSTER.buildBoss(bid, g.gateIndex);
+          const xOff = ids.length > 1 ? (i - (ids.length - 1) / 2) * 100 : 0;
+          const boss = new RUMBLE.Actor(def, g.x + 210 + xOff, lanes[i % lanes.length], RUMBLE.DIR.LEFT, 'boss');
+          this.world.addEnemy(boss);
+          this._activeEnemies.push(boss);
+          return def;
+        });
+        if (this.callbacks.onBossStart) this.callbacks.onBossStart(g, defs);
       }
     }
 
@@ -907,7 +980,7 @@
           if (!e.alive || e.entering) continue;
           if (Math.abs(e.lane - pr.lane) > 0.26) continue;
           if (Math.abs(e.x - pr.x) < 40) {
-            e.takeHit(pr.dmg, { knockback: 9, heavy: true, dirFrom: -pr.dir * e.facing });
+            e.takeHit(pr.dmg, { knockback: 9, heavy: true, fall: 20, dirFrom: -pr.dir * e.facing });
             this.world.spawnFx('spark', e.x, e.lane, '#c9a15a', 1.1);
             hit = true;
             break;
@@ -1034,7 +1107,7 @@
         if (Math.abs(e.lane - t.lane) > 0.26) continue;
         if (Math.abs(e.x - t.x) < 50) {
           t._thrownHit.push(e);
-          e.takeHit(Math.round((t.power || 8) * 0.8), { knockback: 6, heavy: true, dirFrom: -Math.sign(t.vx) * e.facing });
+          e.takeHit(Math.round((t.power || 8) * 0.8), { knockback: 6, heavy: true, fall: 20, dirFrom: -Math.sign(t.vx) * e.facing });
           this.world.spawnFx('spark', e.x, e.lane, '#e0453f', 1);
         }
       }
@@ -1159,7 +1232,7 @@
       if (inLane && !airborne && !iframes) {
         // dirFrom follows the bike's own travel direction (not the hero's
         // facing) — takeHit's knockback formula is `-facing * kb * dirFrom`.
-        hero.takeHit(COURIER.DMG, { knockback: 8, heavy: true, dirFrom: -r.dir * hero.facing });
+        hero.takeHit(COURIER.DMG, { knockback: 8, heavy: true, fall: 24, dirFrom: -r.dir * hero.facing });
         this.world.spawnFx('dust', hero.x, hero.lane, '#1f6fd8', 1.2);
         if (this.callbacks.onCourierHit) this.callbacks.onCourierHit();
       } else if (r.threatened) {

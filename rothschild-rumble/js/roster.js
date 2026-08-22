@@ -19,9 +19,15 @@
   // those two fighters at the "-clean" files; everyone else already had
   // clean cutouts and keeps the original F0N.png naming.
   const NEEDS_CLEAN = { referee: true, tmr: true };
+  // v10: 2-digit zero-pad via padStart, not a hardcoded 'F0' + n prefix — the
+  // hardcoded version silently produced "F010.png"/"F011.png"/"F012.png" for
+  // any move past 9 frames (10th frame = "F0"+10 = "F010", not "F10"), 404ing
+  // real art already on disk. Latent since v3 (nothing had >9 frames until
+  // the 12-frame finisher/energy_super moves), caught via live network-log
+  // inspection while verifying an unrelated change, not code review.
   const frameSeq = (fighter, move, count) =>
     Array.from({ length: count }, (_, i) =>
-      `${A}roster-frames/${fighter}/${move}/F0${i + 1}${NEEDS_CLEAN[fighter] ? '-clean' : ''}.png`);
+      `${A}roster-frames/${fighter}/${move}/F${String(i + 1).padStart(2, '0')}${NEEDS_CLEAN[fighter] ? '-clean' : ''}.png`);
 
   // BIG.COM's punch sequence kept its original delivery filenames (not F0N).
   const BIGCOM_PUNCH = ['01-startup', '02-contact', '03-follow-through', '04-recovery']
@@ -29,11 +35,20 @@
 
   // move timing/contact rules — same for every fighter (per TECHNICAL-CONTRACT.md);
   // damage scales per-fighter via `power` below.
+  // v11: `fall` is LF2's stagger weight (github.com/Project-F/F.LF,
+  // GC.fall.KO=60) — a hit that isn't itself a launcher still adds this much
+  // toward a forced knockdown (engine.js FALL_KO/takeHit). Calibrated so a
+  // 4-5 hit jab/kick string alone crosses 60 and puts the victim down, same
+  // rhythm as real LF2, without every single poke threatening a knockdown.
   const MOVE_SHAPE = {
-    punch:    { frameTicks: 4, mult: 1.00, range: 92,  energyGain: 12 },
-    kick:     { frameTicks: 5, mult: 1.28, range: 122, energyGain: 14 },
-    uppercut: { frameTicks: 5, mult: 1.64, range: 88,  energyGain: 16, launch: 13 },
-    special:  { frameTicks: 5, mult: 2.50, range: 148, energyGain: 0, knockback: 12, energyCost: 55 },
+    // v11: punch/kick used to share the same fallback knockback (6) — every
+    // move pushed the same distance regardless of kind. Real LF2 kicks shove
+    // noticeably harder than jabs; punch now stays close (keeps combo strings
+    // in range) while kick creates real spacing.
+    punch:    { frameTicks: 4, mult: 1.00, range: 92,  energyGain: 12, fall: 12, knockback: 5 },
+    kick:     { frameTicks: 5, mult: 1.28, range: 122, energyGain: 14, fall: 16, knockback: 9 },
+    uppercut: { frameTicks: 5, mult: 1.64, range: 88,  energyGain: 16, launch: 13, fall: 60 },
+    special:  { frameTicks: 5, mult: 2.50, range: 148, energyGain: 0, knockback: 12, energyCost: 55, fall: 40 },
     // v3 LF-style moves (Lior wanted "עוד אופציות תחת הכותרת של ליטל פייטרס"):
     // divekick = punch/kick pressed while airborne (main.js onPunch/onKick),
     // hits harder than a grounded kick and pops the victim down into a
@@ -42,8 +57,8 @@
     // frameTicks is bumped above their donor move's so the contact window
     // (derived from frameTicks × contactIdx in Actor.startAttack) stays live
     // longer — a dive should be punishing to time against, not a one-frame poke.
-    divekick:  { frameTicks: 7, mult: 1.45, range: 100, energyGain: 10, launch: 6 },
-    runattack: { frameTicks: 6, mult: 1.35, range: 110, energyGain: 10, knockback: 11 },
+    divekick:  { frameTicks: 7, mult: 1.45, range: 100, energyGain: 10, launch: 6, fall: 60 },
+    runattack: { frameTicks: 6, mult: 1.35, range: 110, energyGain: 10, knockback: 11, fall: 24 },
     // weapon_swing is a normal melee move (goes through the usual hitbox/
     // _resolveAttacks pipeline) with better reach/damage than a bare punch.
     // weapon_throw deliberately does NOT land a real hit itself (mult:0,
@@ -51,8 +66,25 @@
     // the actual damage comes from a world-space projectile spawned by
     // Campaign.throwWeapon() (world.js), which can hit at a distance and
     // travel past the hero's own melee hitbox entirely.
-    weapon_swing: { frameTicks: 5, mult: 1.6, range: 118, energyGain: 10, knockback: 8 },
-    weapon_throw: { frameTicks: 6, mult: 0, range: 1, energyGain: 6 }
+    weapon_swing: { frameTicks: 5, mult: 1.6, range: 118, energyGain: 10, knockback: 8, fall: 22 },
+    weapon_throw: { frameTicks: 6, mult: 0, range: 1, energyGain: 6, fall: 0 },
+    // Tekken-style 12-pose cinematic string. Six real contact beats, modest
+    // per-hit damage, and a strong final launch keep it spectacular without
+    // deleting a boss from one full meter.
+    finisher: { frameTicks: 5, mult: 0.38, range: 126, energyGain: 0,
+      energyCost: 100, contactFrames: [1, 3, 5, 7, 9, 10],
+      knockback: 1.5, finalLaunch: 15, finalKnockback: 15, fall: 9 },
+    // Long-range cinematic super: charge in frames 1-8, then three active
+    // beam/projectile frames. Guard+Special selects it at full meter.
+    energy_super: { frameTicks: 5, mult: 0.85, range: 380, energyGain: 0,
+      energyCost: 100, contactFrames: [8, 9, 10], cleave: true,
+      knockback: 4, finalLaunch: 18, finalKnockback: 20, fall: 18 },
+    charged_strike: { frameTicks: 7, mult: 3.2, range: 112, energyGain: 0, reaction: 'crumple',
+      energyCost: 75, contactFrames: [6], knockback: 18,
+      finalLaunch: 12, finalKnockback: 22, fall: 34 },
+    tekken_special: { frameTicks: 5, mult: 0.62, range: 132, energyGain: 0,
+      energyCost: 85, contactFrames: [2, 4, 6], knockback: 4,
+      finalLaunch: 14, finalKnockback: 17, reaction: 'mid', fall: 14 }
   };
 
   // v3 art delivery landed (2026-08-20): BIG.COM has real dedicated frames for
@@ -73,6 +105,10 @@
       kick:     Object.assign({ frames: frameSeq(id, 'kick', 4) }, MOVE_SHAPE.kick),
       uppercut: Object.assign({ frames: frameSeq(id, 'uppercut', 4) }, MOVE_SHAPE.uppercut),
       special:  Object.assign({ frames: frameSeq(id, 'special', 5) }, MOVE_SHAPE.special),
+      finisher: Object.assign({ frames: frameSeq(id, 'finisher', 12) }, MOVE_SHAPE.finisher),
+      energy_super: Object.assign({ frames: frameSeq(id, 'energy_super', 12) }, MOVE_SHAPE.energy_super),
+      charged_strike: Object.assign({ frames: frameSeq(id, 'charged_strike', 8) }, MOVE_SHAPE.charged_strike),
+      tekken_special: Object.assign({ frames: frameSeq(id, 'tekken_special', 8) }, MOVE_SHAPE.tekken_special),
       divekick:     Object.assign({ frames: isBigcom ? frameSeq(id, 'divekick', 4) : frameSeq(id, 'kick', 4) }, MOVE_SHAPE.divekick),
       runattack:    Object.assign({ frames: isBigcom ? frameSeq(id, 'runattack', 4) : punchSeq }, MOVE_SHAPE.runattack),
       weapon_swing: Object.assign({ frames: isBigcom ? frameSeq(id, 'weapon_swing', 4) : frameSeq(id, 'kick', 4) }, MOVE_SHAPE.weapon_swing),
@@ -126,10 +162,27 @@
   }
 
   function poses(id) {
-    const idle = IDLE[id];
+    // v11: idle is now a genuine 4-frame breathing loop (CODEX-ART-BRIEF-v7.md
+    // P1 — "כל דמות היא תמונה סטטית אחת... צריך לופ נשימה עדין") for every
+    // fighter, replacing the old single static IDLE[id] image as the idle
+    // pose itself. IDLE[id] stays untouched as a raw constant — walkPose()
+    // below still reads it directly as the walk-cycle fallback for fighters
+    // without a dedicated walk sequence, so this doesn't affect that.
+    const idle = { frames: frameSeq(id, 'idle', 4), ticksPerFrame: 10 };
     return {
-      idle, walk: walkPose(id), jump: frameSeq(id, 'jump', 4)[1],
+      idle, walk: walkPose(id), walkBack: { frames: frameSeq(id, 'walk-back', 6), ticksPerFrame: 6 },
+      jump: frameSeq(id, 'jump', 4)[1],
+      // BIG.COM-only dedicated jump-arc/victory art — see engine.js poseSrc().
+      jumpRise: id === 'bigcom' ? frameSeq(id, 'jump-rise', 1)[0] : undefined,
+      jumpFall: id === 'bigcom' ? frameSeq(id, 'jump-fall', 1)[0] : undefined,
+      jumpLand: id === 'bigcom' ? frameSeq(id, 'land', 1)[0] : undefined,
+      victory: id === 'bigcom' ? { frames: frameSeq(id, 'victory', 2), ticksPerFrame: 14 } : undefined,
       hurt: hurtPose(id), ko: koPose(id),
+      hurtHigh: { frames: frameSeq(id, 'hurt_high', 2), ticksPerFrame: 6, once: true },
+      hurtMid: { frames: frameSeq(id, 'hurt_mid', 2), ticksPerFrame: 6, once: true },
+      hurtLow: { frames: frameSeq(id, 'hurt_low', 2), ticksPerFrame: 6, once: true },
+      hurtLaunch: { frames: frameSeq(id, 'hurt_launch', 2), ticksPerFrame: 7, once: true },
+      hurtCrumple: { frames: frameSeq(id, 'hurt_crumple', 2), ticksPerFrame: 8, once: true },
       guard: id === 'bigcom' ? frameSeq(id, 'guard', 1)[0] : idle,
       // held-victim pose while hero.grabTarget is set — only BIG.COM ever
       // grabs (hero-only per v3 scope), so this is undefined for everyone
@@ -157,12 +210,22 @@
 
   // ── playable roster (also doubles as boss identities, see resolveBosses) ──
   const FIGHTERS = {
-    bigcom:  { id: 'bigcom',  name: 'BIG.COM',   hp: 100, power: 14, speed: 4.8, specialName: 'סנוקרת רוטשילד' },
-    yashar:  { id: 'yashar',  name: 'ישר',        hp: 110, power: 18, speed: 4.3, specialName: 'הפתרון' },
-    icon:    { id: 'icon',    name: 'האייקון',    hp: 115, power: 17, speed: 4.6, specialName: 'WOOO! ציקלון' },
-    frisbee: { id: 'frisbee', name: 'FRISBEE',   hp: 105, power: 15, speed: 4.5, specialName: 'זרם פריזבי' },
-    tmr:     { id: 'tmr',     name: 'T.M.R',      hp: 130, power: 19, speed: 4.1, specialName: 'שובר הכתר' },
-    referee: { id: 'referee', name: 'השופט',      hp: 120, power: 16, speed: 3.7, specialName: 'הספירה האחרונה' }
+    bigcom:  { id: 'bigcom',  name: 'BIG.COM', hp: 100, power: 14, speed: 4.8, specialName: 'סנוקרת רוטשילד', finisherName: 'BLUE SCREEN SHUTDOWN', energySuperName: 'BLUE DATA OVERDRIVE' },
+    yashar:  { id: 'yashar', name: 'ישר', hp: 110, power: 18, speed: 4.3, specialName: 'הפתרון', finisherName: 'SOLUTION PROTOCOL', energySuperName: 'GREEN SOLUTION ARRAY' },
+    icon:    { id: 'icon', name: 'האייקון', hp: 115, power: 17, speed: 4.6, specialName: 'WOOO! ציקלון', finisherName: 'WOOO ASCENSION', energySuperName: 'WOOO STAR ASCENSION' },
+    frisbee: { id: 'frisbee', name: 'FRISBEE', hp: 105, power: 15, speed: 4.5, specialName: 'זרם פריזבי', finisherName: 'RIPTIDE LOOP', energySuperName: 'COSMIC RIPTIDE' },
+    tmr:     { id: 'tmr', name: 'T.M.R', hp: 130, power: 19, speed: 4.1, specialName: 'שובר הכתר', finisherName: 'CHAMPIONSHIP VERDICT', energySuperName: 'GOLDEN CHAMPION CANNON' },
+    referee: { id: 'referee', name: 'השופט', hp: 120, power: 16, speed: 3.7, specialName: 'הספירה האחרונה', finisherName: 'FINAL COUNT', energySuperName: 'SILENT VERDICT' }
+  };
+  const CHARGED_STRIKE_NAMES = {
+    bigcom: 'ROTHSCHILD ONE-INCH CRASH', yashar: 'SOLUTION ELBOW',
+    frisbee: 'RIPTIDE HEEL', tmr: 'CHAMPION HAMMER',
+    referee: 'ENFORCER HEAD COUNT', icon: 'WOOO AXE HEEL'
+  };
+  const TEKKEN_SPECIAL_NAMES = {
+    bigcom: 'BLUE CORNER PRESSURE', yashar: 'SOLUTION BREAKER',
+    frisbee: 'RIPTIDE KICK CHAIN', tmr: 'CHAMPION CHAIN',
+    referee: 'SILENT SANCTION', icon: 'WOOO FLOW'
   };
   const FIGHTER_ORDER = ['bigcom', 'yashar', 'frisbee', 'tmr', 'referee', 'icon'];
   // v2: player picks only BIG.COM (CEO call — single strong hero identity for
@@ -203,7 +266,10 @@
     const punchFrames = id === 'bigcom' ? BIGCOM_PUNCH : null;
     return {
       id: base.id, name: base.name, hp: base.hp, power: base.power, speed: base.speed,
-      specialName: base.specialName, auraColor: AURA[id], drawH: DRAW_H,
+      specialName: base.specialName, finisherName: base.finisherName,
+      energySuperName: base.energySuperName, chargedStrikeName: CHARGED_STRIKE_NAMES[id],
+      tekkenSpecialName: TEKKEN_SPECIAL_NAMES[id],
+      auraColor: AURA[id], drawH: DRAW_H,
       poses: poses(id), moves: buildMoves(id, punchFrames)
     };
   }
@@ -227,28 +293,31 @@
     blanket: ['street-enemy-blanket-idle.png', 'street-enemy-blanket-punch.png']
   };
   const GRUNT_VARIANT_IDS = Object.keys(GRUNT_VARIANTS);
+  // v11: CODEX-ART-BRIEF-v7.md P1 delivered walk(4)/hurt(2)/ko(2) for the
+  // 4 variants that only had classic's own cycles before — all 5 variants
+  // now share this one path shape (assets/street-enemy/<variant>/<move>/F0N.png),
+  // so `classic` no longer needs special-casing against the other four.
+  const gruntCycle = (v, move, count, ticksPerFrame, once) =>
+    ({ frames: Array.from({ length: count }, (_, i) => `${A}street-enemy/${v}/${move}/F${String(i + 1).padStart(2, '0')}.png`), ticksPerFrame, once });
   function buildGrunt(variant) {
     const v = GRUNT_VARIANTS[variant] ? variant : GRUNT_VARIANT_IDS[Math.floor(Math.random() * GRUNT_VARIANT_IDS.length)];
     const [idleFile, attackFile] = GRUNT_VARIANTS[v];
     const idle = `${A}street-enemy/${idleFile}`;
     const attack = `${A}street-enemy/${attackFile}`;
-    const classicWalk = { frames: [1, 2, 3, 4].map(n => `${A}street-enemy/classic/walk/F0${n}.png`), ticksPerFrame: 6 };
-    const classicHurt = { frames: [1, 2].map(n => `${A}street-enemy/classic/hurt/F0${n}.png`), ticksPerFrame: 9, once: true };
-    const classicKo = { frames: [1, 2].map(n => `${A}street-enemy/classic/ko/F0${n}.png`), ticksPerFrame: 12, once: true };
     return {
       id: 'grunt', name: 'איש הרחוב', hp: ri(24, 32), power: 3, speed: 1.9 + Math.random() * 0.55,
       drawH: 195, auraColor: '#9E443D',
       poses: {
         idle,
-        walk: v === 'classic' ? classicWalk : idle,
+        walk: gruntCycle(v, 'walk', 4, 6),
         jump: idle,
-        hurt: v === 'classic' ? classicHurt : attack,
-        ko: v === 'classic' ? classicKo : attack,
+        hurt: gruntCycle(v, 'hurt', 2, 9, true),
+        ko: gruntCycle(v, 'ko', 2, 12, true),
         guard: idle
       },
       moves: {
-        punch: { frames: [attack, attack, idle], frameTicks: 6, mult: 1, range: 78, energyGain: 0 },
-        kick:  { frames: [attack, attack, idle], frameTicks: 7, mult: 1.1, range: 86, energyGain: 0 }
+        punch: { frames: [attack, attack, idle], frameTicks: 6, mult: 1, range: 78, energyGain: 0, fall: 10 },
+        kick:  { frames: [attack, attack, idle], frameTicks: 7, mult: 1.1, range: 86, energyGain: 0, fall: 12 }
       },
       bubble: () => Math.random() < 0.5 ? 'יש לך שקל?' : 'יש לך סיגריה?'
     };
@@ -268,19 +337,36 @@
   // playable hero) was never in BOSS_ORDER to begin with — kept as a
   // function for API stability (world.js calls it) in case the roster
   // grows again later. ──
-  const BOSS_ORDER = ['tmr', 'referee', 'icon'];
+  // v11: 6-district campaign (CODEX-ART-BRIEF-v7.md P0 delivered — see
+  // world.js DISTRICT_BG_PREFIX). Each entry is now an ARRAY of boss ids —
+  // chapters 4-6 pair up previously-solo bosses instead of introducing new
+  // characters (no new boss art was requested), per Lior's locked table:
+  // בית העצמאות=tmr+referee, מגדלי רוטשילד=referee+icon, נווה צדק=כולם.
+  const BOSS_ORDER = [
+    ['tmr'], ['referee'], ['icon'],
+    ['tmr', 'referee'], ['referee', 'icon'], ['tmr', 'referee', 'icon']
+  ];
   const BOSS_TUNING = [
     { hp: 95, power: 8, speed: 2.7 },
     { hp: 140, power: 11, speed: 3.1 },
-    { hp: 185, power: 14, speed: 3.4 }
+    { hp: 185, power: 14, speed: 3.4 },
+    { hp: 210, power: 15, speed: 3.5 },
+    { hp: 235, power: 16, speed: 3.6 },
+    { hp: 260, power: 17, speed: 3.7 }
   ];
   function resolveBossLineup() {
-    return BOSS_ORDER.slice();
+    return BOSS_ORDER.map(chapter => chapter.slice());
   }
+  // v11: a shared gate with 2+ bosses cuts each one's HP ~25% (Lior: "כששני
+  // בוסים יחד, להוריד ~25% HP לכל אחד כדי שלא ייהפך לספוג") — otherwise a
+  // paired gate is just double the total HP of a solo one, which reads as a
+  // damage sponge rather than a genuinely different fight.
   function buildBoss(id, gateIndex) {
     const f = buildFighter(id);
     const tune = BOSS_TUNING[gateIndex] || BOSS_TUNING[BOSS_TUNING.length - 1];
-    f.hp = tune.hp; f.power = tune.power; f.speed = tune.speed;
+    const lineup = BOSS_ORDER[gateIndex] || [id];
+    const paired = lineup.length > 1 ? 0.75 : 1;
+    f.hp = Math.round(tune.hp * paired); f.power = tune.power; f.speed = tune.speed;
     f.isBoss = true; f.gateIndex = gateIndex;
     return f;
   }
@@ -298,8 +384,9 @@
   // never touch bossesCleared/the 3-boss win condition; see the 'elite' gate
   // type in world.js buildGates/_startGate.
   const DOG_A = `${A}enemies/wrestler-dog/`;
+  // v10: same padStart fix as frameSeq() above — see its comment.
   const dogFrames = (move, count) =>
-    Array.from({ length: count }, (_, i) => `${DOG_A}${move}/F0${i + 1}.png`);
+    Array.from({ length: count }, (_, i) => `${DOG_A}${move}/F${String(i + 1).padStart(2, '0')}.png`);
   // per-chapter tuning — a recurring rival, slightly tougher each rematch
   // (same shape as BOSS_TUNING, independent table so he never shares an
   // index with the real bosses).
@@ -310,19 +397,32 @@
     const tune = DOG_TUNING[chapter] || DOG_TUNING[DOG_TUNING.length - 1];
     return {
       id: 'rottweiler', name: 'רוטוויילר רוטשילד', hp: tune.hp, power: tune.power, speed: 3.3,
+      finisherName: "HOUND'S RECKONING",
+      energySuperName: 'HELLHOUND NOVA',
+      chargedStrikeName: 'HOUND SKULL DRIVER',
+      tekkenSpecialName: 'HOUND RAMPAGE',
       drawH: DRAW_H, auraColor: '#c1401f', isBoss: true,
       poses: {
         idle: { frames: dogFrames('idle', 2), ticksPerFrame: 16 },
         walk: { frames: dogFrames('walk', 4), ticksPerFrame: 6 },
         jump: dogFrames('idle', 1)[0],
         hurt: { frames: dogFrames('hurt', 2), ticksPerFrame: 10 },
+        hurtHigh: { frames: dogFrames('hurt_high', 2), ticksPerFrame: 6, once: true },
+        hurtMid: { frames: dogFrames('hurt_mid', 2), ticksPerFrame: 6, once: true },
+        hurtLow: { frames: dogFrames('hurt_low', 2), ticksPerFrame: 6, once: true },
+        hurtLaunch: { frames: dogFrames('hurt_launch', 2), ticksPerFrame: 7, once: true },
+        hurtCrumple: { frames: dogFrames('hurt_crumple', 2), ticksPerFrame: 8, once: true },
         ko: { frames: dogFrames('knockdown', 3), ticksPerFrame: 12 },
         guard: dogFrames('idle', 1)[0]
       },
       moves: {
-        bite:   { frames: dogFrames('bite', 4), frameTicks: 5, mult: 1.15, range: 92, energyGain: 0 },
-        claw:   { frames: dogFrames('claw', 4), frameTicks: 5, mult: 1.3, range: 104, energyGain: 0 },
-        charge: { frames: dogFrames('charge', 4), frameTicks: 6, mult: 1.4, range: 140, energyGain: 0, knockback: 10 }
+        bite:   { frames: dogFrames('bite', 4), frameTicks: 5, mult: 1.15, range: 92, energyGain: 0, fall: 14 },
+        claw:   { frames: dogFrames('claw', 4), frameTicks: 5, mult: 1.3, range: 104, energyGain: 0, fall: 16 },
+        charge: { frames: dogFrames('charge', 4), frameTicks: 6, mult: 1.4, range: 140, energyGain: 0, knockback: 10, fall: 26 },
+        finisher: Object.assign({ frames: dogFrames('finisher', 12) }, MOVE_SHAPE.finisher)
+        ,energy_super: Object.assign({ frames: dogFrames('energy_super', 12) }, MOVE_SHAPE.energy_super)
+        ,charged_strike: Object.assign({ frames: dogFrames('charged_strike', 8) }, MOVE_SHAPE.charged_strike)
+        ,tekken_special: Object.assign({ frames: dogFrames('tekken_special', 8) }, MOVE_SHAPE.tekken_special)
       }
     };
   }

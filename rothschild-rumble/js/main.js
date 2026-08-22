@@ -62,7 +62,9 @@
   }
   function preloadForRun(heroId) {
     let list = collectSrcs(ROSTER.buildFighter(heroId)).concat(collectSrcs(ROSTER.buildGrunt()));
-    ROSTER.resolveBossLineup(heroId).forEach(bid => { list = list.concat(collectSrcs(ROSTER.buildFighter(bid))); });
+    // v11: resolveBossLineup now returns one ARRAY of ids per chapter (some
+    // chapters pair 2-3 bosses in one gate) — flatten before preloading.
+    ROSTER.resolveBossLineup(heroId).flat().forEach(bid => { list = list.concat(collectSrcs(ROSTER.buildFighter(bid))); });
     // FRISBEE is no longer a boss (v2: crate-ally) so resolveBossLineup won't
     // pull its frames in — preload them explicitly so the crate-break moment
     // never has to lazy-load the ally's art mid-fight.
@@ -85,7 +87,15 @@
     campaign = new WORLDNS.Campaign(world, heroId, {
       onWaveStart: function () { UI.toast('גל בריונים!'); },
       onWaveClear: function () { UI.toast('נוקה!'); },
-      onBossStart: function (g, def) { UI.toast('בוס: ' + def.name); },
+      // v11: onBossStart now always receives an ARRAY of defs (length 1 for
+      // a solo boss gate, 2-3 for the paired chapters 4-6) — see world.js
+      // _startGate's boss branch. Portrait files are named boss-card-<id>.png
+      // (CODEX-ART-BRIEF-v7.md P2) for the three real bosses only — the elite
+      // dog room uses the 'elite' gate type, never reaches this callback.
+      onBossStart: function (g, defs) {
+        UI.toast('בוס: ' + defs.map(function (d) { return d.name; }).join(' + '));
+        UI.bossCard(defs.map(function (d) { return { src: 'assets/presentation/boss-card-' + d.id + '.png', name: d.name }; }));
+      },
       onBossClear: function () { UI.toast('הדרך נפתחה!'); },
       onEliteStart: function (g, def) { UI.toast('יריב מיוחד: ' + def.name + '!'); },
       onDistrictChange: function (name, idx) { if (idx > 0) UI.toast(name); },
@@ -117,6 +127,8 @@
     UI.toast('זוזו עם הג׳ויסטיק');
     setTimeout(function () { if (world.running) UI.toast('אגרוף · בעיטה · אפרקאט'); }, 2600);
     setTimeout(function () { if (world.running) UI.toast('שליח! צאו מהנתיב או קפצו'); }, 5400);
+    setTimeout(function () { if (world.running) UI.toast('75%: הגנה+אגרוף=מכה טעונה'); }, 8200);
+    setTimeout(function () { if (world.running) UI.toast('100%: ספיישל=Finisher · הגנה+ספיישל=אנרגיה'); }, 10800);
   }
 
   function syncHud() {
@@ -134,7 +146,8 @@
       bossName: boss ? boss.def.name : '',
       bossHpPct: boss ? (boss.hp / boss.maxHp * 100) : 0,
       allyName: ally ? ally.def.name : '',
-      allyHpPct: ally ? (ally.hp / ally.maxHp * 100) : 0
+      allyHpPct: ally ? (ally.hp / ally.maxHp * 100) : 0,
+      comboCount: h.comboCount
     });
   }
 
@@ -187,6 +200,13 @@
   // plan §7b) so those two special moves always still work.
   function onPunch() {
     const h = world.hero; if (!h) return;
+    if (h.controls.guard && h.energy >= 75 && h.def.moves.charged_strike) {
+      if (h.startAttack('charged_strike')) {
+        UI.toast(h.def.chargedStrikeName + '!');
+        if (AUDIO) AUDIO.sfxAttack('uppercut', false);
+      }
+      return;
+    }
     if (h.grabTarget) { campaign && campaign.grabKnee(); return; }
     if (!h.grounded()) { h.startAttack('divekick'); return; }
     if (h.running) { h.startAttack('runattack'); return; }
@@ -195,6 +215,13 @@
   }
   function onKick() {
     const h = world.hero; if (!h) return;
+    if (h.controls.guard && h.energy >= 85 && h.def.moves.tekken_special) {
+      if (h.startAttack('tekken_special')) {
+        UI.toast(h.def.tekkenSpecialName + '!');
+        if (AUDIO) AUDIO.sfxAttack('special', false);
+      }
+      return;
+    }
     if (h.grabTarget) { campaign && campaign.throwGrabbed(); return; }
     if (!h.grounded()) { h.startAttack('divekick'); return; }
     if (h.weapon) { campaign && campaign.throwWeapon(); return; }
@@ -211,6 +238,20 @@
   }
   function onSpecial() {
     const h = world.hero; if (!h) return;
+    if (h.controls.guard && h.energy >= 100 && h.def.moves.energy_super) {
+      if (h.startAttack('energy_super')) {
+        UI.toast(h.def.energySuperName + '!');
+        if (AUDIO) AUDIO.sfxAttack('special', false);
+      }
+      return;
+    }
+    if (h.energy >= 100 && h.def.moves.finisher) {
+      if (h.startAttack('finisher')) {
+        UI.toast(h.def.finisherName + '!');
+        if (AUDIO) AUDIO.sfxAttack('special', false);
+      }
+      return;
+    }
     if (h.energy < 55) { UI.toast('ספיישל ב-' + Math.round(h.energy) + '%'); return; }
     if (h.startAttack('special')) UI.toast(h.def.specialName + '!');
   }

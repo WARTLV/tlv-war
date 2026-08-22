@@ -61,6 +61,7 @@
   }
 
   // ── HUD ────────────────────────────────────────────────────────────────
+  let _lastComboCount = 0; // v10: only replay the pop animation on an actual increment, not every setHUD tick
   function setHUD(d) {
     if (d.heroName != null) $('#heroName').textContent = d.heroName;
     if (d.heroHpPct != null) {
@@ -99,6 +100,23 @@
     if (d.allyHpPct != null) {
       $('#allyHpBar').style.width = clamp01(d.allyHpPct) + '%';
       $('#allyHpBar').parentElement.setAttribute('aria-valuenow', Math.round(d.allyHpPct));
+    }
+    // v10: combo counter — see css/main.css's #comboPop comment for why this
+    // exists at all. `comboCount` is Actor.comboCount, already reset to 0 by
+    // the engine itself once the combo window lapses (engine.js update()),
+    // so this function never needs its own timeout logic.
+    if (d.comboCount != null) {
+      const el = $('#comboPop');
+      if (d.comboCount >= 2) {
+        el.textContent = 'קומבו ×' + d.comboCount;
+        el.classList.add('show');
+        if (d.comboCount !== _lastComboCount) {
+          el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+        }
+      } else {
+        el.classList.remove('show');
+      }
+      _lastComboCount = d.comboCount;
     }
   }
   function clamp01(v) { return Math.max(0, Math.min(100, v)); }
@@ -276,8 +294,32 @@
     if (d.specialName) $('#panelTrait').innerHTML = '⚡ <b>מהלך מיוחד:</b> ' + d.specialName;
   }
 
+  // v11: boss-intro card (CODEX-ART-BRIEF-v7.md P2 boss-card portraits) —
+  // same toast idiom as toast() above (show class + auto-hide timer, forced
+  // reflow so a second boss-start while one is still fading restarts the
+  // animation instead of no-opping). `portraits` is an array of {src, name}
+  // so a paired-boss gate (chapters 4-6 — see world.js/roster.js BOSS_ORDER)
+  // shows every portrait, not just the first.
+  let bossCardTimer = null;
+  function bossCard(portraits) {
+    const card = $('#bossCard'), wrap = $('#bossCardPortraits'), nameEl = $('#bossCardName');
+    if (!card || !portraits || !portraits.length) return;
+    wrap.innerHTML = '';
+    portraits.forEach(p => {
+      const img = document.createElement('img');
+      img.src = p.src; img.alt = p.name;
+      wrap.appendChild(img);
+    });
+    nameEl.textContent = portraits.map(p => p.name).join(' + ');
+    card.classList.remove('show');
+    void card.offsetWidth;
+    card.classList.add('show');
+    clearTimeout(bossCardTimer);
+    bossCardTimer = setTimeout(() => card.classList.remove('show'), 2400);
+  }
+
   root.UI = {
-    showScreen, toast, courierWarn, setHUD,
+    showScreen, toast, courierWarn, setHUD, bossCard,
     showPause, hidePause, showDefeat, hideDefeat, showResults, hideResults,
     init, resetAllInputs, renderSelect, state
   };
