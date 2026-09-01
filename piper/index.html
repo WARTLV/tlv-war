@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OY VEY · החלילן מטינדר</title>
+<meta name="theme-color" content="#08070c">
+<meta property="og:title" content="OY VEY — החלילן מטינדר">
+<meta property="og:description" content="14.09 · תמצאו את הדמות שלכם לערב">
+<style>
+  :root{
+    --bg:#08070c; --bg2:#0e0b16; --ink:#ece7f5; --muted:#9a8fb0;
+    --magenta:#C24A8A; --magenta-hot:#ff4fa3; --cyan:#4fd6e0; --violet:#8a5cff;
+    --nope:#6b7a90;
+    --disp:"Bebas Neue","Oswald","Arial Narrow","Roboto Condensed",Impact,sans-serif;
+    --body:"Segoe UI",system-ui,-apple-system,"Assistant",Arial,sans-serif;
+    --ig-bar-h:92px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:var(--body);-webkit-font-smoothing:antialiased}
+  body{overflow:hidden;
+    background:
+      radial-gradient(1100px 600px at 82% -10%, rgba(255,79,163,.20), transparent 60%),
+      radial-gradient(900px 700px at -10% 25%, rgba(79,214,224,.11), transparent 55%),
+      radial-gradient(900px 900px at 50% 118%, rgba(138,92,255,.16), transparent 60%),
+      var(--bg);}
+  /* film grain + scanlines — the brand's capture texture, kept from the 16.08 page */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.06;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:59;opacity:.30;
+    background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.18) 2px 3px);}
+
+  /* ================= app shell ================= */
+  .app{position:fixed;inset:0;display:flex;flex-direction:column;
+    padding-bottom:calc(var(--ig-bar-h) + env(safe-area-inset-bottom));}
+  .app[hidden]{display:none}
+
+  .appbar{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:10px;
+    padding:calc(10px + env(safe-area-inset-top)) 58px 8px;text-align:center;position:relative}
+  .appbar .brand{font-family:var(--disp);font-size:clamp(20px,5.6vw,28px);letter-spacing:.06em;color:#fff;
+    line-height:1;text-shadow:0 0 18px rgba(255,79,163,.5)}
+  .appbar .when{font-family:var(--disp);letter-spacing:.18em;font-size:12px;color:var(--cyan);margin-top:3px}
+
+  .profile-chip{flex:0 0 auto;display:flex;justify-content:center;padding:0 12px 6px}
+  .pc-row{display:inline-flex;align-items:center;gap:9px;max-width:100%;
+    background:rgba(23,19,32,.8);border:1px solid #2a2f3c;border-radius:999px;padding:5px 6px 5px 13px;
+    font-size:13px;color:#e7dff2}
+  .pc-row b{color:#fff}
+  .pc-row .tbl{color:var(--cyan);font-family:var(--disp);letter-spacing:.08em}
+  .pc-row button{font-family:var(--body);text-transform:none;letter-spacing:0;
+    padding:4px 11px;font-size:12px;border-radius:999px;background:#241a30;border:1px solid #34283f;color:#cbb8dc}
+
+  /* ================= swipe deck ================= */
+  .deck-wrap{flex:1 1 auto;position:relative;min-height:0;padding:4px 14px 0}
+  .deck{position:absolute;inset:4px 14px 0;perspective:1000px}
+  .card{position:absolute;inset:0;border-radius:20px;overflow:hidden;background:#141019;
+    border:1px solid #2a1f38;box-shadow:0 18px 50px rgba(0,0,0,.55);
+    will-change:transform;touch-action:none;user-select:none;-webkit-user-select:none}
+  .card.gone{transition:transform .42s cubic-bezier(.3,.1,.3,1), opacity .42s ease;opacity:0;pointer-events:none}
+  .card.settling{transition:transform .28s cubic-bezier(.2,.8,.3,1)}
+  /* only the top three cards are painted; the rest wait their turn */
+  .card[data-depth="0"]{z-index:5}
+  .card[data-depth="1"]{z-index:4;transform:scale(.955) translateY(10px)}
+  .card[data-depth="2"]{z-index:3;transform:scale(.91) translateY(20px)}
+  .card[data-depth="3"]{z-index:2;transform:scale(.91) translateY(20px);opacity:0}
+  .card[data-depth="1"] .card-info,.card[data-depth="2"] .card-info{opacity:.35}
+
+  .card .photo{position:absolute;inset:0;background:#1a1424}
+  .card .photo img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block}
+  /* legibility scrim for the info block */
+  .card .scrim{position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(to top, rgba(8,7,12,.96) 0%, rgba(8,7,12,.75) 22%, rgba(8,7,12,0) 52%)}
+
+  /* photo carousel progress pips */
+  .pips{position:absolute;top:9px;left:10px;right:10px;display:flex;gap:5px;z-index:3}
+  .pips i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.28)}
+  .pips i.on{background:#fff}
+  /* edge tap zones cycle photos; the middle opens the full profile */
+  .tapzone{position:absolute;top:0;bottom:38%;width:28%;z-index:2}
+  .tapzone.prev{left:0} .tapzone.next{right:0}
+
+  .card-info{position:absolute;left:0;right:0;bottom:0;padding:16px 18px 18px;z-index:3;
+    pointer-events:none;transition:opacity .2s ease}
+  .card-info .nm{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+  .card-info h2{font-family:var(--disp);font-size:clamp(34px,9.5vw,46px);line-height:.92;margin:0;color:#fff;
+    letter-spacing:.03em;text-shadow:0 2px 14px rgba(0,0,0,.7)}
+  .card-info .age{font-family:var(--disp);font-size:clamp(22px,6vw,30px);color:#e2d6ee;letter-spacing:.02em}
+  .card-info .cls{font-family:var(--disp);letter-spacing:.2em;font-size:13px;margin:5px 0 0;
+    color:var(--accent,#ff4fa3);text-transform:uppercase}
+  .card-info .tagline{margin:8px 0 0;font-size:14.5px;line-height:1.45;color:#efe6f6}
+  .card-info .dist{margin:8px 0 0;font-size:12.5px;color:#b9aecb}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+  .tags span{font-size:11.5px;padding:4px 10px;border-radius:999px;
+    background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#efe6f6}
+
+  /* LIKE / NOPE stamps — genre convention, kept in English in both languages */
+  .stamp{position:absolute;top:26px;font-family:var(--disp);font-size:38px;letter-spacing:.1em;
+    padding:5px 14px;border-radius:10px;border:4px solid;opacity:0;z-index:4;pointer-events:none;
+    transform:rotate(-12deg)}
+  .stamp.like{left:18px;color:var(--magenta-hot);border-color:var(--magenta-hot);
+    text-shadow:0 0 16px rgba(255,79,163,.6)}
+  .stamp.nope{right:18px;color:var(--nope);border-color:var(--nope);transform:rotate(12deg)}
+
+  /* ================= deck actions ================= */
+  .actions{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:16px;padding:14px 0 10px}
+  .abtn{width:60px;height:60px;border-radius:50%;border:1px solid #2f2640;background:#15111d;
+    display:flex;align-items:center;justify-content:center;font-size:25px;padding:0;cursor:pointer;
+    box-shadow:0 6px 20px rgba(0,0,0,.45);transition:transform .12s ease, border-color .12s ease;color:#fff}
+  .abtn:active{transform:scale(.9)}
+  .abtn.no{color:var(--nope);border-color:#33405a}
+  .abtn.yes{color:var(--magenta-hot);border-color:rgba(255,79,163,.55);
+    box-shadow:0 6px 24px rgba(255,79,163,.3)}
+  .abtn.info{width:48px;height:48px;font-size:19px;color:#cbb8dc}
+  .swipe-help{flex:0 0 auto;text-align:center;font-size:12px;color:var(--muted);padding:0 16px 8px;line-height:1.5}
+
+  /* ================= deck empty / already picked ================= */
+  .deck-msg{position:absolute;inset:4px 14px 0;z-index:6;display:none;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;padding:26px;
+    background:rgba(10,8,15,.92);border:1px solid #2a1f38;border-radius:20px}
+  .deck-msg.on{display:flex}
+  .deck-msg h3{font-family:var(--disp);font-size:clamp(28px,8vw,40px);margin:0 0 10px;color:#fff;letter-spacing:.04em}
+  .deck-msg p{margin:0 0 20px;color:#cbb8dc;font-size:15px;line-height:1.6;max-width:34ch}
+  .deck-msg .pickname{font-family:var(--disp);font-size:clamp(38px,12vw,60px);color:var(--magenta-hot);
+    letter-spacing:.05em;line-height:1;margin:0 0 6px;text-shadow:0 0 26px rgba(255,79,163,.5)}
+  .btn{font-family:var(--disp);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;
+    border-radius:12px;padding:13px 22px;font-size:15px;border:1px solid #2a2f3c;background:#171320;color:var(--ink)}
+  .btn.primary{background:var(--magenta-hot);border-color:var(--magenta-hot);color:#fff;
+    box-shadow:0 8px 26px rgba(255,79,163,.4)}
+
+  /* ================= full profile overlay ================= */
+  .profile{position:fixed;inset:0;z-index:80;display:none;background:rgba(6,5,10,.9);
+    backdrop-filter:blur(6px);overflow:auto}
+  .profile.open{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .pf-inner{max-width:640px;margin:0 auto;min-height:100%;
+    padding-bottom:calc(var(--ig-bar-h) + 20px + env(safe-area-inset-bottom))}
+  .pf-photo{position:relative;aspect-ratio:4/5;background:#1a1424;overflow:hidden}
+  .pf-photo img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block}
+  .pf-body{padding:20px 20px 34px}
+  .pf-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .pf-head h2{font-family:var(--disp);font-size:clamp(38px,11vw,58px);line-height:.9;margin:0;color:#fff}
+  .pf-head .age{font-family:var(--disp);font-size:clamp(24px,7vw,34px);color:#e2d6ee}
+  .pf-cls{font-family:var(--disp);letter-spacing:.24em;font-size:13px;color:var(--accent,#ff4fa3);
+    text-transform:uppercase;margin:5px 0 0}
+  .pf-sheet{font:600 11px/1.4 var(--body);letter-spacing:.06em;color:#b9aecb;margin:9px 0 0;text-transform:uppercase}
+  .pf-bio{color:#ddd3ea;font-size:15px;line-height:1.6;margin:14px 0 0}
+  .pf-sec{margin:20px 0 0}
+  .pf-sec h4{font-family:var(--disp);letter-spacing:.16em;font-size:13px;margin:0 0 8px;color:#fff}
+  .pf-sec p{margin:0;color:#ccc3dc;font-size:14px;line-height:1.55}
+  .redflag{border:1px solid rgba(255,79,163,.4);background:rgba(255,79,163,.09);border-radius:12px;
+    padding:11px 14px;color:#f8dcea;font-size:14px}
+  .redflag b{display:block;font-family:var(--disp);letter-spacing:.16em;font-size:11.5px;
+    color:var(--magenta-hot);margin-bottom:3px}
+  .explain-btn{font-family:var(--body);text-transform:none;letter-spacing:0;font-size:12.5px;font-weight:600;
+    padding:8px 13px;border-radius:999px;background:#1d1728;border:1px solid #3a2f45;color:#cbb8dc;
+    margin:0 0 12px;cursor:pointer}
+  .stats{display:grid;gap:10px}
+  .stat{display:grid;grid-template-columns:104px 1fr 26px;align-items:center;gap:10px;direction:ltr}
+  .stat-lbl{display:flex;flex-direction:column;line-height:1.2;overflow:hidden}
+  .stat b{font:700 11px/1 var(--body);letter-spacing:.1em;color:#c7bcda;text-transform:uppercase}
+  .stat i{font:400 10.5px/1.3 var(--body);font-style:normal;color:#7c7191;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{height:9px;border-radius:6px;background:#241a30;overflow:hidden}
+  .fill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--cyan),var(--magenta-hot));
+    transition:width .7s cubic-bezier(.2,.7,.2,1)}
+  .stat>span{font:700 12px/1 var(--body);color:#fff;text-align:right}
+  .stat-desc{display:none;font:400 12.5px/1.5 var(--body);color:#9a8fb0;margin:-3px 0 3px;padding-inline-start:2px}
+  .stats.explain .stat-desc{display:block}
+  .pf-actions{display:flex;gap:10px;margin:24px 0 0}
+  .pf-actions .btn{flex:1}
+  .pf-close{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:90;
+    width:42px;height:42px;border-radius:50%;background:rgba(20,16,25,.92);border:1px solid #2a2f3c;
+    font-size:19px;line-height:1;padding:0;color:#fff;cursor:pointer}
+
+  /* ================= MATCH ================= */
+  .match{position:fixed;inset:0;z-index:95;display:none;align-items:center;justify-content:center;
+    padding:26px;text-align:center;overflow:hidden;
+    background:radial-gradient(800px 600px at 50% 20%, rgba(255,79,163,.30), transparent 62%), rgba(6,5,10,.96)}
+  .match.open{display:flex;animation:fade .25s ease}
+  .match-card{position:relative;z-index:2;max-width:420px;width:100%}
+  .match-eyebrow{font-family:var(--disp);letter-spacing:.34em;font-size:13px;color:var(--cyan);
+    text-transform:uppercase}
+  .match-title{font-family:var(--disp);font-size:clamp(46px,15vw,86px);line-height:.86;margin:8px 0 0;color:#fff;
+    text-shadow:0 0 30px rgba(255,79,163,.75), 0 0 70px rgba(194,74,138,.5);
+    animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
+  @keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+  .match-photo{width:132px;height:132px;border-radius:50%;object-fit:cover;object-position:center 20%;
+    margin:20px auto 0;display:block;border:3px solid var(--magenta-hot);
+    box-shadow:0 0 34px rgba(255,79,163,.55)}
+  .match-name{font-family:var(--disp);font-size:clamp(34px,10vw,50px);line-height:1;margin:14px 0 0;color:#fff}
+  .match-cls{font-family:var(--disp);letter-spacing:.24em;font-size:13px;color:var(--magenta-hot);
+    text-transform:uppercase;margin:5px 0 0}
+  .match-who{color:#e7dff2;font-size:15px;margin:14px 0 0}
+  .match-who .tbl{color:var(--cyan);font-family:var(--disp);letter-spacing:.06em}
+  .match-actions{margin:24px 0 0;display:flex;flex-direction:column;gap:9px;align-items:center}
+  .match-actions .btn{width:100%;max-width:280px}
+  .match-undo{background:transparent;border:1px solid #2a2f3c;color:#a396b8;font-size:12.5px;
+    padding:9px 16px;letter-spacing:.05em}
+  .confetti{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+  .confetti i{position:absolute;top:-14px;width:8px;height:13px;border-radius:2px;opacity:.9;
+    animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(112vh) rotate(720deg);opacity:.15}}
+  @media (prefers-reduced-motion: reduce){
+    .confetti{display:none}
+    .match-title{animation:none}
+    .card.gone,.card.settling,.fill{transition:none}
+  }
+
+  /* ================= gate ================= */
+  .gate{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+    padding:24px;overflow:auto;
+    padding-bottom:calc(var(--ig-bar-h) + 24px + env(safe-area-inset-bottom));
+    background:radial-gradient(900px 600px at 50% -10%, rgba(194,74,138,.28), transparent 60%),
+      radial-gradient(700px 700px at 50% 120%, rgba(138,92,255,.22), transparent 60%), #08070c;}
+  .gate[hidden]{display:none}
+  .gate-card{width:100%;max-width:400px;text-align:center}
+  .gate-logo{max-height:56px;max-width:190px;object-fit:contain;margin:0 auto 14px;display:block;
+    filter:drop-shadow(0 0 18px rgba(255,79,163,.35))}
+  .gate-card h1{font-family:var(--disp);font-size:clamp(34px,11vw,58px);line-height:.9;margin:0;color:#fff;
+    text-shadow:0 0 22px rgba(255,79,163,.5)}
+  .gate-card .gsub{font-family:var(--disp);letter-spacing:.28em;color:var(--magenta-hot);
+    text-transform:uppercase;font-size:clamp(12px,3.6vw,16px);margin:8px 0 0;padding-inline-start:.28em}
+  .gdate{font-family:var(--disp);letter-spacing:.2em;color:#fff;font-size:clamp(14px,4.4vw,19px);margin:12px 0 0}
+  .gate-card .gp{color:#cbb8dc;font-size:14.5px;margin:16px 0 18px;line-height:1.6}
+  .field{text-align:start;margin:0 0 13px}
+  .field label{display:block;font-size:13px;color:#b9aecb;margin:0 0 6px}
+  .field input,.field select{width:100%;padding:14px;border-radius:12px;background:#171320;
+    border:1px solid #34283f;color:#fff;font-family:var(--body);font-size:16px}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--magenta-hot);
+    box-shadow:0 0 0 3px rgba(255,79,163,.2)}
+  .field .err{color:#ff7a9c;font-size:12px;margin-top:5px;min-height:14px}
+  .gate .enter-btn{width:100%;background:var(--magenta-hot);border-color:var(--magenta-hot);color:#fff;
+    padding:16px;font-size:17px;box-shadow:0 8px 26px rgba(255,79,163,.4);margin-top:4px}
+
+  /* ================= floating chrome ================= */
+  .lang-toggle{position:fixed;top:calc(9px + env(safe-area-inset-top));inset-inline-start:11px;z-index:120;
+    font-family:var(--disp);letter-spacing:.1em;font-size:13px;padding:8px 13px;border-radius:999px;
+    background:rgba(20,16,25,.92);border:1px solid #3a2f45;color:#e7dff2;cursor:pointer}
+  .lang-toggle[hidden]{display:none}
+  .mute-btn{position:fixed;inset-inline-start:11px;
+    bottom:calc(var(--ig-bar-h) + 12px + env(safe-area-inset-bottom));z-index:76;
+    width:42px;height:42px;border-radius:50%;border:1px solid #2a2f3c;background:rgba(20,16,25,.9);
+    color:#fff;font-size:18px;padding:0;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+
+  /* toast — replaces alert(); a native dialog would break the full-screen app illusion */
+  .toast{position:fixed;left:50%;top:calc(58px + env(safe-area-inset-top));z-index:130;
+    transform:translateX(-50%) translateY(-160%);
+    background:rgba(28,20,38,.97);border:1px solid var(--magenta-hot);border-radius:14px;
+    padding:13px 18px;color:#f6eaf1;font-size:14px;line-height:1.45;text-align:center;
+    max-width:min(90vw,380px);box-shadow:0 10px 34px rgba(0,0,0,.6);
+    transition:transform .32s cubic-bezier(.2,.9,.3,1)}
+  .toast.on{transform:translateX(-50%) translateY(0)}
+  @media (prefers-reduced-motion: reduce){.toast{transition:none}}
+  #undoPickBtn.arming{border-color:var(--magenta-hot);color:#fff}
+
+  /* Instagram bar — the single, always-visible funnel to @oy.vey.roll */
+  .ig-bar{position:fixed;left:0;right:0;bottom:0;z-index:110;display:flex;align-items:center;
+    justify-content:center;gap:11px;text-decoration:none;color:#fff;font-weight:800;font-size:17px;
+    height:var(--ig-bar-h);padding:0 16px calc(env(safe-area-inset-bottom));
+    background:linear-gradient(90deg,#f9ce34,#ee2a7b 42%,#6228d7);
+    background-size:200% 100%;animation:igShift 9s ease-in-out infinite;
+    box-shadow:0 -6px 30px rgba(238,42,123,.45)}
+  @keyframes igShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  .ig-bar .ig-badge{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.25);
+    display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 auto}
+  .ig-bar .arw{font-size:19px;animation:arw 1.6s ease-in-out infinite}
+  @keyframes arw{0%,100%{transform:translateX(0);opacity:.75}50%{transform:translateX(-5px);opacity:1}}
+  html[dir=ltr] .ig-bar .arw{animation-name:arwL}
+  @keyframes arwL{0%,100%{transform:translateX(0);opacity:.75}50%{transform:translateX(5px);opacity:1}}
+  @media (prefers-reduced-motion: reduce){.ig-bar{animation:none}.ig-bar .arw{animation:none}}
+</style>
+</head>
+<body>
+
+<!-- ========== GATE ========== -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <img class="gate-logo" id="gateLogo" src="logo.png" alt="OY VEY" hidden>
+    <h1 id="gateTitle">החלילן<br>מטינדר</h1>
+    <p class="gsub">find your fighter</p>
+    <p class="gdate" id="gateDate"></p>
+    <p class="gp" id="gateIntro"></p>
+    <form id="gateForm" novalidate>
+      <div class="field">
+        <label for="fName" id="labName"></label>
+        <input id="fName" type="text" autocomplete="given-name" maxlength="24">
+        <div class="err" id="errName"></div>
+      </div>
+      <div class="field">
+        <label for="fTable" id="labTable"></label>
+        <select id="fTable"></select>
+        <div class="err" id="errTable"></div>
+      </div>
+      <button type="submit" class="btn enter-btn" id="enterBtn"></button>
+    </form>
+  </div>
+</div>
+
+<!-- ========== APP ========== -->
+<div class="app" id="app" hidden>
+  <div class="appbar">
+    <div>
+      <div class="brand" id="appBrand"></div>
+      <div class="when" id="appDate"></div>
+    </div>
+  </div>
+
+  <div class="profile-chip">
+    <div class="pc-row">
+      <span id="chipHello"></span>
+      <button id="editProfile" type="button"></button>
+    </div>
+  </div>
+
+  <div class="deck-wrap">
+    <div class="deck" id="deck"></div>
+
+    <div class="deck-msg" id="deckEmpty">
+      <h3 id="emptyTitle"></h3>
+      <p id="emptyBody"></p>
+      <button class="btn primary" id="restartBtn"></button>
+    </div>
+
+    <div class="deck-msg" id="deckPicked">
+      <div class="match-eyebrow" id="pickedEyebrow"></div>
+      <div class="pickname" id="pickedName"></div>
+      <div class="match-cls" id="pickedCls"></div>
+      <p id="pickedBody" style="margin-top:16px"></p>
+      <button class="btn" id="undoPickBtn"></button>
+    </div>
+  </div>
+
+  <div class="actions" id="deckActions">
+    <button class="abtn no"   id="btnNope" type="button" aria-label="pass">✕</button>
+    <button class="abtn info" id="btnInfo" type="button" aria-label="info">ⓘ</button>
+    <button class="abtn yes"  id="btnLike" type="button" aria-label="pick">♥</button>
+  </div>
+  <p class="swipe-help" id="swipeHelp"></p>
+</div>
+
+<!-- ========== FULL PROFILE ========== -->
+<div class="profile" id="profile" role="dialog" aria-modal="true">
+  <button class="pf-close" id="pfClose" aria-label="close">✕</button>
+  <div class="pf-inner">
+    <div class="pf-photo"><img id="pfImg" alt=""></div>
+    <div class="pf-body">
+      <div class="pf-head"><h2 id="pfName"></h2><span class="age" id="pfAge"></span></div>
+      <p class="pf-cls" id="pfCls"></p>
+      <p class="pf-sheet" id="pfSheet"></p>
+      <p class="pf-bio" id="pfBio"></p>
+
+      <div class="pf-sec"><div class="redflag"><b id="pfFlagLabel"></b><span id="pfFlag"></span></div></div>
+
+      <div class="pf-sec">
+        <h4 id="pfStatsHead"></h4>
+        <button class="explain-btn" id="explainBtn" type="button"></button>
+        <div class="stats" id="pfStats"></div>
+      </div>
+
+      <div class="pf-sec"><h4 id="pfAbilityName"></h4><p id="pfAbilityDesc"></p></div>
+      <div class="pf-sec"><h4 id="pfBackHead"></h4><p id="pfBack"></p></div>
+      <div class="pf-sec"><h4 id="pfLookHead"></h4><p id="pfLook"></p></div>
+
+      <div class="pf-actions">
+        <button class="btn primary" id="pfPick"></button>
+        <button class="btn" id="pfBack2"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MATCH ========== -->
+<div class="match" id="match">
+  <div class="confetti" id="confetti"></div>
+  <div class="match-card">
+    <div class="match-eyebrow" id="matchEyebrow"></div>
+    <div class="match-title">IT'S A MATCH</div>
+    <img class="match-photo" id="matchImg" alt="">
+    <div class="match-name" id="matchName"></div>
+    <div class="match-cls" id="matchCls"></div>
+    <div class="match-who" id="matchWho"></div>
+    <div class="match-actions">
+      <button class="btn primary" id="matchGo"></button>
+      <button class="match-undo" id="matchUndo" type="button"></button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="lang-toggle" id="langToggle" type="button"></button>
+<button class="mute-btn" id="muteBtn" type="button">🔊</button>
+<a class="ig-bar" id="igBar" href="https://www.instagram.com/oy.vey.roll/" target="_blank" rel="noopener">
+  <span class="ig-badge">◎</span><span id="igText"></span><span class="arw">←</span>
+</a>
+<audio id="bgm" loop preload="auto"><source src="critical_failure.mp3" type="audio/mpeg"></audio>
+
+<script src="characters.js"></script>
+<script src="store.js"></script>
+<script>
+const CAST  = window.OY_VEY_CAST || [];
+const STORE = window.OY_VEY_STORE;
+const AXES  = ["STR","DEX","CON","INT","WIS","CHA"];
+const IG_URL = "https://www.instagram.com/oy.vey.roll/";
+
+/* ================= i18n ================= */
+const UI = {
+  he: {
+    dir:"rtl", langBtn:"EN",
+    brand:"החלילן מטינדר",
+    dateLine:"יום שני · 14.09.26",
+    gateTitle:"החלילן<br>מטינדר",
+    gateIntro:"שם ומספר שולחן, ואפשר להתחיל להחליק.",
+    labelName:"השם שלך", labelTable:"מספר שולחן",
+    namePlaceholder:"איך קוראים לך?", tablePlaceholder:"בחר/י שולחן…",
+    tableOpt:n=>`שולחן ${n}`, enterBtn:"כניסה",
+    errName:"נא למלא שם", errTable:"נא לבחור שולחן",
+    hello:(n,t)=>`שלום ${n} · שולחן ${t}`,
+    editBtn:"החלף",
+    swipeHelp:"החליקו ימינה כדי לבחור · שמאלה כדי לדלג · נגיעה בתמונה פותחת את הפרופיל המלא",
+    emptyTitle:"עברת על כולם",
+    emptyBody:"דילגת על כל הקאסט. אף אחד לא נעלב — אפשר לעבור שוב.",
+    allTakenTitle:"כל הדמויות נתפסו",
+    allTakenBody:"כל שש הדמויות בשולחן הזה כבר נבחרו. דברו עם המנחה — או בדקו שנכנסתם לשולחן הנכון.",
+    restart:"סבב נוסף",
+    pickedEyebrow:"הדמות שלך לערב",
+    pickedBody:"נתראה ב-14.09. אם נכנסת לשולחן הלא נכון או שינית דעה — אפשר לבטל.",
+    undoPick:"בטל את הבחירה",
+    undoArm:"בטוח/ה? לחצו שוב",
+    undoDone:"הבחירה בוטלה — הדמות שוחררה",
+    flagLabel:"דגל אדום",
+    statsHead:"הנתונים",
+    backHead:"הסיפור",
+    lookHead:"איך זה נראה",
+    pickBtn:"זו הדמות שלי",
+    profileBack:"חזרה",
+    takenBy:n=>`מצטערים — הדמות הזו כבר נבחרה על ידי ${n}`,
+    matchEyebrow:"התאמה מושלמת",
+    matchWho:(n,t)=>`${n} · שולחן ${t}`,
+    matchGo:"מעולה, קדימה",
+    matchUndo:"רגע, לא התכוונתי",
+    igBar:"לכל שאלה — @oy.vey.roll",
+    statNames:{STR:"כוח",DEX:"זריזות",CON:"חוסן",INT:"אינטליגנציה",WIS:"חוכמה",CHA:"כריזמה"},
+    statDescs:{
+      STR:"כוח פיזי גולמי — להרים, לשבור דלת, להכות חזק.",
+      DEX:"מהירות וקואורדינציה — להתחמק ממכה, לכוון, לזוז בלי רעש.",
+      CON:"כמה את/ה סופג/ת — בריאות, אורך נשימה, לא ליפול.",
+      INT:"ידע והיגיון — לזכור עובדות, לפצח חידה, להבין קסם.",
+      WIS:"תפיסה ואינטואיציה — לשים לב לפרטים, לקרוא אנשים, לא ליפול בפח.",
+      CHA:"נוכחות ושכנוע — לדבר, לבלף, להוביל חדר.",
+    },
+    explainShow:"❓ מה המשמעות של הנתונים?", explainHide:"✕ הסתר הסבר",
+  },
+  en: {
+    dir:"ltr", langBtn:"עב",
+    brand:"THE PIPER FROM TINDER",
+    dateLine:"MONDAY · 14.09.26",
+    gateTitle:"THE PIPER<br>FROM TINDER",
+    gateIntro:"Name and table number, and you can start swiping.",
+    labelName:"Your name", labelTable:"Table number",
+    namePlaceholder:"What's your name?", tablePlaceholder:"Choose a table…",
+    tableOpt:n=>`Table ${n}`, enterBtn:"Enter",
+    errName:"Please enter a name", errTable:"Please choose a table",
+    hello:(n,t)=>`Hey ${n} · Table ${t}`,
+    editBtn:"Change",
+    swipeHelp:"Swipe right to pick · left to pass · tap the photo for the full profile",
+    emptyTitle:"That's everyone",
+    emptyBody:"You passed on the whole cast. Nobody took it personally — go around again.",
+    allTakenTitle:"Every character is taken",
+    allTakenBody:"All six characters at this table are already claimed. Talk to your host — or check that you joined the right table.",
+    restart:"Another round",
+    pickedEyebrow:"your character for the night",
+    pickedBody:"See you on 14.09. Joined the wrong table or changed your mind? You can undo.",
+    undoPick:"Undo my pick",
+    undoArm:"Sure? Tap again",
+    undoDone:"Pick cancelled — the character is free again",
+    flagLabel:"RED FLAG",
+    statsHead:"THE STATS",
+    backHead:"THE STORY",
+    lookHead:"THE LOOK",
+    pickBtn:"This is my character",
+    profileBack:"Back",
+    takenBy:n=>`Sorry — this character was already picked by ${n}`,
+    matchEyebrow:"it's a perfect match",
+    matchWho:(n,t)=>`${n} · Table ${t}`,
+    matchGo:"Great, let's go",
+    matchUndo:"Wait, I didn't mean that",
+    igBar:"Any question — @oy.vey.roll",
+    statNames:{STR:"Strength",DEX:"Dexterity",CON:"Constitution",INT:"Intelligence",WIS:"Wisdom",CHA:"Charisma"},
+    statDescs:{
+      STR:"Raw physical power — lifting, breaking down a door, hitting hard.",
+      DEX:"Speed and coordination — dodging, aiming, moving quietly.",
+      CON:"How much you can take — health, stamina, staying on your feet.",
+      INT:"Knowledge and logic — recalling facts, solving puzzles, understanding magic.",
+      WIS:"Perception and instinct — noticing details, reading people, not getting fooled.",
+      CHA:"Presence and persuasion — talking, bluffing, leading a room.",
+    },
+    explainShow:"❓ What do these stats mean?", explainHide:"✕ Hide explanation",
+  },
+};
+// language + the other cross-event preferences stay GLOBAL on purpose (see store.js)
+let LANG = localStorage.getItem('oyvey_lang') === 'en' ? 'en' : 'he';
+const t = () => UI[LANG];
+const cd = c => c[LANG];
+
+let profile = STORE.getProfile();
+let explainOn = localStorage.getItem('oyvey_explain') === '1';
+let deck = [];          // character ids still to swipe, last = top card
+let openChar = null;    // character shown in the full profile
+
+/* ================= language ================= */
+function applyLang(lang){
+  LANG = lang;
+  localStorage.setItem('oyvey_lang', lang);
+  const T = t();
+  document.documentElement.lang = lang;
+  document.documentElement.dir  = T.dir;
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  document.getElementById('gateTitle').innerHTML = T.gateTitle;
+  set('gateDate', T.dateLine);   set('gateIntro', T.gateIntro);
+  set('labName', T.labelName);   set('labTable', T.labelTable);
+  set('enterBtn', T.enterBtn);
+  document.getElementById('fName').placeholder = T.namePlaceholder;
+  set('appBrand', T.brand);      set('appDate', T.dateLine);
+  set('editProfile', T.editBtn); set('swipeHelp', T.swipeHelp);
+  set('emptyTitle', T.emptyTitle); set('emptyBody', T.emptyBody); set('restart', T.restart);
+  set('restartBtn', T.restart);
+  set('pickedEyebrow', T.pickedEyebrow); set('pickedBody', T.pickedBody);
+  set('undoPickBtn', T.undoPick);
+  // a language switch mid-confirmation would leave the button armed but relabelled
+  undoArmed = false; clearTimeout(undoTimer);
+  document.getElementById('undoPickBtn').classList.remove('arming');
+  set('pfFlagLabel', T.flagLabel); set('pfStatsHead', T.statsHead);
+  set('pfBackHead', T.backHead);   set('pfLookHead', T.lookHead);
+  set('pfPick', T.pickBtn);        set('pfBack2', T.profileBack);
+  set('matchEyebrow', T.matchEyebrow); set('matchGo', T.matchGo); set('matchUndo', T.matchUndo);
+  set('igText', T.igBar);          set('langToggle', T.langBtn);
+  document.getElementById('igBar').setAttribute('aria-label', T.igBar);
+  renderExplainBtn();
+
+  // table <select> is rebuilt because every option label is translated
+  const sel = document.getElementById('fTable'), keep = sel.value;
+  sel.innerHTML = `<option value="">${T.tablePlaceholder}</option>`;
+  for (let i=1;i<=10;i++){
+    const o = document.createElement('option'); o.value = String(i); o.textContent = T.tableOpt(i);
+    sel.appendChild(o);
+  }
+  sel.value = keep;
+
+  if (profile) renderChip();
+  renderDeck();
+  if (openChar) fillProfile(openChar);
+}
+document.getElementById('langToggle').addEventListener('click', ()=> applyLang(LANG==='he' ? 'en' : 'he'));
+
+/* ================= brand logo probe ================= */
+(function(){
+  const el = document.getElementById('gateLogo');
+  const probe = new Image();
+  probe.onload = ()=>{ el.hidden = false; };
+  probe.src = el.src;
+})();
+
+/* ================= music ================= */
+const bgm = document.getElementById('bgm'), muteBtn = document.getElementById('muteBtn');
+let muted = localStorage.getItem('oyvey_muted') === '1';
+bgm.volume = 0.32;
+function reflectMute(){ muteBtn.textContent = muted ? '🔇' : '🔊'; bgm.muted = muted; }
+function startMusic(){ if (!muted) bgm.play().catch(()=>{}); }
+reflectMute();
+muteBtn.addEventListener('click', ()=>{
+  muted = !muted; localStorage.setItem('oyvey_muted', muted?'1':'0'); reflectMute();
+  if (!muted) startMusic();
+});
+window.addEventListener('pointerdown', function once(){ startMusic(); }, {once:true});
+
+/* ================= gate ================= */
+const gate = document.getElementById('gate');
+document.getElementById('gateForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const name = document.getElementById('fName').value.trim();
+  const table = document.getElementById('fTable').value;
+  document.getElementById('errName').textContent  = name  ? '' : t().errName;
+  document.getElementById('errTable').textContent = table ? '' : t().errTable;
+  if (!name || !table) return;
+  profile = STORE.setProfile(name, table);
+  startMusic();                        // this gesture is what unlocks audio on mobile
+  enterApp();
+});
+document.getElementById('editProfile').addEventListener('click', ()=>{
+  if (profile){
+    document.getElementById('fName').value = profile.name;
+    document.getElementById('fTable').value = profile.table;
+  }
+  gate.hidden = false;
+  document.getElementById('app').hidden = true;
+});
+
+function enterApp(){
+  gate.hidden = true;
+  document.getElementById('app').hidden = false;
+  renderChip();
+  resetDeck();
+}
+function renderChip(){
+  document.getElementById('chipHello').textContent = t().hello(profile.name, profile.table);
+}
+
+/* this device's pick, only if it belongs to the CURRENT table */
+function myPickHere(){
+  const mp = STORE.myPick();
+  return (mp && profile && String(mp.table) === String(profile.table)) ? mp : null;
+}
+
+/* ================= deck ================= */
+function resetDeck(){
+  const picks = profile ? STORE.getPicks(profile.table) : {};
+  // characters already claimed at this table never enter the deck — you can't swipe on them
+  deck = CAST.filter(c => !picks[c.id]).map(c => c.id).reverse();  // last = top card
+  renderDeck();
+}
+
+function renderDeck(){
+  const el = document.getElementById('deck');
+  const mine = myPickHere();
+  const picked = document.getElementById('deckPicked');
+  const empty  = document.getElementById('deckEmpty');
+  const actions= document.getElementById('deckActions');
+  const help   = document.getElementById('swipeHelp');
+
+  // state 1 — this patron already has a character
+  if (mine){
+    const c = CAST.find(x=>x.id===mine.charId);
+    document.getElementById('pickedName').textContent = c ? c.name : mine.charId;
+    document.getElementById('pickedCls').textContent  = c ? cd(c).cls : '';
+    picked.classList.add('on'); empty.classList.remove('on');
+    el.innerHTML = ''; actions.style.display='none'; help.style.display='none';
+    return;
+  }
+  picked.classList.remove('on');
+  actions.style.display=''; help.style.display='';
+
+  // state 2 — nothing left to swipe. Distinguish "you passed on everyone" (offer another round)
+  // from "every character is already claimed" (another round would show the same empty deck).
+  if (!deck.length){
+    const picks = profile ? STORE.getPicks(profile.table) : {};
+    const allTaken = CAST.every(c => picks[c.id]);
+    document.getElementById('emptyTitle').textContent = allTaken ? t().allTakenTitle : t().emptyTitle;
+    document.getElementById('emptyBody').textContent  = allTaken ? t().allTakenBody  : t().emptyBody;
+    document.getElementById('restartBtn').style.display = allTaken ? 'none' : '';
+    empty.classList.add('on'); el.innerHTML=''; actions.style.display='none'; help.style.display='none';
+    return;
+  }
+  empty.classList.remove('on');
+
+  // state 3 — the live stack
+  el.innerHTML = '';
+  deck.forEach((id, i) => {
+    const c = CAST.find(x=>x.id===id); if (!c) return;
+    const depth = deck.length - 1 - i;               // 0 = top card
+    const d = cd(c);
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.dataset.id = c.id;
+    card.dataset.depth = String(Math.min(depth, 3));
+    card.style.setProperty('--accent', c.accent);
+    card.innerHTML = `
+      <div class="photo"><img alt="${c.name}" decoding="async"></div>
+      <div class="scrim"></div>
+      <div class="pips">${c.photos.map((_,k)=>`<i class="${k===0?'on':''}"></i>`).join('')}</div>
+      <div class="tapzone prev"></div><div class="tapzone next"></div>
+      <div class="stamp like">LIKE</div>
+      <div class="stamp nope">NOPE</div>
+      <div class="card-info">
+        <div class="nm"><h2>${c.name}</h2><span class="age">${d.age}</span></div>
+        <div class="cls">${d.cls}</div>
+        <div class="tagline">${d.tagline}</div>
+        <div class="tags">${d.interests.map(x=>`<span>${x}</span>`).join('')}</div>
+        <div class="dist">📍 ${d.distance}</div>
+      </div>`;
+    card.querySelector('img').src = `photos/${c.photos[0]}.jpg`;
+    card._photo = 0;
+    el.appendChild(card);
+  });
+  wireTopCard();
+}
+
+function topCard(){ return document.querySelector('.card[data-depth="0"]'); }
+
+/* Promote the stack after a swipe WITHOUT rebuilding it. A full renderDeck() here would destroy
+   and recreate every remaining card — re-decoding all their images — which flickers on a slow
+   phone. Only the depth attribute changes; the DOM nodes and their loaded images stay put. */
+function updateDepths(){
+  const el = document.getElementById('deck');
+  deck.forEach((id, i) => {
+    const card = el.querySelector(`.card[data-id="${id}"]`);
+    if (!card) return;
+    const depth = deck.length - 1 - i;
+    card.dataset.depth = String(Math.min(depth, 3));
+    if (depth === 0) card.style.transform = '';   // drop any leftover inline drag transform
+  });
+  wireTopCard();
+}
+
+/* ---- photo carousel inside a card ---- */
+function showPhoto(card, idx){
+  const c = CAST.find(x=>x.id===card.dataset.id); if (!c) return;
+  const n = c.photos.length;
+  card._photo = (idx + n) % n;
+  card.querySelector('img').src = `photos/${c.photos[card._photo]}.jpg`;
+  card.querySelectorAll('.pips i').forEach((p,k)=> p.classList.toggle('on', k===card._photo));
+}
+
+/* ---- drag to swipe ---- */
+const THRESHOLD = 105;          // px past which the card commits and flies out
+function wireTopCard(){
+  const card = topCard();
+  // guard against stacking a second set of listeners when a card is re-promoted
+  if (!card || card._wired) return;
+  card._wired = true;
+  let sx=0, sy=0, dx=0, dy=0, dragging=false, t0=0;
+
+  const like = card.querySelector('.stamp.like');
+  const nope = card.querySelector('.stamp.nope');
+
+  card.addEventListener('pointerdown', e=>{
+    if (e.button && e.button !== 0) return;
+    dragging = true; sx = e.clientX; sy = e.clientY; dx = dy = 0; t0 = Date.now();
+    card.classList.remove('settling');
+    // capture keeps the drag alive if the finger leaves the card; not worth throwing over
+    try { card.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  card.addEventListener('pointermove', e=>{
+    if (!dragging) return;
+    dx = e.clientX - sx; dy = e.clientY - sy;
+    card.style.transform = `translate(${dx}px, ${dy*0.35}px) rotate(${dx/22}deg)`;
+    const p = Math.min(Math.abs(dx)/THRESHOLD, 1);
+    like.style.opacity = dx > 0 ? p : 0;
+    nope.style.opacity = dx < 0 ? p : 0;
+  });
+  card.addEventListener('pointerup', e=>{
+    if (!dragging) return;
+    dragging = false;
+    const moved = Math.hypot(dx, dy), quick = Date.now() - t0 < 350;
+
+    if (moved < 10 && quick){                  // a tap, not a drag
+      card.style.transform = ''; like.style.opacity = nope.style.opacity = 0;
+      const r = card.getBoundingClientRect();
+      const xr = (e.clientX - r.left) / r.width;
+      const yr = (e.clientY - r.top) / r.height;
+      if (yr < 0.62 && xr < 0.28)      showPhoto(card, card._photo - 1);
+      else if (yr < 0.62 && xr > 0.72) showPhoto(card, card._photo + 1);
+      else                             openProfile(card.dataset.id);
+      return;
+    }
+    if (Math.abs(dx) > THRESHOLD) commitSwipe(card, dx > 0 ? 'like' : 'nope');
+    else {
+      card.classList.add('settling');
+      card.style.transform = '';
+      like.style.opacity = nope.style.opacity = 0;
+    }
+  });
+  card.addEventListener('pointercancel', ()=>{
+    dragging = false; card.classList.add('settling'); card.style.transform = '';
+    like.style.opacity = nope.style.opacity = 0;
+  });
+}
+
+function commitSwipe(card, dir){
+  const id = card.dataset.id;
+  if (dir === 'like'){ attemptPick(id, card); return; }
+  flyOut(card, -1, ()=>{
+    deck = deck.filter(x => x !== id);
+    card.remove();
+    if (!deck.length) renderDeck();      // falls through to the "passed on everyone" screen
+    else updateDepths();
+  });
+}
+function flyOut(card, sign, done){
+  card.classList.add('gone');
+  card.style.transform = `translate(${sign * (window.innerWidth + 260)}px, 40px) rotate(${sign*26}deg)`;
+  setTimeout(done, 420);
+}
+
+/* ---- button + keyboard paths (not everyone will discover the drag) ---- */
+document.getElementById('btnNope').addEventListener('click', ()=>{
+  const c = topCard(); if (c) commitSwipe(c, 'nope');
+});
+document.getElementById('btnLike').addEventListener('click', ()=>{
+  const c = topCard(); if (c) commitSwipe(c, 'like');
+});
+document.getElementById('btnInfo').addEventListener('click', ()=>{
+  const c = topCard(); if (c) openProfile(c.dataset.id);
+});
+document.addEventListener('keydown', e=>{
+  if (document.getElementById('profile').classList.contains('open')){
+    if (e.key === 'Escape') closeProfile();
+    return;
+  }
+  if (document.getElementById('match').classList.contains('open')) return;
+  if (document.getElementById('app').hidden) return;
+  const c = topCard(); if (!c) return;
+  if (e.key === 'ArrowLeft')  { commitSwipe(c, 'nope'); }
+  if (e.key === 'ArrowRight') { commitSwipe(c, 'like'); }
+  if (e.key === 'Enter')      { openProfile(c.dataset.id); }
+});
+document.getElementById('restartBtn').addEventListener('click', resetDeck);
+
+/* ================= pick ================= */
+function attemptPick(id, card){
+  const c = CAST.find(x=>x.id===id); if (!c || !profile) return;
+  const res = STORE.claim(profile.table, id, profile.name);
+  if (!res.ok){
+    // someone at this table took it first — drop it from the deck and say so
+    toast(t().takenBy(res.takenBy));
+    deck = deck.filter(x => x !== id);
+    renderDeck();
+    return;
+  }
+  STORE.setMyPick(profile.table, id, profile.name);
+  const finish = ()=>{ closeProfile(); showMatch(c); renderDeck(); };
+  if (card) flyOut(card, 1, finish); else finish();
+}
+
+/* ================= full profile ================= */
+function openProfile(id){
+  const c = CAST.find(x=>x.id===id); if (!c) return;
+  openChar = c;
+  fillProfile(c);
+  document.getElementById('profile').classList.add('open');
+  document.getElementById('profile').scrollTop = 0;
+  document.getElementById('langToggle').hidden = true;
+}
+function fillProfile(c){
+  const d = cd(c);
+  document.documentElement.style.setProperty('--accent', c.accent);
+  const im = document.getElementById('pfImg');
+  im.alt = c.name; im.src = `photos/${c.photos[0]}.jpg`;
+  document.getElementById('pfName').textContent = c.name;
+  document.getElementById('pfAge').textContent  = d.age;
+  document.getElementById('pfCls').textContent  = d.cls;
+  document.getElementById('pfSheet').textContent= d.sheetLine;
+  document.getElementById('pfBio').textContent  = d.bio;
+  document.getElementById('pfFlag').textContent = d.redFlag;
+  document.getElementById('pfAbilityName').textContent = d.ability.name;
+  document.getElementById('pfAbilityDesc').textContent = d.ability.desc;
+  document.getElementById('pfBack').textContent = d.backstory;
+  document.getElementById('pfLook').textContent = d.appearance;
+
+  const box = document.getElementById('pfStats');
+  box.innerHTML = '';
+  box.classList.toggle('explain', explainOn);
+  renderExplainBtn();
+  AXES.forEach(ax=>{
+    const v = c.stats[ax] ?? 0;
+    const row = document.createElement('div'); row.className = 'stat';
+    row.innerHTML = `<span class="stat-lbl"><b>${ax}</b><i>${t().statNames[ax]}</i></span>`+
+                    `<div class="track"><div class="fill"></div></div><span>${v}</span>`;
+    box.appendChild(row);
+    const desc = document.createElement('div'); desc.className='stat-desc';
+    desc.textContent = t().statDescs[ax];
+    box.appendChild(desc);
+    requestAnimationFrame(()=> setTimeout(()=>{ row.querySelector('.fill').style.width = (v*10)+'%'; }, 60));
+  });
+
+  // hide the pick button if this patron already holds a character
+  document.getElementById('pfPick').style.display = myPickHere() ? 'none' : '';
+}
+function closeProfile(){
+  document.getElementById('profile').classList.remove('open');
+  document.getElementById('langToggle').hidden = false;
+  openChar = null;
+}
+document.getElementById('pfClose').addEventListener('click', closeProfile);
+document.getElementById('pfBack2').addEventListener('click', closeProfile);
+document.getElementById('pfPick').addEventListener('click', ()=>{
+  if (!openChar) return;
+  const id = openChar.id;
+  const card = document.querySelector(`.card[data-id="${id}"][data-depth="0"]`);
+  attemptPick(id, card);
+});
+
+function renderExplainBtn(){
+  const b = document.getElementById('explainBtn');
+  if (b) b.textContent = explainOn ? t().explainHide : t().explainShow;
+}
+document.getElementById('explainBtn').addEventListener('click', ()=>{
+  explainOn = !explainOn;
+  localStorage.setItem('oyvey_explain', explainOn ? '1':'0');
+  document.getElementById('pfStats').classList.toggle('explain', explainOn);
+  renderExplainBtn();
+});
+
+/* ================= match ================= */
+function showMatch(c){
+  const d = cd(c);
+  document.getElementById('matchImg').src = `photos/${c.photos[0]}.jpg`;
+  document.getElementById('matchImg').alt = c.name;
+  document.getElementById('matchName').textContent = c.name;
+  document.getElementById('matchCls').textContent  = d.cls;
+  document.getElementById('matchWho').innerHTML =
+    t().matchWho(escapeHtml(profile.name), `<span class="tbl">${escapeHtml(profile.table)}</span>`);
+  document.getElementById('match').classList.add('open');
+  document.getElementById('langToggle').hidden = true;
+  burstConfetti();
+}
+function burstConfetti(){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const wrap = document.getElementById('confetti');
+  wrap.innerHTML = '';
+  const colors = ['#ff4fa3','#4fd6e0','#8a5cff','#FFB067','#7FE3B0'];
+  for (let i=0;i<46;i++){
+    const b = document.createElement('i');
+    b.style.left = Math.random()*100 + '%';
+    b.style.background = colors[i % colors.length];
+    b.style.animationDuration = (2.2 + Math.random()*1.8) + 's';
+    b.style.animationDelay = (Math.random()*0.5) + 's';
+    wrap.appendChild(b);
+  }
+}
+function closeMatch(){
+  document.getElementById('match').classList.remove('open');
+  document.getElementById('confetti').innerHTML = '';
+  document.getElementById('langToggle').hidden = false;
+}
+document.getElementById('matchGo').addEventListener('click', closeMatch);
+document.getElementById('matchUndo').addEventListener('click', ()=>{
+  const mp = myPickHere(); if (!mp) { closeMatch(); return; }
+  STORE.release(profile.table, mp.charId);
+  closeMatch();
+  resetDeck();
+});
+/* Undo is destructive enough to deserve a confirmation, but a native confirm() would break the
+   app illusion — so the button arms itself and a second tap commits. Disarms after 4s. */
+let undoArmed = false, undoTimer;
+function disarmUndo(){
+  undoArmed = false; clearTimeout(undoTimer);
+  const b = document.getElementById('undoPickBtn');
+  b.classList.remove('arming'); b.textContent = t().undoPick;
+}
+document.getElementById('undoPickBtn').addEventListener('click', ()=>{
+  const mp = myPickHere(); if (!mp) return;
+  const b = document.getElementById('undoPickBtn');
+  if (!undoArmed){
+    undoArmed = true;
+    b.classList.add('arming'); b.textContent = t().undoArm;
+    undoTimer = setTimeout(disarmUndo, 4000);
+    return;
+  }
+  disarmUndo();
+  STORE.release(profile.table, mp.charId);
+  toast(t().undoDone);
+  resetDeck();
+});
+
+let toastTimer;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> el.classList.remove('on'), 3400);
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* ================= boot ================= */
+applyLang(LANG);
+if (profile) enterApp();
+</script>
+</body>
+</html>
