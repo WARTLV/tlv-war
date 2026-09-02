@@ -88,7 +88,10 @@
   .card[data-depth="3"]{z-index:2;transform:scale(.91) translateY(20px);opacity:0}
   .card[data-depth="1"] .card-info,.card[data-depth="2"] .card-info{opacity:.35}
 
-  .card .photo{position:absolute;inset:0;background:#1a1424}
+  /* the deck's reverse shows through until a portrait decodes, so a slow card reads as a
+     face-down card rather than as a dark hole */
+  .card .photo{position:absolute;inset:0;
+    background:#1a1424 url('photos/card-back.jpg') center/cover no-repeat}
   .card .photo img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block}
   /* legibility scrim for the info block */
   .card .scrim{position:absolute;inset:0;pointer-events:none;
@@ -182,7 +185,8 @@
   @keyframes fade{from{opacity:0}to{opacity:1}}
   .pf-inner{max-width:640px;margin:0 auto;min-height:100%;
     padding-bottom:calc(var(--ig-bar-h) + 20px + env(safe-area-inset-bottom))}
-  .pf-photo{position:relative;aspect-ratio:4/5;background:#1a1424;overflow:hidden}
+  .pf-photo{position:relative;aspect-ratio:4/5;overflow:hidden;
+    background:#1a1424 url('photos/card-back.jpg') center/cover no-repeat}
   .pf-photo img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block}
   .pf-body{padding:20px 20px 34px}
   .pf-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
@@ -306,11 +310,18 @@
   .mrow.is-piper:hover{border-color:#A8FF3E}
 
   /* ================= gate ================= */
+  /* The entry screen was type on a gradient with nothing that said "event". It is now the
+     tunnel from the adventure — but it is a BACKDROP, so it carries a scrim: the form and the
+     wordmark sit on top in white and legibility beats atmosphere. */
   .gate{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
     padding:24px;overflow:auto;
     padding-bottom:calc(var(--ig-bar-h) + 24px + env(safe-area-inset-bottom));
-    background:radial-gradient(900px 600px at 50% -10%, rgba(194,74,138,.28), transparent 60%),
-      radial-gradient(700px 700px at 50% 120%, rgba(138,92,255,.22), transparent 60%), #08070c;}
+    background:
+      radial-gradient(800px 560px at 50% -12%, rgba(194,74,138,.24), transparent 60%),
+      radial-gradient(760px 620px at 50% 118%, rgba(168,255,62,.10), transparent 62%),
+      linear-gradient(rgba(5,4,8,.60), rgba(5,4,8,.80)),
+      url('photos/gate-bg.jpg') center/cover no-repeat,
+      #08070c;}
   .gate[hidden]{display:none}
   .gate-card{width:100%;max-width:400px;text-align:center}
   .gate-logo{max-height:56px;max-width:190px;object-fit:contain;margin:0 auto 14px;display:block;
