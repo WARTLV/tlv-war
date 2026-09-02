@@ -12,17 +12,18 @@
    set in the display font as a brand wordmark, and `ability.name` is a canonical D&D 5e feature
    printed on the player's real sheet — only `ability.desc` gets translated.
 
-   `photos` = filenames in photos/ , shown as a carousel inside the swipe card. The first one is
-   the main profile shot. Until Codex delivers the dating-app set (see the brief in
-   "דמויות מבוכים ודרקונים 14.09/"), these point at copies of the old 80s-fantasy portraits so the
-   mechanism can be built and verified — swapping the files is all that's needed later. */
+   `photos` = filenames in photos/ . One image per character; the array shape is kept so extra shots
+   can be added later without touching the swipe-card code (the card hides its pips and disables the
+   edge-tap carousel whenever a character has only one). Until Codex delivers the dating-app set (see
+   the brief in "דמויות מבוכים ודרקונים 14.09/"), these are copies of the existing character cards, so
+   the mechanism is verified and swapping the files is all that's needed later. */
 function scoreToBar(score) { return Math.round(((score - 8) / 10) * 10); } // 8-18 -> 0-10
 
 window.OY_VEY_CAST = [
   {
     // REAL — Tuhar ben Shir, Half-elf Life Cleric 3, Doctor background
     id: "01_tuhar", name: "TUHAR", icon: "✚", accent: "#7FE3B0",
-    photos: ["01_tuhar_01", "01_tuhar_02", "01_tuhar_03"],
+    photos: ["01_tuhar"],
     stats: { STR: scoreToBar(8), DEX: scoreToBar(10), CON: scoreToBar(14), INT: scoreToBar(16), WIS: scoreToBar(18), CHA: scoreToBar(12) },
     en: {
       cls: "THE HEALER",
@@ -56,7 +57,7 @@ window.OY_VEY_CAST = [
   {
     // REAL — Deborah the seer, Elf Chronurgy Wizard 3, "Experimented On" background
     id: "02_deborah", name: "DEBORAH", icon: "⏳", accent: "#8CC5FF",
-    photos: ["02_deborah_01", "02_deborah_02", "02_deborah_03"],
+    photos: ["02_deborah"],
     stats: { STR: scoreToBar(10), DEX: scoreToBar(8), CON: scoreToBar(16), INT: scoreToBar(18), WIS: scoreToBar(14), CHA: scoreToBar(12) },
     en: {
       cls: "THE SEER",
@@ -90,7 +91,7 @@ window.OY_VEY_CAST = [
   {
     // REAL — Harel Revavi, Human Champion Fighter 3, Soldier background
     id: "03_harel", name: "HAREL", icon: "⚔", accent: "#7FE0E6",
-    photos: ["03_harel_01", "03_harel_02", "03_harel_03"],
+    photos: ["03_harel"],
     stats: { STR: scoreToBar(18), DEX: scoreToBar(14), CON: scoreToBar(16), INT: scoreToBar(10), WIS: scoreToBar(12), CHA: scoreToBar(8) },
     en: {
       cls: "THE SOLDIER",
@@ -124,7 +125,7 @@ window.OY_VEY_CAST = [
   {
     // REAL — Leon Rosele, Dwarf Wild Magic Barbarian, Folk Hero background
     id: "04_leon", name: "LEON", icon: "✊", accent: "#FFB067",
-    photos: ["04_leon_01", "04_leon_02", "04_leon_03"],
+    photos: ["04_leon"],
     stats: { STR: scoreToBar(16), DEX: scoreToBar(14), CON: scoreToBar(18), INT: scoreToBar(8), WIS: scoreToBar(10), CHA: scoreToBar(12) },
     en: {
       cls: "THE SMALL GIANT",
@@ -158,7 +159,7 @@ window.OY_VEY_CAST = [
   {
     // REAL — Diana MoonBorn, Half-orc Moon Druid 3, Hippy background
     id: "05_diana", name: "DIANA", icon: "👁", accent: "#D59BFF",
-    photos: ["05_diana_01", "05_diana_02", "05_diana_03"],
+    photos: ["05_diana"],
     stats: { STR: scoreToBar(12), DEX: scoreToBar(16), CON: scoreToBar(14), INT: scoreToBar(10), WIS: scoreToBar(18), CHA: scoreToBar(8) },
     en: {
       cls: "THE HIPPY",
@@ -192,7 +193,7 @@ window.OY_VEY_CAST = [
   {
     // REAL — Meshi "Mezika", Halfling Thief Rogue 3, Street Kid background
     id: "06_meshi", name: "MESHI", icon: "🗝", accent: "#C24A8A",
-    photos: ["06_meshi_01", "06_meshi_02", "06_meshi_03"],
+    photos: ["06_meshi"],
     stats: { STR: scoreToBar(8), DEX: scoreToBar(18), CON: scoreToBar(10), INT: scoreToBar(14), WIS: scoreToBar(12), CHA: scoreToBar(16) },
     en: {
       cls: "THE THIEF",

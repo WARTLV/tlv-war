@@ -668,8 +668,10 @@ function renderDeck(){
     card.innerHTML = `
       <div class="photo"><img alt="${c.name}" decoding="async"></div>
       <div class="scrim"></div>
-      <div class="pips">${c.photos.map((_,k)=>`<i class="${k===0?'on':''}"></i>`).join('')}</div>
-      <div class="tapzone prev"></div><div class="tapzone next"></div>
+      ${c.photos.length > 1
+        ? `<div class="pips">${c.photos.map((_,k)=>`<i class="${k===0?'on':''}"></i>`).join('')}</div>
+           <div class="tapzone prev"></div><div class="tapzone next"></div>`
+        : ''}
       <div class="stamp like">LIKE</div>
       <div class="stamp nope">NOPE</div>
       <div class="card-info">
@@ -749,9 +751,12 @@ function wireTopCard(){
       const r = card.getBoundingClientRect();
       const xr = (e.clientX - r.left) / r.width;
       const yr = (e.clientY - r.top) / r.height;
-      if (yr < 0.62 && xr < 0.28)      showPhoto(card, card._photo - 1);
-      else if (yr < 0.62 && xr > 0.72) showPhoto(card, card._photo + 1);
-      else                             openProfile(card.dataset.id);
+      // with a single photo there is no carousel, so the whole card opens the profile
+      const chr = CAST.find(x => x.id === card.dataset.id);
+      const many = chr && chr.photos.length > 1;
+      if (many && yr < 0.62 && xr < 0.28)      showPhoto(card, card._photo - 1);
+      else if (many && yr < 0.62 && xr > 0.72) showPhoto(card, card._photo + 1);
+      else                                     openProfile(card.dataset.id);
       return;
     }
     if (Math.abs(dx) > THRESHOLD) commitSwipe(card, dx > 0 ? 'like' : 'nope');
