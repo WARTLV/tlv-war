@@ -249,8 +249,12 @@
     background:rgba(28,20,38,.97);border:1px solid var(--magenta-hot);border-radius:14px;
     padding:13px 18px;color:#f6eaf1;font-size:14px;line-height:1.45;text-align:center;
     max-width:min(90vw,380px);box-shadow:0 10px 34px rgba(0,0,0,.6);
-    transition:transform .32s cubic-bezier(.2,.9,.3,1)}
-  .toast.on{transform:translateX(-50%) translateY(0)}
+    /* Hidden by opacity, NOT by the transform alone: an empty toast is only ~27px tall, so
+       translateY(-160%) left it parked on screen as a bordered pill over the title.
+       visibility is deliberately NOT used — transitioning it does not reliably advance. */
+    opacity:0;pointer-events:none;
+    transition:transform .32s cubic-bezier(.2,.9,.3,1), opacity .25s ease}
+  .toast.on{transform:translateX(-50%) translateY(0);opacity:1}
   @media (prefers-reduced-motion: reduce){.toast{transition:none}}
   #undoPickBtn.arming{border-color:var(--magenta-hot);color:#fff}
 
