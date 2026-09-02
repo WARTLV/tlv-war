@@ -30,12 +30,23 @@
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
     font-family:var(--body);-webkit-font-smoothing:antialiased}
+  /* The chrome used to glow harder than the artwork, so the painted cards — which are muted and
+     cool by design — sat on top of the page instead of inside it. The ambient is now dim and
+     close to the cards' own dusty blue, and the only real colour comes from --glow, which the
+     deck sets to the accent of whichever character is on top. The page lights from the card. */
   body{overflow:hidden;
+    --glow:#ff4fa3;
     background:
-      radial-gradient(1100px 600px at 82% -10%, rgba(255,79,163,.20), transparent 60%),
-      radial-gradient(900px 700px at -10% 25%, rgba(79,214,224,.11), transparent 55%),
-      radial-gradient(900px 900px at 50% 118%, rgba(138,92,255,.16), transparent 60%),
-      var(--bg);}
+      radial-gradient(900px 620px at 50% 6%, color-mix(in srgb, var(--glow) 16%, transparent), transparent 62%),
+      radial-gradient(760px 560px at 88% 4%, rgba(255,79,163,.07), transparent 60%),
+      radial-gradient(820px 620px at -8% 34%, rgba(79,214,224,.05), transparent 58%),
+      radial-gradient(900px 700px at 50% 116%, rgba(138,92,255,.08), transparent 62%),
+      var(--bg);
+    transition:--glow .5s ease}
+  @property --glow{syntax:'<color>';inherits:true;initial-value:#ff4fa3}
+  /* vignette — pushes the eye to the card */
+  .vig{position:fixed;inset:0;pointer-events:none;z-index:58;
+    background:radial-gradient(120% 80% at 50% 42%, transparent 46%, rgba(0,0,0,.55) 100%)}
   /* film grain + scanlines — the brand's capture texture, kept from the 16.08 page */
   body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.06;mix-blend-mode:overlay;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");}
@@ -104,6 +115,20 @@
   .tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
   .tags span{font-size:11.5px;padding:4px 10px;border-radius:999px;
     background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#efe6f6}
+
+  /* "tap for more" — the profile view was being missed, so the top card says so until the
+     patron opens one, then the hint retires for good. */
+  .tap-hint{position:absolute;left:50%;transform:translateX(-50%);top:14px;z-index:4;
+    background:rgba(10,8,15,.82);border:1px solid rgba(255,255,255,.26);border-radius:999px;
+    padding:8px 15px;font-size:12.5px;color:#f1eaf8;white-space:nowrap;max-width:92%;
+    overflow:hidden;text-overflow:ellipsis;backdrop-filter:blur(3px);
+    animation:hintPulse 2.4s ease-in-out infinite}
+  @keyframes hintPulse{0%,100%{opacity:.72;transform:translateX(-50%) scale(1)}
+                       50%{opacity:1;transform:translateX(-50%) scale(1.035)}}
+  .card[data-depth="0"] .tap-hint{display:block}
+  .card .tap-hint{display:none}
+  body.tap-learned .tap-hint{display:none !important}
+  @media (prefers-reduced-motion: reduce){.tap-hint{animation:none}}
 
   /* LIKE / NOPE stamps — genre convention, kept in English in both languages */
   .stamp{position:absolute;top:26px;font-family:var(--disp);font-size:38px;letter-spacing:.1em;
@@ -206,8 +231,11 @@
   .match-who .tbl{color:var(--cyan);font-family:var(--disp);letter-spacing:.06em}
   .match-actions{margin:24px 0 0;display:flex;flex-direction:column;gap:9px;align-items:center}
   .match-actions .btn{width:100%;max-width:280px}
-  .match-undo{background:transparent;border:1px solid #2a2f3c;color:#a396b8;font-size:12.5px;
-    padding:9px 16px;letter-spacing:.05em}
+  .match-confirm-q{color:#cbb8dc;font-size:14.5px;margin:20px 0 0}
+  .match-undo{background:transparent;border:1px solid #4a3f58;color:#cbb8dc;font-size:13.5px;
+    padding:12px 18px;letter-spacing:.02em;width:100%;max-width:280px;border-radius:12px;
+    font-family:var(--body);text-transform:none}
+  .match-undo:hover{border-color:var(--magenta-hot);color:#fff}
   .confetti{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
   .confetti i{position:absolute;top:-14px;width:8px;height:13px;border-radius:2px;opacity:.9;
     animation:fall linear forwards}
@@ -336,6 +364,8 @@
 </div>
 
 <!-- ========== APP ========== -->
+<div class="vig"></div>
+
 <div class="app" id="app" hidden>
   <div class="appbar">
     <div>
@@ -418,6 +448,7 @@
     <div class="match-name" id="matchName"></div>
     <div class="match-cls" id="matchCls"></div>
     <div class="match-who" id="matchWho"></div>
+    <div class="match-confirm-q" id="matchConfirmQ"></div>
     <div class="match-actions">
       <button class="btn primary" id="matchGo"></button>
       <button class="match-undo" id="matchUndo" type="button"></button>
@@ -472,7 +503,8 @@ const UI = {
     errName:"נא למלא שם", errTable:"נא לבחור שולחן",
     hello:(n,t)=>`שלום ${n} · שולחן ${t}`,
     editBtn:"החלף",
-    swipeHelp:"החליקו ימינה כדי לבחור · שמאלה כדי לדלג · נגיעה בתמונה פותחת את הפרופיל המלא",
+    swipeHelp:"החליקו ימינה כדי לבחור · שמאלה כדי לדלג",
+    tapHint:"👆 נגיעה בתמונה — כל הפרטים על הדמות",
     emptyTitle:"עברת על כולם",
     emptyBody:"דילגת על כל הקאסט. אף אחד לא נעלב — אפשר לעבור שוב.",
     allTakenTitle:"כל הדמויות נתפסו",
@@ -492,8 +524,9 @@ const UI = {
     takenBy:n=>`מצטערים — הדמות הזו כבר נבחרה על ידי ${n}`,
     matchEyebrow:"התאמה מושלמת",
     matchWho:(n,t)=>`${n} · שולחן ${t}`,
-    matchGo:"מעולה, קדימה",
-    matchUndo:"רגע, לא התכוונתי",
+    matchConfirmQ:"זו הדמות שלך לערב?",
+    matchGo:"כן, אני נועל/ת את זה",
+    matchUndo:"↩ לא, בחרתי בטעות — חזרה",
     igBar:"לכל שאלה — @oy.vey.roll",
     statNames:{STR:"כוח",DEX:"זריזות",CON:"חוסן",INT:"אינטליגנציה",WIS:"חוכמה",CHA:"כריזמה"},
     statDescs:{
@@ -518,7 +551,8 @@ const UI = {
     errName:"Please enter a name", errTable:"Please choose a table",
     hello:(n,t)=>`Hey ${n} · Table ${t}`,
     editBtn:"Change",
-    swipeHelp:"Swipe right to pick · left to pass · tap the photo for the full profile",
+    swipeHelp:"Swipe right to pick · left to pass",
+    tapHint:"👆 Tap the photo — everything about this character",
     emptyTitle:"That's everyone",
     emptyBody:"You passed on the whole cast. Nobody took it personally — go around again.",
     allTakenTitle:"Every character is taken",
@@ -538,8 +572,9 @@ const UI = {
     takenBy:n=>`Sorry — this character was already picked by ${n}`,
     matchEyebrow:"it's a perfect match",
     matchWho:(n,t)=>`${n} · Table ${t}`,
-    matchGo:"Great, let's go",
-    matchUndo:"Wait, I didn't mean that",
+    matchConfirmQ:"Is this your character for the night?",
+    matchGo:"Yes, lock it in",
+    matchUndo:"↩ No, I picked by mistake — go back",
     igBar:"Any question — @oy.vey.roll",
     statNames:{STR:"Strength",DEX:"Dexterity",CON:"Constitution",INT:"Intelligence",WIS:"Wisdom",CHA:"Charisma"},
     statDescs:{
@@ -590,6 +625,7 @@ function applyLang(lang){
   set('pfBackHead', T.backHead);   set('pfLookHead', T.lookHead);
   set('pfPick', T.pickBtn);        set('pfBack2', T.profileBack);
   set('matchEyebrow', T.matchEyebrow); set('matchGo', T.matchGo); set('matchUndo', T.matchUndo);
+  set('matchConfirmQ', T.matchConfirmQ);   // tap-hint text is set per card in renderDeck
   set('igText', T.igBar);          set('langToggle', T.langBtn);
   document.getElementById('igBar').setAttribute('aria-label', T.igBar);
   renderExplainBtn();
@@ -727,6 +763,7 @@ function renderDeck(){
         ? `<div class="pips">${c.photos.map((_,k)=>`<i class="${k===0?'on':''}"></i>`).join('')}</div>
            <div class="tapzone prev"></div><div class="tapzone next"></div>`
         : ''}
+      <div class="tap-hint"></div>
       <div class="stamp like">LIKE</div>
       <div class="stamp nope">NOPE</div>
       <div class="card-info">
@@ -736,14 +773,23 @@ function renderDeck(){
         <div class="tags">${d.interests.map(x=>`<span>${x}</span>`).join('')}</div>
         <div class="dist">📍 ${d.distance}</div>
       </div>`;
+    const th = card.querySelector('.tap-hint'); if (th) th.textContent = t().tapHint;
     card.querySelector('img').src = `photos/${c.photos[0]}.jpg`;
     card._photo = 0;
     el.appendChild(card);
   });
   wireTopCard();
+  syncGlow();
 }
 
 function topCard(){ return document.querySelector('.card[data-depth="0"]'); }
+
+/* Ambient light follows the deck: whoever is on top tints the page behind them. */
+function syncGlow(){
+  const c = topCard();
+  const chr = c && CAST.find(x=>x.id===c.dataset.id);
+  document.body.style.setProperty('--glow', chr ? chr.accent : '#ff4fa3');
+}
 
 /* Promote the stack after a swipe WITHOUT rebuilding it. A full renderDeck() here would destroy
    and recreate every remaining card — re-decoding all their images — which flickers on a slow
@@ -758,6 +804,7 @@ function updateDepths(){
     if (depth === 0) card.style.transform = '';   // drop any leftover inline drag transform
   });
   wireTopCard();
+  syncGlow();
 }
 
 /* ---- photo carousel inside a card ---- */
@@ -886,6 +933,8 @@ function attemptPick(id, card){
 /* ================= full profile ================= */
 function openProfile(id){
   const c = CAST.find(x=>x.id===id); if (!c) return;
+  try { localStorage.setItem('oyvey_tap_learned','1'); } catch(e){}
+  document.body.classList.add('tap-learned');
   openChar = c;
   fillProfile(c);
   document.getElementById('profile').classList.add('open');
@@ -991,7 +1040,7 @@ function closeMatch(){
 const PIPER = window.OY_VEY_PIPER;
 /* Versioned URL on purpose: anyone who loads the page BEFORE the art ships caches a 404 for the
    bare path, and would then never see him once it lands. Bump PIPER_V when the art is deployed. */
-const PIPER_V = 1;
+const PIPER_V = 2;   // bumped when the art shipped — v1 was cached as a 404
 const piperSrc = () => `photos/${PIPER.photo}.jpg?v=${PIPER_V}`;
 let piperArtOK = null;                        // null = unknown, true/false once probed
 (function probePiperArt(){
@@ -1074,6 +1123,7 @@ function escapeHtml(s){
 }
 
 /* ================= boot ================= */
+try { if (localStorage.getItem('oyvey_tap_learned')==='1') document.body.classList.add('tap-learned'); } catch(e){}
 applyLang(LANG);
 if (profile) enterApp();
 </script>
