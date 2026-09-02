@@ -280,6 +280,31 @@
   .piper .btn{margin:22px 0 0;background:transparent;border:1px solid rgba(168,255,62,.4);
     color:#cfe0b8;min-width:170px}
 
+  /* ================= my matches ================= */
+  .matches{position:fixed;inset:0;z-index:96;display:none;overflow:auto;
+    background:radial-gradient(700px 500px at 50% 0%, rgba(255,79,163,.10), transparent 62%), rgba(6,5,10,.97)}
+  .matches.open{display:block;animation:fade .2s ease}
+  .matches-inner{max-width:520px;margin:0 auto;
+    padding:calc(64px + env(safe-area-inset-top)) 18px calc(var(--ig-bar-h) + 26px + env(safe-area-inset-bottom))}
+  .matches-title{font-family:var(--disp);font-size:clamp(30px,9vw,44px);letter-spacing:.05em;
+    color:#fff;margin:0 0 18px;text-align:center}
+  .mrow{display:flex;align-items:center;gap:14px;width:100%;text-align:start;cursor:pointer;
+    background:rgba(23,19,32,.75);border:1px solid #2a2f3c;border-radius:16px;padding:12px;
+    margin:0 0 12px;font-family:var(--body);text-transform:none;letter-spacing:0}
+  .mrow:hover{border-color:var(--magenta-hot)}
+  .mrow img{width:72px;height:90px;object-fit:cover;object-position:center 18%;border-radius:11px;
+    flex:0 0 auto;background:#141019}
+  .mrow .mtxt{min-width:0;flex:1}
+  .mrow .mname{font-family:var(--disp);font-size:26px;line-height:1;color:#fff;letter-spacing:.04em}
+  .mrow .mcls{font-family:var(--disp);letter-spacing:.2em;font-size:11.5px;margin-top:4px;
+    text-transform:uppercase}
+  .mrow .mnote{font-size:12.5px;color:#9a8fb0;margin-top:6px;line-height:1.4}
+  .mrow .mgo{color:#6f6482;font-size:22px;flex:0 0 auto}
+  html[dir=rtl] .mrow .mgo{transform:scaleX(-1)}
+  .mrow.is-piper{border-color:rgba(168,255,62,.34);background:rgba(10,14,8,.82)}
+  .mrow.is-piper .mcls{color:#A8FF3E}
+  .mrow.is-piper:hover{border-color:#A8FF3E}
+
   /* ================= gate ================= */
   .gate{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
     padding:24px;overflow:auto;
@@ -388,6 +413,7 @@
   <div class="profile-chip">
     <div class="pc-row">
       <span id="chipHello"></span>
+      <button id="matchesBtn" type="button" hidden></button>
       <button id="editProfile" type="button"></button>
     </div>
   </div>
@@ -468,6 +494,15 @@
   </div>
 </div>
 
+<!-- ========== MY MATCHES ========== -->
+<div class="matches" id="matchesScreen" role="dialog" aria-modal="true">
+  <button class="pf-close" id="matchesClose" aria-label="close">✕</button>
+  <div class="matches-inner">
+    <h2 class="matches-title" id="matchesTitle"></h2>
+    <div id="matchesList"></div>
+  </div>
+</div>
+
 <!-- ========== PIPER — second match ========== -->
 <div class="piper" id="piperScreen">
   <div class="piper-card">
@@ -526,6 +561,10 @@ const UI = {
     pickedEyebrow:"הדמות שלך לערב",
     pickedBody:"נתראה ב-14.09. אם נכנסת לשולחן הלא נכון או שינית דעה — אפשר לבטל.",
     undoPick:"בטל את הבחירה",
+    matchesBtn:"ההתאמות שלי",
+    matchesTitle:"ההתאמות שלי",
+    matchesYours:"הדמות שלך לערב",
+    matchesTapHint:"נגיעה לפרטים המלאים",
     shareBtn:"שלח/י לחברים בוואטסאפ",
     shareText:n=>`אני ${n}. החלילן מטינדר · יום שני 14.09 · תבחרו את הדמות שלכם:`,
     undoArm:"בטוח/ה? לחצו שוב",
@@ -576,6 +615,10 @@ const UI = {
     pickedEyebrow:"your character for the night",
     pickedBody:"See you on 14.09. Joined the wrong table or changed your mind? You can undo.",
     undoPick:"Undo my pick",
+    matchesBtn:"My matches",
+    matchesTitle:"My matches",
+    matchesYours:"your character for the night",
+    matchesTapHint:"tap for the full details",
     shareBtn:"Send to friends on WhatsApp",
     shareText:n=>`I'm ${n}. The Piper from Tinder · Monday 14.09 · pick your character:`,
     undoArm:"Sure? Tap again",
@@ -643,6 +686,7 @@ function applyLang(lang){
   set('pfPick', T.pickBtn);        set('pfBack2', T.profileBack);
   set('matchEyebrow', T.matchEyebrow); set('matchGo', T.matchGo); set('matchUndo', T.matchUndo);
   set('matchConfirmQ', T.matchConfirmQ);   // tap-hint text is set per card in renderDeck
+  set('matchesTitle', T.matchesTitle);
   set('igText', T.igBar);          set('langToggle', T.langBtn);
   document.getElementById('igBar').setAttribute('aria-label', T.igBar);
   renderExplainBtn();
@@ -713,6 +757,9 @@ function enterApp(){
 }
 function renderChip(){
   document.getElementById('chipHello').textContent = t().hello(profile.name, profile.table);
+  const mb = document.getElementById('matchesBtn');
+  mb.textContent = t().matchesBtn;
+  mb.hidden = !myPickHere();          // nothing to list until they have one
 }
 
 /* this device's pick, only if it belongs to the CURRENT table */
@@ -747,10 +794,12 @@ function renderDeck(){
     document.getElementById('waShare').href = 'https://wa.me/?text=' + encodeURIComponent(shareMsg);
     document.getElementById('waShareLabel').textContent = t().shareBtn;
     picked.classList.add('on'); empty.classList.remove('on');
+    if (profile) renderChip();
     el.innerHTML = ''; actions.style.display='none'; help.style.display='none';
     return;
   }
   picked.classList.remove('on');
+  if (profile) renderChip();
   actions.style.display=''; help.style.display='';
 
   // state 2 — nothing left to swipe. Distinguish "you passed on everyone" (offer another round)
@@ -1054,6 +1103,60 @@ function closeMatch(){
   document.getElementById('confetti').innerHTML = '';
   document.getElementById('langToggle').hidden = false;
 }
+/* ================= MY MATCHES =================
+   Every dating app has a matches list, and by this point the patron has two: the character they
+   locked in, and the one that matched with them. Piper is only listed once he has actually been
+   revealed, so opening this screen can never spoil him. */
+function renderMatches(){
+  const mine = myPickHere(); if (!mine) return;
+  const c = CAST.find(x => x.id === mine.charId); if (!c) return;
+  const list = document.getElementById('matchesList');
+  const T = t();
+  list.innerHTML = '';
+
+  function addRow(extraClass, imgSrc, name, sub, subColor, note, onClick){
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'mrow' + (extraClass ? ' ' + extraClass : '');
+    const im = document.createElement('img'); im.alt = ''; im.loading = 'lazy'; im.src = imgSrc;
+    const txt = document.createElement('div'); txt.className = 'mtxt';
+    const nm = document.createElement('div'); nm.className = 'mname'; nm.textContent = name;
+    const cl = document.createElement('div'); cl.className = 'mcls'; cl.textContent = sub;
+    if (subColor) cl.style.color = subColor;
+    const nt = document.createElement('div'); nt.className = 'mnote'; nt.textContent = note;
+    txt.appendChild(nm); txt.appendChild(cl); txt.appendChild(nt);
+    const go = document.createElement('span'); go.className = 'mgo'; go.textContent = '\u203a';
+    b.appendChild(im); b.appendChild(txt); b.appendChild(go);
+    b.addEventListener('click', onClick);
+    list.appendChild(b);
+  }
+
+  addRow('', 'photos/' + c.photos[0] + '.jpg', c.name, cd(c).cls, c.accent,
+         T.matchesYours + ' \u00b7 ' + T.matchesTapHint,
+         function(){ closeMatches(); openProfile(c.id); });
+
+  if (piperArtOK && piperAlreadySeen()){
+    const pd = PIPER[LANG];
+    addRow('is-piper', piperSrc(), PIPER.name, pd.cls, null,
+           pd.distance + ' \u00b7 ' + pd.tagline,
+           function(){ closeMatches(); setTimeout(showPiper, 180); });
+  }
+}
+function openMatches(){
+  renderMatches();
+  const el = document.getElementById('matchesScreen');
+  el.classList.add('open'); el.scrollTop = 0;
+  document.getElementById('langToggle').hidden = true;
+  document.body.style.overflow = 'hidden';
+}
+function closeMatches(){
+  document.getElementById('matchesScreen').classList.remove('open');
+  document.getElementById('langToggle').hidden = false;
+  document.body.style.overflow = '';
+}
+document.getElementById('matchesBtn').addEventListener('click', openMatches);
+document.getElementById('matchesClose').addEventListener('click', closeMatches);
+
 /* ================= PIPER — the second match =================
    Shown once per patron, right after they dismiss their own MATCH. He is not in the deck and
    cannot be picked. Gated on the artwork actually loading, so this ships before the art exists:
