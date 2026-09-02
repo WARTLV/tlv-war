@@ -12,6 +12,11 @@
    set in the display font as a brand wordmark, and `ability.name` is a canonical D&D 5e feature
    printed on the player's real sheet — only `ability.desc` gets translated.
 
+   NOTE: the `appearance` line follows the REFERENCE ART in "דמויות מבוכים ודרקונים 14.09/reference/",
+   not the players' paper sheets, for three characters whose sheet text and card art disagreed on hair
+   (Tuhar silver not blonde, Deborah platinum not black, Meshi dark-with-bleached-streaks not ginger).
+   The art is what a patron actually sees next to this text, so the art wins.
+
    `photos` = filenames in photos/ . One image per character; the array shape is kept so extra shots
    can be added later without touching the swipe-card code (the card hides its pips and disables the
    edge-tap carousel whenever a character has only one). Until Codex delivers the dating-app set (see
@@ -33,7 +38,7 @@ window.OY_VEY_CAST = [
       interests: ["Healing", "Herbalism", "Night shifts"],
       redFlag: "Replies at 3am, because he's on shift",
       sheetLine: "Half-elf · Life Cleric 3 · HP 24 · AC 10",
-      appearance: "38 (ageless) · 1.70m · blue eyes · blonde hair",
+      appearance: "38 (ageless) · 1.70m · blue eyes · silver hair",
       oneLiner: "born between two worlds, saving people in both",
       ability: { name: "DISCIPLE OF LIFE", desc: "Every healing spell lands harder — plus channel divinity to mend the wounded or turn the undead." },
       backstory: "Born to a fay father and a human mother, he grew up moving between both worlds. He studied magic and medicine and joined the organization to put both to use for the greater good.",
@@ -47,7 +52,7 @@ window.OY_VEY_CAST = [
       interests: ["ריפוי", "צמחי מרפא", "משמרות לילה"],
       redFlag: "עונה להודעות ב-3 לפנות בוקר, כי הוא במשמרת",
       sheetLine: "חצי-אלף · כוהן חיים 3 · HP 24 · AC 10",
-      appearance: "38 (חסר-גיל) · 1.70 מ׳ · עיניים כחולות · שיער בלונדיני",
+      appearance: "38 (חסר-גיל) · 1.70 מ׳ · עיניים כחולות · שיער כסוף",
       oneLiner: "נולד בין שני עולמות, ומציל אנשים בשניהם",
       ability: { name: "DISCIPLE OF LIFE", desc: "כל לחש ריפוי פוגע חזק יותר — ובנוסף ערוץ אלוהי לרפא פצועים או לגרש מתים-חיים." },
       backstory: "נולד לאב פיה ולאם אנושית, גדל בין שני העולמות. למד קסם ורפואה, והצטרף לארגון כדי לגייס את שניהם למען הטוב הכללי.",
@@ -67,7 +72,7 @@ window.OY_VEY_CAST = [
       interests: ["Paradoxes", "Broken clocks", "Knowing"],
       redFlag: "Already knows how this date ends",
       sheetLine: "Elf · Chronurgy Wizard 3 · HP 23 · AC 9",
-      appearance: "??? · 1.63m · purple eyes · black hair",
+      appearance: "??? · 1.63m · purple eyes · platinum hair",
       oneLiner: "born from a test tube, still learning to bend time itself",
       ability: { name: "CHRONAL SHIFT", desc: "Forces a creature to reroll its die — twice a rest — and reads the room three seconds ahead." },
       backstory: "Born from a test tube, given magic and the power to bend time itself. She's still learning the edges of it — and determined to prove to the organization she's more than just her powers.",
@@ -81,7 +86,7 @@ window.OY_VEY_CAST = [
       interests: ["פרדוקסים", "שעונים שבורים", "לדעת"],
       redFlag: "כבר יודעת איך הדייט הזה נגמר",
       sheetLine: "אלפית · קוסמת כרונורגיה 3 · HP 23 · AC 9",
-      appearance: "??? · 1.63 מ׳ · עיניים סגולות · שיער שחור",
+      appearance: "??? · 1.63 מ׳ · עיניים סגולות · שיער פלטינה",
       oneLiner: "נולדה מתוך מבחנה, ועדיין לומדת לכופף את הזמן עצמו",
       ability: { name: "CHRONAL SHIFT", desc: "מכריחה יצור להטיל מחדש את הקובייה שלו — פעמיים למנוחה — וקוראת את החדר שלוש שניות קדימה." },
       backstory: "נולדה מתוך מבחנה, וקיבלה קסם ואת הכוח לכופף את הזמן עצמו. היא עדיין לומדת את הגבולות שלו — ונחושה להוכיח לארגון שהיא יותר מסתם הכוחות שלה.",
@@ -203,7 +208,7 @@ window.OY_VEY_CAST = [
       interests: ["Locks", "Rooftops", "Other people's things"],
       redFlag: "Your wallet",
       sheetLine: "Halfling · Thief Rogue 3 · HP 18 · AC 16",
-      appearance: "18 · 1.42m · hazel eyes · ginger hair",
+      appearance: "18 · 1.42m · hazel eyes · dark hair with bleached streaks",
       oneLiner: "already three steps toward the exit",
       ability: { name: "SNEAK ATTACK", desc: "2d6 bonus damage with advantage, plus a free dash, hide, or disengage every turn." },
       backstory: "Born and raised an orphan, jumping from house to house, trusting only herself. When she accidentally tried to rob the organization, they saw exactly what she was capable of — and recruited her instead.",
@@ -217,7 +222,7 @@ window.OY_VEY_CAST = [
       interests: ["מנעולים", "גגות", "דברים של אנשים אחרים"],
       redFlag: "הארנק שלך",
       sheetLine: "הפלינג · נוכלת גנב 3 · HP 18 · AC 16",
-      appearance: "18 · 1.42 מ׳ · עיניים דבש · שיער ג'ינג'י",
+      appearance: "18 · 1.42 מ׳ · עיניים דבש · שיער כהה עם פסים בהירים",
       oneLiner: "כבר שלושה צעדים בדרך החוצה",
       ability: { name: "SNEAK ATTACK", desc: "2d6 נזק בונוס עם יתרון, ובנוסף ספרינט, הסתתרות או ניתוק חינם בכל תור." },
       backstory: "נולדה וגדלה יתומה, קפצה מבית לבית, ובטחה רק בעצמה. כשבטעות ניסתה לשדוד את הארגון, הם ראו בדיוק למה היא מסוגלת — וגייסו אותה במקום.",
