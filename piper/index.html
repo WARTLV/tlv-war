@@ -218,6 +218,29 @@
     .card.gone,.card.settling,.fill{transition:none}
   }
 
+  /* ================= PIPER — the second, unwanted match ================= */
+  /* Deliberately the opposite of the MATCH screen: no confetti, no magenta, no celebration.
+     Cold, still, and green. It should feel like a notification you did not want. */
+  .piper{position:fixed;inset:0;z-index:97;display:none;align-items:center;justify-content:center;
+    padding:26px;text-align:center;overflow:auto;
+    background:radial-gradient(700px 520px at 50% 12%, rgba(168,255,62,.10), transparent 62%),
+      rgba(4,5,4,.985)}
+  .piper.open{display:flex;animation:fade .5s ease}
+  .piper-card{width:100%;max-width:400px}
+  .piper-eyebrow{font-family:var(--disp);letter-spacing:.3em;font-size:14px;color:#A8FF3E;
+    text-transform:uppercase;opacity:.9}
+  .piper-photo{width:100%;max-width:290px;aspect-ratio:4/5;object-fit:cover;display:block;
+    margin:18px auto 0;border-radius:14px;border:1px solid rgba(168,255,62,.35);
+    box-shadow:0 0 44px rgba(168,255,62,.18)}
+  .piper-name{font-family:var(--disp);font-size:clamp(40px,12vw,62px);line-height:1;margin:16px 0 0;
+    color:#fff;letter-spacing:.06em;text-shadow:0 0 26px rgba(168,255,62,.4)}
+  .piper-cls{font-family:var(--disp);letter-spacing:.3em;font-size:13px;color:#A8FF3E;margin:6px 0 0}
+  .piper-tag{color:#dfe6d4;font-size:15.5px;margin:14px 0 0;line-height:1.5}
+  .piper-dist{color:#8f9a83;font-size:13px;margin:9px 0 0;font-weight:700}
+  .piper-note{color:#6f7a66;font-size:12.5px;margin:16px 0 0;letter-spacing:.02em}
+  .piper .btn{margin:22px 0 0;background:transparent;border:1px solid rgba(168,255,62,.4);
+    color:#cfe0b8;min-width:170px}
+
   /* ================= gate ================= */
   .gate{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
     padding:24px;overflow:auto;
@@ -402,6 +425,20 @@
   </div>
 </div>
 
+<!-- ========== PIPER — second match ========== -->
+<div class="piper" id="piperScreen">
+  <div class="piper-card">
+    <div class="piper-eyebrow" id="piperEyebrow"></div>
+    <img class="piper-photo" id="piperImg" alt="PIPER">
+    <div class="piper-name">PIPER</div>
+    <div class="piper-cls" id="piperCls"></div>
+    <div class="piper-tag" id="piperTag"></div>
+    <div class="piper-dist" id="piperDist"></div>
+    <div class="piper-note" id="piperNote"></div>
+    <button class="btn" id="piperDismiss" type="button"></button>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="lang-toggle" id="langToggle" type="button"></button>
 <button class="mute-btn" id="muteBtn" type="button">🔊</button>
@@ -410,8 +447,11 @@
 </a>
 <audio id="bgm" loop preload="auto"><source src="critical_failure.mp3" type="audio/mpeg"></audio>
 
-<script src="characters.js"></script>
-<script src="store.js"></script>
+<!-- Versioned on purpose. A returning patron caches these, and an unversioned characters.js
+     served stale against a newer index.html has broken this project's other page before.
+     Bump the number whenever either file changes. -->
+<script src="characters.js?v=2"></script>
+<script src="store.js?v=1"></script>
 <script>
 const CAST  = window.OY_VEY_CAST || [];
 const STORE = window.OY_VEY_STORE;
@@ -944,7 +984,53 @@ function closeMatch(){
   document.getElementById('confetti').innerHTML = '';
   document.getElementById('langToggle').hidden = false;
 }
-document.getElementById('matchGo').addEventListener('click', closeMatch);
+/* ================= PIPER — the second match =================
+   Shown once per patron, right after they dismiss their own MATCH. He is not in the deck and
+   cannot be picked. Gated on the artwork actually loading, so this ships before the art exists:
+   if photos/piper.jpg 404s the screen is simply skipped and the flow ends as before. */
+const PIPER = window.OY_VEY_PIPER;
+/* Versioned URL on purpose: anyone who loads the page BEFORE the art ships caches a 404 for the
+   bare path, and would then never see him once it lands. Bump PIPER_V when the art is deployed. */
+const PIPER_V = 1;
+const piperSrc = () => `photos/${PIPER.photo}.jpg?v=${PIPER_V}`;
+let piperArtOK = null;                        // null = unknown, true/false once probed
+(function probePiperArt(){
+  if (!PIPER) { piperArtOK = false; return; }
+  const im = new Image();
+  im.onload  = ()=>{ piperArtOK = true;  };
+  im.onerror = ()=>{ piperArtOK = false; };
+  im.src = piperSrc();
+})();
+
+function piperAlreadySeen(){
+  try { return localStorage.getItem('oyvey_piper_seen') === '1'; } catch(e){ return true; }
+}
+function showPiper(){
+  const d = PIPER[LANG];
+  document.getElementById('piperEyebrow').textContent = d.eyebrow;
+  document.getElementById('piperCls').textContent     = d.cls;
+  document.getElementById('piperTag').textContent     = d.tagline;
+  document.getElementById('piperDist').textContent    = d.distance;
+  document.getElementById('piperNote').textContent    = d.note;
+  document.getElementById('piperDismiss').textContent = d.dismiss;
+  document.getElementById('piperImg').src = piperSrc();
+  document.getElementById('piperScreen').classList.add('open');
+  document.getElementById('langToggle').hidden = true;
+  try { localStorage.setItem('oyvey_piper_seen','1'); } catch(e){}
+}
+document.getElementById('piperDismiss').addEventListener('click', ()=>{
+  document.getElementById('piperScreen').classList.remove('open');
+  document.getElementById('langToggle').hidden = false;
+  document.body.style.overflow='';
+});
+
+document.getElementById('matchGo').addEventListener('click', ()=>{
+  closeMatch();
+  if (piperArtOK && !piperAlreadySeen()){
+    document.body.style.overflow='hidden';
+    setTimeout(showPiper, 900);   // a beat of nothing first — the pause is the point
+  }
+});
 document.getElementById('matchUndo').addEventListener('click', ()=>{
   const mp = myPickHere(); if (!mp) { closeMatch(); return; }
   STORE.release(profile.table, mp.charId);

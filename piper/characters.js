@@ -230,3 +230,26 @@ window.OY_VEY_CAST = [
     },
   },
 ];
+
+/* PIPER — not part of the swipe deck. He appears once, after the patron has already matched with
+   their character, as a second unwanted match. He cannot be picked. The page only shows him if
+   photos/piper.jpg actually loads, so this ships safely before the art exists. */
+window.OY_VEY_PIPER = {
+  id: "piper", name: "PIPER", accent: "#A8FF3E", photo: "piper",
+  en: {
+    eyebrow: "you have another match",
+    cls: "???",
+    distance: "0 m away",
+    tagline: "Promises love. Promises acceptance.",
+    note: "This match cannot be undone.",
+    dismiss: "OK…",
+  },
+  he: {
+    eyebrow: "יש לך התאמה נוספת",
+    cls: "???",
+    distance: "0 מ׳ ממך",
+    tagline: "מבטיח אהבה. מבטיח קבלה.",
+    note: "לא ניתן לבטל התאמה זו.",
+    dismiss: "אוקיי…",
+  },
+};
