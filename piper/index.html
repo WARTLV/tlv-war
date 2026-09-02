@@ -159,6 +159,17 @@
   .deck-msg p{margin:0 0 20px;color:#cbb8dc;font-size:15px;line-height:1.6;max-width:34ch}
   .deck-msg .pickname{font-family:var(--disp);font-size:clamp(38px,12vw,60px);color:var(--magenta-hot);
     letter-spacing:.05em;line-height:1;margin:0 0 6px;text-shadow:0 0 26px rgba(255,79,163,.5)}
+  /* Share lives on the "you have your character" panel: that is the moment worth passing on,
+     and it is the screen a patron returns to. WhatsApp green as a rim only — a full green fill
+     would fight the page the way the old Instagram CTA did. */
+  .wa-share{display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    margin:4px 0 14px;padding:13px 20px;border-radius:12px;text-decoration:none;
+    background:rgba(37,211,102,.10);border:1px solid rgba(37,211,102,.55);color:#dff7e6;
+    font-size:14.5px;font-weight:700;max-width:300px;width:100%}
+  .wa-share:hover{background:rgba(37,211,102,.18);border-color:#25D366;color:#fff}
+  .wa-share .wa-ico{width:26px;height:26px;border-radius:50%;background:#25D366;color:#07130b;
+    display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto}
+
   .btn{font-family:var(--disp);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;
     border-radius:12px;padding:13px 22px;font-size:15px;border:1px solid #2a2f3c;background:#171320;color:var(--ink)}
   .btn.primary{background:var(--magenta-hot);border-color:var(--magenta-hot);color:#fff;
@@ -395,6 +406,7 @@
       <div class="pickname" id="pickedName"></div>
       <div class="match-cls" id="pickedCls"></div>
       <p id="pickedBody" style="margin-top:16px"></p>
+      <a class="wa-share" id="waShare" target="_blank" rel="noopener"><span class="wa-ico">✉</span><span id="waShareLabel"></span></a>
       <button class="btn" id="undoPickBtn"></button>
     </div>
   </div>
@@ -488,6 +500,7 @@ const CAST  = window.OY_VEY_CAST || [];
 const STORE = window.OY_VEY_STORE;
 const AXES  = ["STR","DEX","CON","INT","WIS","CHA"];
 const IG_URL = "https://www.instagram.com/oy.vey.roll/";
+const PAGE_URL = "https://wartlv.github.io/tlv-war/piper/";
 
 /* ================= i18n ================= */
 const UI = {
@@ -513,6 +526,8 @@ const UI = {
     pickedEyebrow:"הדמות שלך לערב",
     pickedBody:"נתראה ב-14.09. אם נכנסת לשולחן הלא נכון או שינית דעה — אפשר לבטל.",
     undoPick:"בטל את הבחירה",
+    shareBtn:"שלח/י לחברים בוואטסאפ",
+    shareText:n=>`אני ${n}. החלילן מטינדר · יום שני 14.09 · תבחרו את הדמות שלכם:`,
     undoArm:"בטוח/ה? לחצו שוב",
     undoDone:"הבחירה בוטלה — הדמות שוחררה",
     flagLabel:"דגל אדום",
@@ -561,6 +576,8 @@ const UI = {
     pickedEyebrow:"your character for the night",
     pickedBody:"See you on 14.09. Joined the wrong table or changed your mind? You can undo.",
     undoPick:"Undo my pick",
+    shareBtn:"Send to friends on WhatsApp",
+    shareText:n=>`I'm ${n}. The Piper from Tinder · Monday 14.09 · pick your character:`,
     undoArm:"Sure? Tap again",
     undoDone:"Pick cancelled — the character is free again",
     flagLabel:"RED FLAG",
@@ -725,6 +742,10 @@ function renderDeck(){
     const c = CAST.find(x=>x.id===mine.charId);
     document.getElementById('pickedName').textContent = c ? c.name : mine.charId;
     document.getElementById('pickedCls').textContent  = c ? cd(c).cls : '';
+    // built here because the message carries whichever character they locked in
+    const shareMsg = t().shareText(c ? c.name : '') + ' ' + PAGE_URL;
+    document.getElementById('waShare').href = 'https://wa.me/?text=' + encodeURIComponent(shareMsg);
+    document.getElementById('waShareLabel').textContent = t().shareBtn;
     picked.classList.add('on'); empty.classList.remove('on');
     el.innerHTML = ''; actions.style.display='none'; help.style.display='none';
     return;
