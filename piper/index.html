@@ -264,15 +264,18 @@
   /* ================= PIPER — the second, unwanted match ================= */
   /* Deliberately the opposite of the MATCH screen: no confetti, no magenta, no celebration.
      Cold, still, and green. It should feel like a notification you did not want. */
-  .piper{position:fixed;inset:0;z-index:97;display:none;align-items:center;justify-content:center;
-    padding:26px;text-align:center;overflow:auto;
+  /* This screen must always be exitable. It is scrollable with room for the sticky bar, the
+     dismiss button sits inside a sticky footer so it can never fall below the fold, and it
+     auto-advances after a few seconds in case a patron just stares at it. */
+  .piper{position:fixed;inset:0;z-index:97;display:none;overflow-y:auto;text-align:center;
+    padding:calc(20px + env(safe-area-inset-top)) 22px calc(var(--ig-bar-h) + 20px + env(safe-area-inset-bottom));
     background:radial-gradient(700px 520px at 50% 12%, rgba(168,255,62,.10), transparent 62%),
       rgba(4,5,4,.985)}
-  .piper.open{display:flex;animation:fade .5s ease}
-  .piper-card{width:100%;max-width:400px}
+  .piper.open{display:block;animation:fade .5s ease}
+  .piper-card{width:100%;max-width:400px;margin:0 auto}
   .piper-eyebrow{font-family:var(--disp);letter-spacing:.3em;font-size:14px;color:#A8FF3E;
     text-transform:uppercase;opacity:.9}
-  .piper-photo{width:100%;max-width:290px;aspect-ratio:4/5;object-fit:cover;display:block;
+  .piper-photo{width:100%;max-width:212px;aspect-ratio:4/5;object-fit:cover;display:block;
     margin:18px auto 0;border-radius:14px;border:1px solid rgba(168,255,62,.35);
     box-shadow:0 0 44px rgba(168,255,62,.18)}
   .piper-name{font-family:var(--disp);font-size:clamp(40px,12vw,62px);line-height:1;margin:16px 0 0;
@@ -281,12 +284,13 @@
   .piper-tag{color:#dfe6d4;font-size:15.5px;margin:14px 0 0;line-height:1.5}
   .piper-dist{color:#8f9a83;font-size:13px;margin:9px 0 0;font-weight:700}
   .piper-note{color:#6f7a66;font-size:12.5px;margin:16px 0 0;letter-spacing:.02em}
-  .piper .btn{margin:22px 0 0;background:transparent;border:1px solid rgba(168,255,62,.4);
-    color:#cfe0b8;min-width:170px}
+  .piper .btn{margin:18px 0 0;background:rgba(168,255,62,.10);border:1px solid rgba(168,255,62,.55);
+    color:#dff0c4;width:100%;max-width:280px}
+  .piper-count{display:block;margin:10px 0 0;font-size:12px;color:#67725c;letter-spacing:.02em}
 
   /* ================= my matches ================= */
   .matches{position:fixed;inset:0;z-index:96;display:none;overflow:auto;
-    background:radial-gradient(700px 500px at 50% 0%, rgba(255,79,163,.10), transparent 62%), rgba(6,5,10,.97)}
+    background:radial-gradient(700px 500px at 50% 0%, rgba(255,79,163,.10), transparent 62%), #06050a}
   .matches.open{display:block;animation:fade .2s ease}
   .matches-inner{max-width:520px;margin:0 auto;
     padding:calc(64px + env(safe-area-inset-top)) 18px calc(var(--ig-bar-h) + 26px + env(safe-area-inset-bottom))}
@@ -308,6 +312,22 @@
   .mrow.is-piper{border-color:rgba(168,255,62,.34);background:rgba(10,14,8,.82)}
   .mrow.is-piper .mcls{color:#A8FF3E}
   .mrow.is-piper:hover{border-color:#A8FF3E}
+
+  /* ---- ticket CTA ---- */
+  .ticket-link{display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    padding:13px 20px;border-radius:12px;text-decoration:none;font-size:14.5px;font-weight:700;
+    background:rgba(255,176,103,.10);border:1px solid rgba(255,176,103,.5);color:#ffdcb8;
+    width:100%;max-width:300px;margin:0 auto}
+  .ticket-link:hover{background:rgba(255,176,103,.18);border-color:#FFB067;color:#fff}
+  .gate-ticket{margin:20px 0 0;display:flex;flex-direction:column;align-items:center;gap:9px}
+  .gate-ticket span{color:#9a8fb0;font-size:13px}
+
+  /* ---- matches doubles as the door pass, so identity reads first ---- */
+  .pass{background:rgba(23,19,32,.7);border:1px solid #2a2f3c;border-radius:16px;
+    padding:14px 16px;margin:0 0 16px;text-align:center}
+  .pass-name{font-family:var(--disp);font-size:clamp(28px,8vw,38px);line-height:1;color:#fff;letter-spacing:.04em}
+  .pass-level{font-size:13.5px;color:var(--cyan);margin-top:6px;font-weight:700}
+  .pass-note{font-size:12px;color:#7f7594;margin-top:9px}
 
   /* ================= gate ================= */
   /* The entry screen was type on a gradient with nothing that said "event". It is now the
@@ -407,6 +427,10 @@
       </div>
       <button type="submit" class="btn enter-btn" id="enterBtn"></button>
     </form>
+    <p class="gate-ticket">
+      <span id="ticketGateNote"></span>
+      <a class="ticket-link" id="ticketGate" href="https://matmon.space/%D7%90%D7%99%D7%A8%D7%95%D7%A2%D7%99%D7%9D/%d7%a2%d7%a8%d7%91-%d7%9e%d7%91%d7%95%d7%9b%d7%99%d7%9d-%d7%95%d7%93%d7%a8%d7%a7%d7%95%d7%a0%d7%99%d7%9d-5/" target="_blank" rel="noopener"><span id="ticketGateLabel"></span></a>
+    </p>
   </div>
 </div>
 
@@ -444,6 +468,7 @@
       <div class="match-cls" id="pickedCls"></div>
       <p id="pickedBody" style="margin-top:16px"></p>
       <a class="wa-share" id="waShare" target="_blank" rel="noopener"><span class="wa-ico">✉</span><span id="waShareLabel"></span></a>
+      <a class="ticket-link" id="ticketPicked" href="https://matmon.space/%D7%90%D7%99%D7%A8%D7%95%D7%A2%D7%99%D7%9D/%d7%a2%d7%a8%d7%91-%d7%9e%d7%91%d7%95%d7%9b%d7%99%d7%9d-%d7%95%d7%93%d7%a8%d7%a7%d7%95%d7%a0%d7%99%d7%9d-5/" target="_blank" rel="noopener" style="margin-bottom:14px"><span id="ticketPickedLabel"></span></a>
       <button class="btn" id="undoPickBtn"></button>
     </div>
   </div>
@@ -510,6 +535,11 @@
   <button class="pf-close" id="matchesClose" aria-label="close">✕</button>
   <div class="matches-inner">
     <h2 class="matches-title" id="matchesTitle"></h2>
+    <div class="pass">
+      <div class="pass-name" id="passName"></div>
+      <div class="pass-level" id="passLevel"></div>
+      <div class="pass-note" id="passNote"></div>
+    </div>
     <div id="matchesList"></div>
   </div>
 </div>
@@ -525,6 +555,7 @@
     <div class="piper-dist" id="piperDist"></div>
     <div class="piper-note" id="piperNote"></div>
     <button class="btn" id="piperDismiss" type="button"></button>
+    <span class="piper-count" id="piperCount"></span>
   </div>
 </div>
 
@@ -539,11 +570,13 @@
 <!-- Versioned on purpose. A returning patron caches these, and an unversioned characters.js
      served stale against a newer index.html has broken this project's other page before.
      Bump the number whenever either file changes. -->
-<script src="characters.js?v=2"></script>
-<script src="store.js?v=1"></script>
+<script src="characters.js?v=3"></script>
+<script src="store.js?v=2"></script>
 <script>
 const CAST  = window.OY_VEY_CAST || [];
 const STORE = window.OY_VEY_STORE;
+const LEVELS = ['beginner','amateur','pro'];
+const levelLabel = k => (t().levels[k] || k);
 const AXES  = ["STR","DEX","CON","INT","WIS","CHA"];
 const IG_URL = "https://www.instagram.com/oy.vey.roll/";
 const PAGE_URL = "https://wartlv.github.io/tlv-war/piper/";
@@ -556,21 +589,27 @@ const UI = {
     dateLine:"יום שני · 14.09.26",
     gateTitle:"החלילן<br>מטינדר",
     gateIntro:"שם ומספר שולחן, ואפשר להתחיל להחליק.",
-    labelName:"השם שלך", labelTable:"מספר שולחן",
-    namePlaceholder:"איך קוראים לך?", tablePlaceholder:"בחר/י שולחן…",
-    tableOpt:n=>`שולחן ${n}`, enterBtn:"כניסה",
-    errName:"נא למלא שם", errTable:"נא לבחור שולחן",
-    hello:(n,t)=>`שלום ${n} · שולחן ${t}`,
+    labelName:"השם שלך", labelTable:"מה הניסיון שלך ב-D&D?",
+    namePlaceholder:"איך קוראים לך?", tablePlaceholder:"בחר/י רמה…",
+    levels:{beginner:"פעם ראשונה שלי", amateur:"שיחקתי כמה פעמים", pro:"אני ותיק/ה"},
+    enterBtn:"כניסה",
+    errName:"נא למלא שם", errTable:"נא לבחור רמה",
+    hello:(n,l)=>`שלום ${n} · ${l}`,
+    ticketBtn:"לרכישת כרטיס לערב",
+    piperAuto:n=>`ממשיך אוטומטית בעוד ${n}…`,
+    ticketGate:"עוד לא קנית כרטיס?",
+    passName:"השם שלך", passLevel:"רמה",
+    passNote:"הציגו את המסך הזה בכניסה",
     editBtn:"החלף",
     swipeHelp:"החליקו ימינה כדי לבחור · שמאלה כדי לדלג",
     tapHint:"👆 נגיעה בתמונה — כל הפרטים על הדמות",
     emptyTitle:"עברת על כולם",
     emptyBody:"דילגת על כל הקאסט. אף אחד לא נעלב — אפשר לעבור שוב.",
     allTakenTitle:"כל הדמויות נתפסו",
-    allTakenBody:"כל שש הדמויות בשולחן הזה כבר נבחרו. דברו עם המנחה — או בדקו שנכנסתם לשולחן הנכון.",
+    allTakenBody:"כל שש הדמויות כבר נבחרו במכשיר הזה. דברו עם המנחה.",
     restart:"סבב נוסף",
     pickedEyebrow:"הדמות שלך לערב",
-    pickedBody:"נתראה ב-14.09. אם נכנסת לשולחן הלא נכון או שינית דעה — אפשר לבטל.",
+    pickedBody:"נתראה ב-14.09. אם שינית דעה — אפשר לבטל ולבחור מחדש.",
     undoPick:"בטל את הבחירה",
     matchesBtn:"ההתאמות שלי",
     matchesTitle:"ההתאמות שלי",
@@ -588,7 +627,7 @@ const UI = {
     profileBack:"חזרה",
     takenBy:n=>`מצטערים — הדמות הזו כבר נבחרה על ידי ${n}`,
     matchEyebrow:"התאמה מושלמת",
-    matchWho:(n,t)=>`${n} · שולחן ${t}`,
+    matchWho:(n,l)=>`${n} · ${l}`,
     matchConfirmQ:"זו הדמות שלך לערב?",
     matchGo:"כן, אני נועל/ת את זה",
     matchUndo:"↩ לא, בחרתי בטעות — חזרה",
@@ -610,21 +649,27 @@ const UI = {
     dateLine:"MONDAY · 14.09.26",
     gateTitle:"THE PIPER<br>FROM TINDER",
     gateIntro:"Name and table number, and you can start swiping.",
-    labelName:"Your name", labelTable:"Table number",
-    namePlaceholder:"What's your name?", tablePlaceholder:"Choose a table…",
-    tableOpt:n=>`Table ${n}`, enterBtn:"Enter",
-    errName:"Please enter a name", errTable:"Please choose a table",
-    hello:(n,t)=>`Hey ${n} · Table ${t}`,
+    labelName:"Your name", labelTable:"How much D&D have you played?",
+    namePlaceholder:"What's your name?", tablePlaceholder:"Choose a level…",
+    levels:{beginner:"This is my first time", amateur:"I've played a few times", pro:"I'm a veteran"},
+    enterBtn:"Enter",
+    errName:"Please enter a name", errTable:"Please choose a level",
+    hello:(n,l)=>`Hey ${n} · ${l}`,
+    ticketBtn:"Get a ticket for the night",
+    piperAuto:n=>`continuing automatically in ${n}…`,
+    ticketGate:"Haven't got a ticket yet?",
+    passName:"Your name", passLevel:"Level",
+    passNote:"Show this screen at the door",
     editBtn:"Change",
     swipeHelp:"Swipe right to pick · left to pass",
     tapHint:"👆 Tap the photo — everything about this character",
     emptyTitle:"That's everyone",
     emptyBody:"You passed on the whole cast. Nobody took it personally — go around again.",
     allTakenTitle:"Every character is taken",
-    allTakenBody:"All six characters at this table are already claimed. Talk to your host — or check that you joined the right table.",
+    allTakenBody:"All six characters are already claimed on this device. Talk to your host.",
     restart:"Another round",
     pickedEyebrow:"your character for the night",
-    pickedBody:"See you on 14.09. Joined the wrong table or changed your mind? You can undo.",
+    pickedBody:"See you on 14.09. Changed your mind? You can undo and pick again.",
     undoPick:"Undo my pick",
     matchesBtn:"My matches",
     matchesTitle:"My matches",
@@ -642,7 +687,7 @@ const UI = {
     profileBack:"Back",
     takenBy:n=>`Sorry — this character was already picked by ${n}`,
     matchEyebrow:"it's a perfect match",
-    matchWho:(n,t)=>`${n} · Table ${t}`,
+    matchWho:(n,l)=>`${n} · ${l}`,
     matchConfirmQ:"Is this your character for the night?",
     matchGo:"Yes, lock it in",
     matchUndo:"↩ No, I picked by mistake — go back",
@@ -698,6 +743,8 @@ function applyLang(lang){
   set('matchEyebrow', T.matchEyebrow); set('matchGo', T.matchGo); set('matchUndo', T.matchUndo);
   set('matchConfirmQ', T.matchConfirmQ);   // tap-hint text is set per card in renderDeck
   set('matchesTitle', T.matchesTitle);
+  set('ticketGateNote', T.ticketGate); set('ticketGateLabel', T.ticketBtn);
+  set('ticketPickedLabel', T.ticketBtn); set('passNote', T.passNote);
   set('igText', T.igBar);          set('langToggle', T.langBtn);
   document.getElementById('igBar').setAttribute('aria-label', T.igBar);
   renderExplainBtn();
@@ -705,10 +752,10 @@ function applyLang(lang){
   // table <select> is rebuilt because every option label is translated
   const sel = document.getElementById('fTable'), keep = sel.value;
   sel.innerHTML = `<option value="">${T.tablePlaceholder}</option>`;
-  for (let i=1;i<=10;i++){
-    const o = document.createElement('option'); o.value = String(i); o.textContent = T.tableOpt(i);
+  LEVELS.forEach(k => {
+    const o = document.createElement('option'); o.value = k; o.textContent = T.levels[k];
     sel.appendChild(o);
-  }
+  });
   sel.value = keep;
 
   if (profile) renderChip();
@@ -743,18 +790,18 @@ const gate = document.getElementById('gate');
 document.getElementById('gateForm').addEventListener('submit', e=>{
   e.preventDefault();
   const name = document.getElementById('fName').value.trim();
-  const table = document.getElementById('fTable').value;
+  const level = document.getElementById('fTable').value;
   document.getElementById('errName').textContent  = name  ? '' : t().errName;
-  document.getElementById('errTable').textContent = table ? '' : t().errTable;
-  if (!name || !table) return;
-  profile = STORE.setProfile(name, table);
+  document.getElementById('errTable').textContent = level ? '' : t().errTable;
+  if (!name || !level) return;
+  profile = STORE.setProfile(name, level);
   startMusic();                        // this gesture is what unlocks audio on mobile
   enterApp();
 });
 document.getElementById('editProfile').addEventListener('click', ()=>{
   if (profile){
     document.getElementById('fName').value = profile.name;
-    document.getElementById('fTable').value = profile.table;
+    document.getElementById('fTable').value = profile.level;
   }
   gate.hidden = false;
   document.getElementById('app').hidden = true;
@@ -767,22 +814,19 @@ function enterApp(){
   resetDeck();
 }
 function renderChip(){
-  document.getElementById('chipHello').textContent = t().hello(profile.name, profile.table);
+  document.getElementById('chipHello').textContent = t().hello(profile.name, levelLabel(profile.level));
   const mb = document.getElementById('matchesBtn');
   mb.textContent = t().matchesBtn;
   mb.hidden = !myPickHere();          // nothing to list until they have one
 }
 
-/* this device's pick, only if it belongs to the CURRENT table */
-function myPickHere(){
-  const mp = STORE.myPick();
-  return (mp && profile && String(mp.table) === String(profile.table)) ? mp : null;
-}
+/* this device's pick (there are no tables — one pool) */
+function myPickHere(){ return STORE.myPick(); }
 
 /* ================= deck ================= */
 function resetDeck(){
-  const picks = profile ? STORE.getPicks(profile.table) : {};
-  // characters already claimed at this table never enter the deck — you can't swipe on them
+  const picks = STORE.getPicks();
+  // characters already claimed never enter the deck — you can't swipe on them
   deck = CAST.filter(c => !picks[c.id]).map(c => c.id).reverse();  // last = top card
   renderDeck();
 }
@@ -816,7 +860,7 @@ function renderDeck(){
   // state 2 — nothing left to swipe. Distinguish "you passed on everyone" (offer another round)
   // from "every character is already claimed" (another round would show the same empty deck).
   if (!deck.length){
-    const picks = profile ? STORE.getPicks(profile.table) : {};
+    const picks = STORE.getPicks();
     const allTaken = CAST.every(c => picks[c.id]);
     document.getElementById('emptyTitle').textContent = allTaken ? t().allTakenTitle : t().emptyTitle;
     document.getElementById('emptyBody').textContent  = allTaken ? t().allTakenBody  : t().emptyBody;
@@ -998,7 +1042,7 @@ document.getElementById('restartBtn').addEventListener('click', resetDeck);
 /* ================= pick ================= */
 function attemptPick(id, card){
   const c = CAST.find(x=>x.id===id); if (!c || !profile) return;
-  const res = STORE.claim(profile.table, id, profile.name);
+  const res = STORE.claim(id, profile.name);
   if (!res.ok){
     // someone at this table took it first — drop it from the deck and say so
     toast(t().takenBy(res.takenBy));
@@ -1006,7 +1050,7 @@ function attemptPick(id, card){
     renderDeck();
     return;
   }
-  STORE.setMyPick(profile.table, id, profile.name);
+  STORE.setMyPick(id, profile.name);
   const finish = ()=>{ closeProfile(); showMatch(c); renderDeck(); };
   if (card) flyOut(card, 1, finish); else finish();
 }
@@ -1090,7 +1134,7 @@ function showMatch(c){
   document.getElementById('matchName').textContent = c.name;
   document.getElementById('matchCls').textContent  = d.cls;
   document.getElementById('matchWho').innerHTML =
-    t().matchWho(escapeHtml(profile.name), `<span class="tbl">${escapeHtml(profile.table)}</span>`);
+    t().matchWho(escapeHtml(profile.name), `<span class="tbl">${escapeHtml(levelLabel(profile.level))}</span>`);
   document.getElementById('match').classList.add('open');
   document.getElementById('langToggle').hidden = true;
   burstConfetti();
@@ -1154,6 +1198,11 @@ function renderMatches(){
   }
 }
 function openMatches(){
+  if (profile){
+    document.getElementById('passName').textContent  = profile.name;
+    document.getElementById('passLevel').textContent = t().passLevel + ': ' + levelLabel(profile.level);
+    document.getElementById('passNote').textContent  = t().passNote;
+  }
   renderMatches();
   const el = document.getElementById('matchesScreen');
   el.classList.add('open'); el.scrollTop = 0;
@@ -1189,6 +1238,11 @@ let piperArtOK = null;                        // null = unknown, true/false once
 function piperAlreadySeen(){
   try { return localStorage.getItem('oyvey_piper_seen') === '1'; } catch(e){ return true; }
 }
+let piperTimer = null, piperTick = null;
+function clearPiperTimers(){
+  if (piperTimer){ clearTimeout(piperTimer); piperTimer = null; }
+  if (piperTick){ clearInterval(piperTick); piperTick = null; }
+}
 function showPiper(){
   const d = PIPER[LANG];
   document.getElementById('piperEyebrow').textContent = d.eyebrow;
@@ -1199,14 +1253,30 @@ function showPiper(){
   document.getElementById('piperDismiss').textContent = d.dismiss;
   document.getElementById('piperImg').src = piperSrc();
   document.getElementById('piperScreen').classList.add('open');
+  document.getElementById('piperScreen').scrollTop = 0;
   document.getElementById('langToggle').hidden = true;
   try { localStorage.setItem('oyvey_piper_seen','1'); } catch(e){}
+
+  // Nobody should get stuck here. It closes itself after 5s if they don't.
+  clearPiperTimers();
+  let left = 5;
+  const cnt = document.getElementById('piperCount');
+  cnt.textContent = t().piperAuto(left);
+  piperTick = setInterval(()=>{
+    left--;
+    if (left > 0) cnt.textContent = t().piperAuto(left);
+    else { cnt.textContent = ''; clearInterval(piperTick); piperTick = null; }
+  }, 1000);
+  piperTimer = setTimeout(dismissPiper, 5000);
 }
-document.getElementById('piperDismiss').addEventListener('click', ()=>{
+function dismissPiper(){
+  clearPiperTimers();
+  document.getElementById('piperCount').textContent = '';
   document.getElementById('piperScreen').classList.remove('open');
   document.getElementById('langToggle').hidden = false;
-  document.body.style.overflow='';
-});
+  document.body.style.overflow = '';
+}
+document.getElementById('piperDismiss').addEventListener('click', dismissPiper);
 
 document.getElementById('matchGo').addEventListener('click', ()=>{
   closeMatch();
@@ -1217,7 +1287,7 @@ document.getElementById('matchGo').addEventListener('click', ()=>{
 });
 document.getElementById('matchUndo').addEventListener('click', ()=>{
   const mp = myPickHere(); if (!mp) { closeMatch(); return; }
-  STORE.release(profile.table, mp.charId);
+  STORE.release(mp.charId);
   closeMatch();
   resetDeck();
 });
@@ -1239,7 +1309,7 @@ document.getElementById('undoPickBtn').addEventListener('click', ()=>{
     return;
   }
   disarmUndo();
-  STORE.release(profile.table, mp.charId);
+  STORE.release(mp.charId);
   toast(t().undoDone);
   resetDeck();
 });
