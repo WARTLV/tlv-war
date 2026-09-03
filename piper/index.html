@@ -18,14 +18,25 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.png" sizes="64x64">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- One professional geometric family, Hebrew + Latin, weight does the work — the hallmark of a
+     real product UI (Bumble/Hinge). Replaces the poster-condensed display font. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#08070c; --bg2:#0e0b16; --ink:#ece7f5; --muted:#9a8fb0;
-    --magenta:#C24A8A; --magenta-hot:#ff4fa3; --cyan:#4fd6e0; --violet:#8a5cff;
-    --nope:#6b7a90;
-    --disp:"Bebas Neue","Oswald","Arial Narrow","Roboto Condensed",Impact,sans-serif;
-    --body:"Segoe UI",system-ui,-apple-system,"Assistant",Arial,sans-serif;
-    --ig-bar-h:92px;
+    /* warm dark-purple ground — a premium app in dark mode, not a black void */
+    --bg:#0f0a16; --bg2:#160f20; --ink:#f4eef8; --muted:#a99cb8;
+    --magenta:#C24A8A; --magenta-hot:#ff4d8d; --cyan:#4fd6e0; --violet:#b14dff;
+    --nope:#7d8aa0;
+    /* the confident brand gradient, used on primary actions like a real app's signature */
+    --grad:linear-gradient(135deg,#ff4d8d 0%,#b14dff 100%);
+    /* the curse. Restrained — a symptom, never decoration. */
+    --curse:#A8FF3E;
+    /* one family, many weights */
+    --disp:"Rubik","Heebo","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+    --body:"Rubik","Heebo","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+    --ig-bar-h:54px;
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
@@ -47,11 +58,10 @@
   /* vignette — pushes the eye to the card */
   .vig{position:fixed;inset:0;pointer-events:none;z-index:58;
     background:radial-gradient(120% 80% at 50% 42%, transparent 46%, rgba(0,0,0,.55) 100%)}
-  /* film grain + scanlines — the brand's capture texture, kept from the 16.08 page */
-  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.06;mix-blend-mode:overlay;
+  /* Very faint grain only — the heavy scanlines read as "goth poster", not "professional app".
+     The painted card art carries all the texture the page needs; the chrome stays clean. */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.035;mix-blend-mode:overlay;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");}
-  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:59;opacity:.30;
-    background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.18) 2px 3px);}
 
   /* ================= app shell ================= */
   .app{position:fixed;inset:0;display:flex;flex-direction:column;
@@ -402,6 +412,136 @@
   html[dir=ltr] .ig-bar .arw{animation-name:arwL}
   @keyframes arwL{0%,100%{transform:translateX(0);opacity:.75}50%{transform:translateX(5px);opacity:1}}
   @media (prefers-reduced-motion: reduce){.ig-bar{animation:none}.ig-bar .arw{animation:none}}
+
+  /* ============================================================================
+     REDESIGN [2026-09] — "professional & cursed".
+     The surface is a confident, product-grade dating app (Rubik, one warm
+     gradient, generous radii). The dark fantasy lives entirely in the CONTENT —
+     the painted cards, the Piper. The curse leaks ONLY through --curse, used
+     tiny and matte, never as decoration. These rules come last, so they win.
+     ============================================================================ */
+  body{font-weight:500}
+
+  /* ---- top bar: compact real-app header ---- */
+  .appbar{padding:calc(9px + env(safe-area-inset-top)) 56px 2px}
+  .appbar .brand{font-family:var(--disp);font-weight:800;font-size:19px;letter-spacing:0;text-shadow:none;color:#fff}
+  .appbar .when{font-family:var(--disp);font-weight:600;letter-spacing:.12em;font-size:10.5px;color:var(--muted);margin-top:1px}
+
+  /* ---- profile chip: soft glass pill; matches button carries the brand ---- */
+  .profile-chip{padding:2px 12px 8px}
+  .pc-row{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);
+    border-radius:999px;padding:5px 6px 5px 14px;font-weight:500;color:#e8def0;backdrop-filter:blur(8px)}
+  .pc-row .tbl{font-family:var(--body);font-weight:700;letter-spacing:0;color:var(--cyan)}
+  .pc-row button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#e8def0;font-weight:600}
+  #matchesBtn{background:var(--grad);border:none;color:#fff;font-weight:700;box-shadow:0 3px 12px rgba(255,77,141,.3)}
+
+  /* ---- cards: rounder, deeper, spring in ---- */
+  .card{border-radius:26px;border:1px solid rgba(255,255,255,.07);
+    box-shadow:0 24px 60px rgba(0,0,0,.6), inset 0 2px 0 rgba(255,255,255,.05)}
+  .card[data-depth="0"]{animation:cardIn .4s cubic-bezier(.2,.9,.3,1) both}
+  @keyframes cardIn{from{transform:scale(.94) translateY(14px);opacity:0}to{transform:none;opacity:1}}
+  .card .scrim{background:linear-gradient(to top, rgba(11,7,17,.97) 0%, rgba(11,7,17,.78) 24%, rgba(11,7,17,0) 55%)}
+  .card-info h2{font-family:var(--disp);font-weight:800;letter-spacing:-.01em}
+  .card-info .age{font-family:var(--body);font-weight:500;font-size:clamp(20px,5.4vw,26px);color:#d9cee6}
+  .card-info .cls{font-family:var(--disp);font-weight:700;letter-spacing:.12em;font-size:12px}
+  .tags span{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);font-weight:500;color:#f0e8f6}
+  .card-info .dist{color:var(--muted);font-weight:500}
+
+  /* ---- action row: a designed row, not three grey circles.
+         The LIKE is the loud one and its label names the whole point. ---- */
+  .actions{gap:22px;padding:12px 0 4px;align-items:flex-start}
+  .act{display:flex;flex-direction:column;align-items:center;gap:7px}
+  .act-lbl{font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
+  #lblLike{color:#ff9ac4;font-weight:700}
+  .abtn{border-radius:50%;box-shadow:none;transition:transform .14s cubic-bezier(.2,1.5,.4,1),box-shadow .18s ease,border-color .18s ease}
+  .abtn:active{transform:scale(.86)}
+  .abtn.no{width:58px;height:58px;font-size:23px;background:rgba(255,255,255,.05);
+    border:1.5px solid rgba(125,138,160,.4);color:#aeb8c8}
+  .abtn.no:hover{border-color:var(--nope);color:#fff}
+  .abtn.info{width:46px;height:46px;font-size:18px;background:rgba(255,255,255,.04);
+    border:1.5px solid rgba(255,255,255,.12);color:#c8bcd6;margin-top:6px}
+  .abtn.info:hover{border-color:rgba(255,255,255,.3);color:#fff}
+  .abtn.yes{width:72px;height:72px;font-size:29px;background:var(--grad);border:none;color:#fff;
+    animation:yesPulse 2.8s ease-in-out infinite}
+  @keyframes yesPulse{0%,100%{box-shadow:0 10px 30px rgba(255,77,141,.4),0 0 0 6px rgba(255,77,141,.06)}
+    50%{box-shadow:0 12px 34px rgba(255,77,141,.58),0 0 0 11px rgba(255,77,141,.12)}}
+  .swipe-help{color:var(--muted);font-weight:500;padding:2px 16px 6px}
+
+  /* ---- swipe stamps: cleaner, filled chips ---- */
+  .stamp{font-family:var(--disp);font-weight:800;border-radius:12px;letter-spacing:.02em;border-width:3px}
+  .stamp.like{color:#fff;border-color:#ff4d8d;background:rgba(255,77,141,.16);text-shadow:none}
+  .stamp.nope{color:#cdd6e4;border-color:#7d8aa0;background:rgba(125,138,160,.12)}
+
+  /* ---- primary buttons: the brand gradient, confident ---- */
+  .btn{font-family:var(--body);font-weight:700;text-transform:none;letter-spacing:0;border-radius:14px}
+  .btn.primary,.gate .enter-btn{background:var(--grad);border:none;color:#fff;box-shadow:0 10px 28px rgba(177,77,255,.3)}
+
+  /* ---- gate: cleaner form fields ---- */
+  .gate-card h1{font-family:var(--disp);font-weight:800;letter-spacing:-.01em;text-shadow:0 6px 30px rgba(255,77,141,.35)}
+  .gate-card .gsub{font-family:var(--disp);font-weight:700;letter-spacing:.22em;color:#ff9ac4}
+  .gdate{font-family:var(--disp);font-weight:600;letter-spacing:.08em}
+  .field label{font-weight:600;color:#c2b6d0}
+  .field input,.field select{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);
+    border-radius:14px;font-family:var(--body);font-weight:500}
+  .field input:focus,.field select:focus{border-color:var(--magenta-hot);box-shadow:0 0 0 3px rgba(255,77,141,.18)}
+
+  /* ---- MATCH: the pick moment, brand gradient ---- */
+  .match{background:radial-gradient(760px 560px at 50% 18%, rgba(177,77,255,.30), transparent 60%), #0b0713}
+  .match-eyebrow{font-family:var(--disp);font-weight:700;letter-spacing:.18em;color:#ff9ac4}
+  .match-title{font-family:var(--disp);font-weight:900;letter-spacing:-.01em;color:#ff6aa6;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    text-shadow:none;filter:drop-shadow(0 4px 26px rgba(255,77,141,.55))}
+  .match-photo{border:3px solid #ff4d8d;box-shadow:0 0 40px rgba(255,77,141,.4)}
+  .match-name{font-family:var(--disp);font-weight:800}
+  .match-cls{font-family:var(--disp);font-weight:700;letter-spacing:.13em;color:#ff9ac4}
+  .match-who{font-weight:500}
+  .match-who .tbl{font-family:var(--body);font-weight:700;letter-spacing:0;color:var(--cyan)}
+  .match-confirm-q{font-weight:600;color:#d8cce4}
+
+  /* ---- Instagram: slim, on-palette, no rainbow ---- */
+  .ig-bar{height:var(--ig-bar-h);gap:9px;font-weight:600;font-size:13px;color:#cbbfd8;
+    background:rgba(16,11,24,.94);backdrop-filter:blur(10px);
+    border-top:1px solid rgba(255,255,255,.08);box-shadow:none;animation:none}
+  .ig-bar .ig-badge{width:24px;height:24px;border-radius:7px;font-size:14px;background:var(--grad);color:#fff}
+  .ig-bar .arw{font-size:14px;opacity:.55}
+  .ig-bar b{color:#fff;font-weight:700}
+
+  /* ---- floating chrome ---- */
+  .lang-toggle{font-family:var(--disp);font-weight:700;letter-spacing:.02em;
+    background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#efe7f6;backdrop-filter:blur(8px)}
+  .mute-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);backdrop-filter:blur(8px)}
+
+  /* ---- toast ---- */
+  .toast{border:1px solid rgba(255,77,141,.5);background:rgba(24,16,32,.98);font-weight:500;border-radius:16px}
+
+  /* ---- overlays: Rubik weights, no wide poster tracking ---- */
+  .matches-title,.deck-msg h3,.pf-head h2,.pass-name{font-family:var(--disp);font-weight:800;letter-spacing:-.005em}
+  .pf-head h2{color:#fff}
+  .pf-cls{font-family:var(--disp);font-weight:700;letter-spacing:.14em}
+  .pf-sec h4{font-family:var(--disp);font-weight:700;letter-spacing:.06em}
+  .redflag b{font-family:var(--disp);font-weight:700;letter-spacing:.08em;color:var(--magenta-hot)}
+  .deck-msg .pickname{font-family:var(--disp);font-weight:800;letter-spacing:-.01em;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+  .pickedEyebrow,.match-eyebrow{text-transform:none}
+  .mrow{border-radius:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08)}
+  .mrow .mname{font-family:var(--disp);font-weight:800;letter-spacing:0}
+  .mrow .mcls{font-family:var(--disp);font-weight:700;letter-spacing:.1em}
+
+  /* ---- the pass (door pass) ---- */
+  .pass{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:18px}
+  .pass-level{color:var(--cyan);font-weight:700}
+  .pass-note{font-weight:500}
+
+  /* ---- the curse, restrained: matte green, no bloom ---- */
+  .piper{background:radial-gradient(700px 520px at 50% 12%, rgba(168,255,62,.07), transparent 62%), rgba(6,7,5,.99)}
+  .piper-photo{border:1px solid rgba(168,255,62,.4);box-shadow:0 20px 50px rgba(0,0,0,.6)}
+  .piper-name{font-family:var(--disp);font-weight:800;letter-spacing:0;color:#eaf5da;text-shadow:none}
+  .piper-eyebrow{font-family:var(--disp);font-weight:700;letter-spacing:.16em;color:var(--curse);opacity:.85}
+  .piper-cls{font-family:var(--disp);font-weight:700;letter-spacing:.18em}
+  .piper .btn{background:rgba(168,255,62,.09);border:1px solid rgba(168,255,62,.5);color:#dff0c4}
+  .mrow.is-piper{background:rgba(13,18,7,.72);border-color:rgba(168,255,62,.28)}
+  @media (prefers-reduced-motion:reduce){.abtn.yes,.card[data-depth="0"]{animation:none}}
+
 </style>
 </head>
 <body>
@@ -474,9 +614,9 @@
   </div>
 
   <div class="actions" id="deckActions">
-    <button class="abtn no"   id="btnNope" type="button" aria-label="pass">✕</button>
-    <button class="abtn info" id="btnInfo" type="button" aria-label="info">ⓘ</button>
-    <button class="abtn yes"  id="btnLike" type="button" aria-label="pick">♥</button>
+    <div class="act"><button class="abtn no"   id="btnNope" type="button" aria-label="pass">✕</button><span class="act-lbl" id="lblNope"></span></div>
+    <div class="act"><button class="abtn info" id="btnInfo" type="button" aria-label="info">ⓘ</button><span class="act-lbl" id="lblInfo"></span></div>
+    <div class="act"><button class="abtn yes"  id="btnLike" type="button" aria-label="pick">♥</button><span class="act-lbl" id="lblLike"></span></div>
   </div>
   <p class="swipe-help" id="swipeHelp"></p>
 </div>
@@ -601,7 +741,8 @@ const UI = {
     passName:"השם שלך", passLevel:"רמה",
     passNote:"הציגו את המסך הזה בכניסה",
     editBtn:"החלף",
-    swipeHelp:"החליקו ימינה כדי לבחור · שמאלה כדי לדלג",
+    swipeHelp:"החליקו ימינה על הדמות שאיתה תשחקו · שמאלה כדי לדלג",
+    actNope:"דלג", actInfo:"מידע", actLike:"זו הדמות שלי",
     tapHint:"👆 נגיעה בתמונה — כל הפרטים על הדמות",
     emptyTitle:"עברת על כולם",
     emptyBody:"דילגת על כל הקאסט. אף אחד לא נעלב — אפשר לעבור שוב.",
@@ -661,7 +802,8 @@ const UI = {
     passName:"Your name", passLevel:"Level",
     passNote:"Show this screen at the door",
     editBtn:"Change",
-    swipeHelp:"Swipe right to pick · left to pass",
+    swipeHelp:"Swipe right on the character you'll play · left to pass",
+    actNope:"Pass", actInfo:"Details", actLike:"Play as",
     tapHint:"👆 Tap the photo — everything about this character",
     emptyTitle:"That's everyone",
     emptyBody:"You passed on the whole cast. Nobody took it personally — go around again.",
@@ -730,7 +872,8 @@ function applyLang(lang){
   document.getElementById('fName').placeholder = T.namePlaceholder;
   set('appBrand', T.brand);      set('appDate', T.dateLine);
   set('editProfile', T.editBtn); set('swipeHelp', T.swipeHelp);
-  set('emptyTitle', T.emptyTitle); set('emptyBody', T.emptyBody); set('restart', T.restart);
+  set('emptyTitle', T.emptyTitle);
+  set('lblNope', T.actNope); set('lblInfo', T.actInfo); set('lblLike', T.actLike); set('emptyBody', T.emptyBody); set('restart', T.restart);
   set('restartBtn', T.restart);
   set('pickedEyebrow', T.pickedEyebrow); set('pickedBody', T.pickedBody);
   set('undoPickBtn', T.undoPick);
