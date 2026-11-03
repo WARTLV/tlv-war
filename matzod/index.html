@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>מצוד בסנטר · OY VEY</title>
+<meta name="description" content="תיק 13/11 · בחרו זהות כיסוי להרפתקת OY VEY בדיזנגוף סנטר.">
+<meta property="og:title" content="מצוד בסנטר · בחרו זהות כיסוי">
+<meta property="og:description" content="תשעה תריסים בסנטר הסגור. מאחורי כל אחד — זהות שתיכנסו אליה.">
+<meta property="og:image" content="https://wartlv.github.io/tlv-war/matzod/share.jpg">
+<meta property="og:url" content="https://wartlv.github.io/tlv-war/matzod/">
+<meta name="theme-color" content="#0b1118">
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Karantina:wght@400;700&family=Secular+One&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0b1118; --ink2:#111b25; --ink3:#1a2835; --line:#263b48;
+  --cyan:#4fd6e8; --cyan-dim:#2a7f8c; --blue:#2268c8; --pink:#dc4e8e;
+  --cream:#f0e9d8; --muted:#8fa3ad; --paper:#cdc9bf; --paper2:#bdb8ad; --paper-ink:#141a20;
+  --disp:"Karantina",sans-serif; --body:"Secular One","Rubik",sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink);color:var(--cream);font-family:var(--body);-webkit-tap-highlight-color:transparent}
+body{min-height:100dvh;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+img{display:block;max-width:100%}
+.mono{font-family:var(--mono);letter-spacing:.06em}
+.hidden{display:none!important}
+
+/* ---------- world: closed mall at night, spiral ramp bands ---------- */
+.world{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+  background:radial-gradient(120% 70% at 50% 0%,#14324a 0%,#0d1a26 45%,var(--ink) 80%)}
+.world svg{position:absolute;left:50%;top:-6%;width:220%;max-width:2000px;transform:translateX(-50%);opacity:.55}
+.world::after{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+
+.app{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:0 16px 120px}
+
+/* ---------- top bar ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 0 6px}
+.top img{height:30px;width:auto}
+.top-actions{display:flex;gap:8px;align-items:center}
+.chip{border:1px solid var(--line);background:rgba(11,17,24,.7);border-radius:999px;padding:6px 12px;font-size:13px}
+.chip:hover,.chip:focus-visible{border-color:var(--cyan);outline:none}
+.chip.pass-btn{border-color:var(--cyan);color:var(--cyan)}
+
+/* ---------- headline ---------- */
+.case-no{font-family:var(--mono);font-size:12px;color:var(--cyan);letter-spacing:.18em;margin:18px 0 0}
+h1{font-family:var(--disp);font-weight:700;font-style:italic;font-size:clamp(64px,19vw,128px);line-height:.82;margin:6px 0 0;letter-spacing:-.01em}
+h1 .cut{position:relative;display:inline-block}
+h1 .cut::after{content:"";position:absolute;inset:auto 0 30% 0;height:3px;background:var(--ink);box-shadow:0 -9px 0 var(--ink),0 9px 0 var(--ink);opacity:.9}
+.lede{font-size:16px;line-height:1.55;color:#d7dfe2;margin:14px 0 0;max-width:34em}
+.lede b{color:var(--cream)}
+.where{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin:12px 0 0;letter-spacing:.04em}
+
+/* ---------- gate: recruitment form on a paper file ---------- */
+.file{position:relative;margin:26px 0 0;background:var(--paper);color:var(--paper-ink);border-radius:3px;
+  padding:26px 20px 22px;box-shadow:0 18px 50px rgba(0,0,0,.55);transform:rotate(-.6deg)}
+.file::before{content:"";position:absolute;top:-14px;inset-inline-start:22px;width:170px;height:26px;background:var(--paper2);border-radius:4px 4px 0 0}
+.file-tab{position:absolute;top:-11px;inset-inline-start:32px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:#3d464d}
+.stamp{position:absolute;inset-inline-end:14px;top:14px;border:3px solid var(--pink);color:var(--pink);font-family:var(--disp);
+  font-weight:700;font-size:26px;padding:0 10px;transform:rotate(8deg);opacity:.85;line-height:1.25}
+.file h2{font-family:var(--disp);font-size:44px;line-height:.9;margin:0 0 6px;max-width:70%}
+.file p{margin:0 0 16px;font-size:14.5px;line-height:1.5;color:#2c343a}
+.field{margin:0 0 14px}
+.field label,.field legend{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;color:#4a535a;margin:0 0 6px;padding:0}
+.field input{width:100%;font:inherit;font-size:20px;background:transparent;border:0;border-bottom:2px dashed #59636b;padding:6px 2px;color:var(--paper-ink);border-radius:0}
+.field input:focus{outline:none;border-bottom-color:var(--blue)}
+fieldset.field{border:0;padding:0}
+.levels{display:flex;gap:8px;flex-wrap:wrap}
+.levels label{flex:1 1 auto;margin:0;position:relative}
+.levels input{position:absolute;opacity:0;inset:0}
+.levels span{display:block;text-align:center;border:2px solid #59636b;padding:8px 6px;font-family:var(--body);font-size:14px;letter-spacing:0;color:var(--paper-ink)}
+.levels input:checked+span{background:var(--paper-ink);color:var(--paper);border-color:var(--paper-ink)}
+.levels input:focus-visible+span{outline:2px solid var(--blue);outline-offset:2px}
+.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:2px;padding:14px 22px;font-family:var(--disp);font-weight:700;font-size:26px;line-height:1;letter-spacing:.02em}
+.btn-ink{background:var(--paper-ink);color:var(--cream);width:100%}
+.btn-cyan{background:var(--cyan);color:var(--ink)}
+.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--cream);font-family:var(--body);font-size:15px;font-weight:400;padding:11px 18px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.err{color:var(--pink);font-size:13px;min-height:18px;margin:-4px 0 8px}
+
+/* ---------- the shutter wall ---------- */
+.wall-head{margin:26px 0 4px}
+.wall-head h2{font-family:var(--disp);font-size:52px;line-height:.9;margin:0}
+.wall-head p{margin:6px 0 0;font-size:14px;color:var(--muted)}
+.floor{margin:18px 0 0}
+.floor-label{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.2em;margin:0 0 8px}
+.floor-label::after{content:"";flex:1;height:10px;border-radius:50%;border-top:2px solid var(--cyan-dim);transform:translateY(4px)}
+.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+html[lang=en] .sign{min-height:58px;align-items:center}
+html[lang=en] .sign .t{font-size:clamp(19px,5.4vw,28px)}
+.store{position:relative;display:block;width:100%;padding:0;border:0;background:none;text-align:center}
+.store:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.sign{position:relative;z-index:3;background:#0e161e;border:1px solid var(--line);border-bottom:3px solid var(--cyan);
+  padding:6px 4px 4px;display:flex;align-items:baseline;justify-content:center;gap:6px;min-height:42px}
+.sign .n{font-family:var(--mono);font-size:11px;color:var(--cyan)}
+.sign .t{font-family:var(--disp);font-weight:700;font-size:clamp(22px,6.4vw,32px);line-height:1;font-style:italic}
+.bay{position:relative;aspect-ratio:3/4;overflow:hidden;background:#05090d;border:1px solid var(--line);border-top:0}
+.bay img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:28% 18%;filter:saturate(1.05)}
+.shutter{position:absolute;inset:0;z-index:2;transition:transform .55s cubic-bezier(.6,.05,.3,1);
+  background:
+    linear-gradient(90deg,rgba(0,0,0,.55),transparent 12%,transparent 88%,rgba(0,0,0,.55)),
+    repeating-linear-gradient(180deg,#3a4a56 0 2px,#22303b 2px 9px,#17222b 9px 12px);
+  box-shadow:inset 0 -14px 0 #0d151c}
+.shutter::before{content:"";position:absolute;left:50%;bottom:22px;width:34%;height:7px;transform:translateX(-50%);
+  background:#0d151c;border-radius:2px;box-shadow:0 0 0 1px #4b5d6a}
+.shutter::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(79,214,232,.14),transparent 30%)}
+.store:hover .shutter{transform:translateY(-6%)}
+.store.open .shutter{transform:translateY(-101%)}
+.tag-taken,.tag-mine{position:absolute;z-index:4;left:50%;top:52%;transform:translate(-50%,-50%) rotate(-7deg);white-space:nowrap;
+  font-family:var(--disp);font-weight:700;font-size:22px;line-height:1.1;padding:2px 10px;max-width:92%;overflow:hidden;text-overflow:ellipsis}
+.tag-taken{background:var(--paper);color:var(--paper-ink);border:2px solid var(--paper-ink)}
+.tag-mine{background:var(--cyan);color:var(--ink);top:auto;bottom:8px;transform:translateX(-50%) rotate(-3deg)}
+.store.taken .sign{opacity:.55}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:18px 0 0;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;margin-inline-end:6px;vertical-align:-1px}
+
+/* ---------- overlays ---------- */
+.ov{position:fixed;inset:0;z-index:50;display:none;background:rgba(4,8,12,.86);backdrop-filter:blur(3px);overflow:auto;-webkit-overflow-scrolling:touch}
+.ov.open{display:block;animation:fade .2s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.close{position:fixed;top:12px;inset-inline-end:12px;z-index:60;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--ink);font-size:22px;line-height:1}
+
+/* dossier = paper case file */
+.dossier{max-width:560px;margin:56px auto 40px;padding:0 16px}
+.dfile{position:relative;background:var(--paper);color:var(--paper-ink);border-radius:3px;box-shadow:0 24px 70px rgba(0,0,0,.6);padding:18px 18px 22px}
+.dhead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:#48525a;border-bottom:2px solid var(--paper-ink);padding-bottom:8px}
+.dphoto{position:relative;margin:14px 0 0;background:#05090d;transform:rotate(1deg);box-shadow:0 8px 18px rgba(0,0,0,.35);border:6px solid #e9e5dc}
+.dphoto img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:30% 20%}
+.dphoto .clip{position:absolute;top:-14px;inset-inline-start:24px;width:18px;height:46px;border:3px solid #8a949b;border-radius:9px}
+.dphoto .redact{position:absolute;inset-inline-start:10px;bottom:10px;background:var(--paper-ink);color:var(--paper);font-family:var(--mono);font-size:10.5px;padding:3px 7px;letter-spacing:.12em}
+.dtitle{margin:16px 0 0}
+.dtitle .en{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--blue)}
+.dtitle .nm{font-family:var(--disp);font-size:40px;font-weight:700;line-height:.95}
+.dtitle .role{font-family:var(--disp);font-weight:700;font-style:italic;font-size:76px;line-height:.82;margin:2px 0 0}
+.dtitle .cls{font-size:15px;color:#3a434a;margin:6px 0 0}
+.dsec{margin:16px 0 0;border-top:1px dashed #6d767c;padding-top:12px}
+.dsec h3{margin:0 0 6px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:#4a535a;font-weight:600}
+.dsec p{margin:0;font-size:16px;line-height:1.55}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.facts div{background:rgba(20,26,32,.06);padding:8px 10px;border-inline-start:3px solid var(--paper-ink);font-size:14.5px;line-height:1.4}
+.facts div.risk{border-color:var(--pink)}
+.facts b{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:#4a535a;font-weight:600;margin-bottom:2px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{border:1.5px solid var(--paper-ink);padding:2px 9px;font-size:14px}
+.ability{background:var(--paper-ink);color:var(--cream);padding:12px 14px;margin:0}
+.ability .an{font-family:var(--disp);font-weight:700;font-style:italic;font-size:32px;line-height:1}
+.ability .ae{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--cyan);margin:2px 0 6px}
+.ability p{font-size:15px;line-height:1.5;color:#dfe6e8}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px}
+.stat .lbl{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px}
+.stat .lbl small{font-family:var(--mono);font-size:10.5px;color:#5a646b}
+.stat .v{font-family:var(--mono);font-size:24px;font-weight:600;line-height:1.1}
+.stat.hi .v{color:#0f7f90}.stat.lo .v{color:#b53b73}
+.bar{display:flex;gap:2px;margin-top:3px}
+.bar i{flex:1;height:6px;background:#a9a49a}
+.bar i.on{background:var(--paper-ink)}
+.stat.hi .bar i.on{background:#1a9fb2}.stat.lo .bar i.on{background:var(--pink)}
+.vitals{display:flex;gap:18px;margin-top:12px;font-family:var(--mono);font-size:13px;color:#3a434a}
+.vitals b{font-size:24px;color:var(--paper-ink);margin-inline-start:6px}
+.link-note{display:flex;gap:10px;align-items:center;background:rgba(34,104,200,.1);border:1.5px dashed var(--blue);padding:8px;font-size:14.5px}
+.link-note img{width:46px;height:46px;object-fit:cover;object-position:30% 18%;flex:0 0 auto}
+.link-note button{background:none;border:0;padding:0;color:var(--blue);text-decoration:underline;font-size:14.5px}
+.dcta{position:sticky;bottom:0;margin:18px -18px -22px;padding:14px 18px 18px;background:linear-gradient(180deg,rgba(205,201,191,0),var(--paper) 22px);box-shadow:0 -1px 0 rgba(20,26,32,.08)}
+.dcta .btn{width:100%}
+.more{display:flex;flex-direction:column;align-items:center;gap:2px;margin:0 0 10px;padding:0;width:100%;background:none;border:0;
+  color:var(--paper-ink);font-size:15px;transition:opacity .25s,transform .25s}
+.more .arr{display:block;width:30px;height:30px;border-radius:50%;background:var(--paper-ink);color:var(--paper);
+  font-size:18px;line-height:30px;animation:nudge 1.3s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+.dossier.scrolled .more{opacity:0;transform:translateY(8px);pointer-events:none;height:0;margin:0;overflow:hidden}
+.dphoto img{aspect-ratio:1/1}
+.dcta .taken-note{text-align:center;font-size:15px;padding:12px;border:2px solid var(--paper-ink)}
+
+/* side question */
+.sidebox{max-width:460px;margin:12vh auto 40px;padding:0 16px;text-align:center}
+.sidebox .case-no{margin:0}
+.sidebox h2{font-family:var(--disp);font-size:54px;line-height:.88;margin:10px 0 0}
+.sidebox p{color:#c9d3d7;font-size:15.5px;line-height:1.55;margin:12px 0 0}
+.sides{display:grid;gap:10px;margin:22px 0 0}
+.side{border:2px solid var(--line);background:var(--ink2);padding:14px 16px;text-align:start;border-radius:2px}
+.side b{display:block;font-family:var(--disp);font-size:32px;line-height:1}
+.side span{font-size:13.5px;color:var(--muted)}
+.side.police{border-color:var(--cyan)}.side.police b{color:var(--cyan)}
+.side.org{border-color:var(--pink)}.side.org b{color:var(--pink)}
+.side:hover,.side:focus-visible{background:var(--ink3);outline:none}
+.secret{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:16px 0 0;letter-spacing:.06em}
+
+/* agent pass */
+.passwrap{max-width:440px;margin:60px auto 40px;padding:0 16px}
+.pass{position:relative;background:var(--ink2);border:1px solid var(--line);border-top:4px solid var(--cyan);padding:18px;overflow:hidden}
+.pass .stamp{position:absolute;top:64px;inset-inline-end:14px;font-size:30px;animation:none}
+.pass.fresh .stamp{animation:thud .5s cubic-bezier(.2,1.6,.4,1) .35s both}
+@keyframes thud{from{transform:rotate(8deg) scale(2.4);opacity:0}to{transform:rotate(8deg) scale(1);opacity:.9}}
+.pass-top{display:flex;justify-content:space-between;align-items:center}
+.pass-top img{height:24px}
+.pass-photo{display:grid;grid-template-columns:120px 1fr;gap:14px;margin:16px 0 0;align-items:end}
+.pass-photo img{width:120px;aspect-ratio:3/4;object-fit:cover;object-position:28% 18%;border:1px solid var(--line)}
+.pass .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--muted)}
+.pass .agent{font-family:var(--disp);font-size:40px;line-height:.95;font-weight:700;word-break:break-word}
+.pass .cover{font-family:var(--disp);font-size:52px;line-height:.85;font-style:italic;font-weight:700;color:var(--cyan)}
+.pass .covername{font-size:15px;color:#c9d3d7}
+.pass-rows{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 0;border-top:1px dashed var(--line);padding-top:12px}
+.pass-rows div{font-size:14.5px}
+.pass .sideval.police{color:var(--cyan)}.pass .sideval.org{color:var(--pink)}
+.barcode{height:34px;margin:14px 0 0;background:repeating-linear-gradient(90deg,var(--cream) 0 2px,transparent 2px 4px,var(--cream) 4px 5px,transparent 5px 9px,var(--cream) 9px 12px,transparent 12px 14px);opacity:.75}
+.pass-note{font-size:13px;color:var(--muted);margin:10px 0 0;text-align:center}
+.pass-actions{display:grid;gap:9px;margin:16px 0 0}
+.pass-actions .btn{width:100%}
+.btn-wa{background:#25d366;color:#08170e}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);z-index:90;background:var(--cream);color:var(--ink);padding:10px 16px;font-size:14.5px;opacity:0;transition:.25s;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.foot{margin:34px 0 0;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.7}
+.foot a{color:var(--cyan)}
+
+@media (min-width:640px){
+  .row{gap:16px}
+  .file{padding:32px 30px 26px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="world" aria-hidden="true">
+  <svg viewBox="0 0 1600 1400" fill="none">
+    <ellipse cx="800" cy="260" rx="760" ry="170" stroke="#4fd6e8" stroke-width="10" opacity=".35"/>
+    <ellipse cx="800" cy="520" rx="720" ry="160" stroke="#2268c8" stroke-width="26" opacity=".45"/>
+    <ellipse cx="800" cy="780" rx="690" ry="150" stroke="#4fd6e8" stroke-width="8" opacity=".25"/>
+    <ellipse cx="800" cy="1040" rx="660" ry="140" stroke="#2268c8" stroke-width="22" opacity=".35"/>
+    <ellipse cx="800" cy="1290" rx="630" ry="130" stroke="#dc4e8e" stroke-width="4" opacity=".25"/>
+    <rect x="250" y="0" width="34" height="1400" fill="#0b1118" opacity=".7"/>
+    <rect x="1310" y="0" width="34" height="1400" fill="#0b1118" opacity=".7"/>
+  </svg>
+</div>
+
+<main class="app">
+  <header class="top">
+    <img src="logo.png" alt="Oy.Vey">
+    <div class="top-actions">
+      <button class="chip pass-btn hidden" id="openPass" data-t="myPass"></button>
+      <button class="chip" id="langBtn" aria-label="Language">EN</button>
+    </div>
+  </header>
+
+  <p class="case-no" data-t="caseNo"></p>
+  <h1 data-t="h1"></h1>
+  <p class="lede" data-t="lede"></p>
+  <p class="where mono" data-t="where"></p>
+
+  <!-- GATE -->
+  <section id="gate">
+    <form class="file" id="gateForm" novalidate>
+      <span class="file-tab" data-t="fileTab"></span>
+      <span class="stamp" data-t="stampSecret"></span>
+      <h2 data-t="gateH"></h2>
+      <p data-t="gateP"></p>
+      <div class="field">
+        <label for="nameIn" data-t="nameLbl"></label>
+        <input id="nameIn" maxlength="28" autocomplete="given-name" required>
+      </div>
+      <fieldset class="field">
+        <legend data-t="lvlLbl"></legend>
+        <div class="levels">
+          <label><input type="radio" name="lvl" value="new"><span data-t="lvlNew"></span></label>
+          <label><input type="radio" name="lvl" value="some"><span data-t="lvlSome"></span></label>
+          <label><input type="radio" name="lvl" value="vet"><span data-t="lvlVet"></span></label>
+        </div>
+      </fieldset>
+      <div class="err" id="gateErr" role="alert"></div>
+      <button class="btn btn-ink" type="submit" data-t="gateBtn"></button>
+    </form>
+  </section>
+
+  <!-- WALL -->
+  <section id="wall" class="hidden">
+    <div class="wall-head">
+      <h2 data-t="wallH"></h2>
+      <p data-t="wallP"></p>
+    </div>
+    <div id="floors"></div>
+    <div class="legend">
+      <span><i style="background:#3a4a56"></i><span data-t="lgClosed"></span></span>
+      <span><i style="background:var(--paper)"></i><span data-t="lgTaken"></span></span>
+      <span><i style="background:var(--cyan)"></i><span data-t="lgMine"></span></span>
+    </div>
+  </section>
+
+  <p class="foot"><span data-t="foot"></span><br><a href="https://www.instagram.com/oy.vey.roll/" target="_blank" rel="noopener">@oy.vey.roll</a></p>
+</main>
+
+<!-- DOSSIER -->
+<div class="ov" id="dossierOv" role="dialog" aria-modal="true" aria-labelledby="dName">
+  <button class="close" data-close aria-label="סגירה">×</button>
+  <div class="dossier"><article class="dfile" id="dossier"></article></div>
+</div>
+
+<!-- SIDE QUESTION -->
+<div class="ov" id="sideOv" role="dialog" aria-modal="true" aria-labelledby="sideH">
+  <button class="close" data-close aria-label="סגירה">×</button>
+  <div class="sidebox">
+    <p class="case-no" data-t="sideKicker"></p>
+    <h2 id="sideH" data-t="sideH"></h2>
+    <p data-t="sideP"></p>
+    <div class="sides">
+      <button class="side police" data-side="police"><b data-t="sPolice"></b><span data-t="sPoliceSub"></span></button>
+      <button class="side org" data-side="org"><b data-t="sOrg"></b><span data-t="sOrgSub"></span></button>
+      <button class="side" data-side="open"><b data-t="sOpen"></b><span data-t="sOpenSub"></span></button>
+    </div>
+    <p class="secret" data-t="sideSecret"></p>
+  </div>
+</div>
+
+<!-- PASS -->
+<div class="ov" id="passOv" role="dialog" aria-modal="true" aria-labelledby="passAgent">
+  <button class="close" data-close aria-label="סגירה">×</button>
+  <div class="passwrap" id="passWrap"></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="characters.js?v=1"></script>
+<script src="store.js?v=1"></script>
+<script>
+(function () {
+  const CAST = window.OY_VEY_CAST, S = window.OY_VEY_STORE;
+  const URL_SELF = "https://wartlv.github.io/tlv-war/matzod/";
+  const TICKET_URL = "";            // ← put the ticket link here; the button stays hidden while empty
+  const STAT_EN = ["STR","DEX","CON","INT","WIS","CHA"];
+
+  const T = {
+    he: {
+      caseNo:"תיק 13/11 · דיזנגוף סנטר · אחרי הסגירה",
+      h1:'מצוד <span class="cut">בסנטר</span>',
+      lede:"שלוש גופות נמצאו בדיזנגוף סנטר. המשטרה בטוחה שמאחורי זה עומד <b>ארגון מחאה קסום</b>, והיא צריכה אנשים מבפנים. אתם נכנסים בזהות כיסוי, מוצאים את המנהיגים, ומגלים שהמציאות מסובכת יותר.",
+      where:"3.11 · 19:00 · בית רומנו, דרך יפו 9",
+      fileTab:"טופס גיוס · 13/11", stampSecret:"חסוי",
+      gateH:"טופס גיוס לסוכן סמוי",
+      gateP:"ממלאים שני פרטים, ואז יורדים לסנטר הסגור לבחור זהות כיסוי.",
+      nameLbl:"שם הסוכן/ית", lvlLbl:"ניסיון במבוכים ודרקונים",
+      lvlNew:"פעם ראשונה", lvlSome:"שיחקתי קצת", lvlVet:"ותיק/ה",
+      gateBtn:"חתימה על התיק", errName:"צריך שם כדי לפתוח תיק.", errLvl:"בחרו רמת ניסיון.",
+      wallH:"בחרו זהות כיסוי",
+      wallP:"תשעה תריסים בסנטר הסגור. נגיעה פותחת תריס ואת התיק שמאחוריו.",
+      floor:(n)=>`קומה ${n}`,
+      lgClosed:"פנוי", lgTaken:"נלקח", lgMine:"שלך",
+      takenBy:(n)=>`נלקח · ${n}`, mine:"הזהות שלך",
+      myPass:"התעודה שלי",
+      dFile:(n)=>`תיק ${n}/09`, dClass:"סיווג: חסוי", photoTag:"צולם אחרי הסגירה",
+      secBio:"רקע", secKnown:"מה ידוע", factQuote:"קו אופי", factRisk:"נקודת תורפה",
+      secFocus:"תחומים", secAbility:"יכולת מרכזית", secStats:"נתונים",
+      hp:"חיים", ac:"הגנה",
+      linkNote:"קשר ידוע:", linkSister:(n)=>`אחיות מאומצות עם ${n}`, linkOpen:"לתיק",
+      more:"המשך התיק למטה · גללו",
+      take:"זו הזהות שלי", takeSwitch:"להחליף לזהות הזאת",
+      takenNote:(n)=>`הזהות הזאת כבר נלקחה על ידי ${n}.`, isMine:"זו הזהות שלך. לתעודה ←",
+      confirmSwitch:(a,b)=>`להחליף מ${a} ל${b}?`,
+      sideKicker:"שאלה אחרונה · לא נכנסת לדו״ח",
+      sideH:"ואם המציאות מסובכת יותר?",
+      sideP:"אתם נכנסים לארגון בשליחות המשטרה. אבל אולי הם צודקים. בסוף, לצד מי תעמדו?",
+      sPolice:"המשטרה", sPoliceSub:"באתי לעשות את העבודה.",
+      sOrg:"הארגון", sOrgSub:"אני כבר מבין אותם יותר מדי.",
+      sOpen:"עוד לא החלטתי", sOpenSub:"נראה מה יקרה בפנים.",
+      sideSecret:"רק מנחה המשחק רואה את התשובה. אפשר לשנות אותה בערב עצמו.",
+      passKicker:"תעודת סוכן סמוי", passAgent:"סוכן/ית", passCover:"זהות כיסוי",
+      passSide:"נטייה", passLvl:"ניסיון", stampOk:"אושר",
+      sideName:{police:"המשטרה",org:"הארגון",open:"פתוח"},
+      lvlName:{new:"פעם ראשונה",some:"קצת",vet:"ותיק/ה"},
+      passNote:"מציגים את המסך הזה בכניסה. 3.11 · 19:00 · בית רומנו",
+      share:"שליחה לחבר/ה בוואטסאפ", tickets:"כרטיסים", change:"להחליף זהות", back:"חזרה לתריסים",
+      shareText:(t)=>`לקחתי זהות כיסוי: ${t}. מצוד בסנטר, הרפתקת OY VEY. בחרו לכם זהות לפני שייגמרו:`,
+      released:"הזהות שוחררה. בחרו אחרת.",
+      foot:"OY VEY · הרפתקאות D&D חיות בתל אביב · הבחירה נשמרת בטלפון הזה",
+    },
+    en: {
+      caseNo:"CASE 13/11 · DIZENGOFF CENTER · AFTER HOURS",
+      h1:'Center <span class="cut">Manhunt</span>',
+      lede:"Three bodies were found in Dizengoff Center. The police are sure a <b>magical protest movement</b> is behind it, and they need people on the inside. You go in under a cover identity, find the leaders, and learn that reality is more complicated.",
+      where:"3.11 · 19:00 · Beit Romano, Derech Yafo 9",
+      fileTab:"RECRUITMENT · 13/11", stampSecret:"CLASSIFIED",
+      gateH:"Undercover recruitment form",
+      gateP:"Two details, then down into the closed mall to choose a cover identity.",
+      nameLbl:"AGENT NAME", lvlLbl:"D&D EXPERIENCE",
+      lvlNew:"First time", lvlSome:"Played a bit", lvlVet:"Veteran",
+      gateBtn:"Sign the file", errName:"We need a name to open a file.", errLvl:"Pick an experience level.",
+      wallH:"Choose a cover",
+      wallP:"Nine shutters in the closed mall. Tap one to raise it and open the file behind it.",
+      floor:(n)=>`FLOOR ${n}`,
+      lgClosed:"Open", lgTaken:"Taken", lgMine:"Yours",
+      takenBy:(n)=>`Taken · ${n}`, mine:"Your cover",
+      myPass:"My pass",
+      dFile:(n)=>`FILE ${n}/09`, dClass:"CLASSIFIED", photoTag:"SHOT AFTER HOURS",
+      secBio:"BACKGROUND", secKnown:"WHAT WE KNOW", factQuote:"TRAIT", factRisk:"WEAK SPOT",
+      secFocus:"FIELDS", secAbility:"KEY ABILITY", secStats:"STATS",
+      hp:"HP", ac:"AC",
+      linkNote:"Known link:", linkSister:(n)=>`adopted sister of ${n}`, linkOpen:"Open file",
+      more:"The full file continues below · scroll",
+      take:"This is my cover", takeSwitch:"Switch to this cover",
+      takenNote:(n)=>`This cover was already taken by ${n}.`, isMine:"This is your cover. To your pass →",
+      confirmSwitch:(a,b)=>`Switch from ${a} to ${b}?`,
+      sideKicker:"ONE LAST QUESTION · OFF THE RECORD",
+      sideH:"What if it's more complicated?",
+      sideP:"You're going into the movement for the police. But maybe they're right. In the end, whose side are you on?",
+      sPolice:"The police", sPoliceSub:"I came to do the job.",
+      sOrg:"The movement", sOrgSub:"I already get them a little too well.",
+      sOpen:"Undecided", sOpenSub:"Let's see what happens inside.",
+      sideSecret:"Only the game master sees this. You can change it on the night.",
+      passKicker:"UNDERCOVER AGENT PASS", passAgent:"Agent", passCover:"Cover identity",
+      passSide:"Leaning", passLvl:"Experience", stampOk:"APPROVED",
+      sideName:{police:"Police",org:"Movement",open:"Open"},
+      lvlName:{new:"First time",some:"Some",vet:"Veteran"},
+      passNote:"Show this screen at the door. 3.11 · 19:00 · Beit Romano",
+      share:"Send to a friend on WhatsApp", tickets:"Tickets", change:"Change cover", back:"Back to the shutters",
+      shareText:(t)=>`I took my cover: ${t}. Center Manhunt, an OY VEY adventure. Pick yours before they're gone:`,
+      released:"Cover released. Pick another.",
+      foot:"OY VEY · live D&D adventures in Tel Aviv · your pick is saved on this phone",
+    },
+  };
+
+  let lang = (()=>{ try { return localStorage.getItem("oyvey_lang") || "he"; } catch(e){ return "he"; } })();
+  if (lang !== "he" && lang !== "en") lang = "he";
+  const t = (k) => T[lang][k];
+  const $ = (s, r=document) => r.querySelector(s);
+  const byId = (id) => CAST.find(c => c.id === id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+
+  let lastFocus = null, pendingId = null;
+
+  function applyLang() {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "he" ? "rtl" : "ltr";
+    document.querySelectorAll("[data-t]").forEach(el => {
+      const v = t(el.dataset.t);
+      if (typeof v === "string") el.innerHTML = v;
+    });
+    $("#langBtn").textContent = lang === "he" ? "EN" : "עב";
+    document.querySelectorAll("[data-close]").forEach(b => b.setAttribute("aria-label", lang === "he" ? "סגירה" : "Close"));
+    renderWall();
+    if ($("#dossierOv").classList.contains("open") && pendingId) renderDossier(pendingId);
+    if ($("#passOv").classList.contains("open")) renderPass(false);
+  }
+
+  /* ---------- gate ---------- */
+  $("#gateForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = $("#nameIn").value.trim();
+    const lvl = (document.querySelector('input[name="lvl"]:checked') || {}).value;
+    if (!name) { $("#gateErr").textContent = t("errName"); $("#nameIn").focus(); return; }
+    if (!lvl) { $("#gateErr").textContent = t("errLvl"); return; }
+    $("#gateErr").textContent = "";
+    S.setProfile(name, lvl);
+    showWall(true);
+  });
+
+  function showWall(scroll) {
+    $("#gate").classList.add("hidden");
+    $("#wall").classList.remove("hidden");
+    renderWall();
+    if (scroll) $("#wall").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  /* ---------- wall ---------- */
+  function renderWall() {
+    const picks = S.getPicks(), mine = S.myPick();
+    $("#openPass").classList.toggle("hidden", !mine);
+    const host = $("#floors");
+    host.innerHTML = "";
+    for (let f = 0; f < 3; f++) {
+      const floor = document.createElement("div");
+      floor.className = "floor";
+      floor.innerHTML = `<div class="floor-label">${t("floor")(f + 1)}</div><div class="row"></div>`;
+      const row = $(".row", floor);
+      CAST.slice(f * 3, f * 3 + 3).forEach(c => {
+        const isMine = mine && mine.charId === c.id;
+        const takenBy = !isMine && picks[c.id];
+        const b = document.createElement("button");
+        b.className = "store" + (isMine ? " open mine" : "") + (takenBy ? " taken" : "");
+        b.dataset.id = c.id;
+        b.setAttribute("aria-label", `${c.num} ${c[lang].title}` + (takenBy ? ` · ${t("takenBy")(takenBy)}` : "") + (isMine ? ` · ${t("mine")}` : ""));
+        b.innerHTML = `
+          <div class="sign"><span class="n">${c.num}</span><span class="t">${esc(c[lang].title)}</span></div>
+          <div class="bay">
+            <img src="art/${c.num}-s.webp" alt="" loading="lazy">
+            <div class="shutter"></div>
+            ${takenBy ? `<span class="tag-taken">${esc(t("takenBy")(takenBy))}</span>` : ""}
+            ${isMine ? `<span class="tag-mine">${esc(t("mine"))}</span>` : ""}
+          </div>`;
+        b.addEventListener("click", () => openStore(b, c));
+        row.appendChild(b);
+      });
+      host.appendChild(floor);
+    }
+  }
+
+  function openStore(btn, c) {
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (btn.classList.contains("open") || reduce) return openDossier(c.id);
+    btn.classList.add("open");
+    setTimeout(() => openDossier(c.id), 520);
+  }
+
+  /* ---------- overlays ---------- */
+  function openOv(id) {
+    lastFocus = document.activeElement;
+    const ov = $("#" + id);
+    ov.classList.add("open");
+    ov.scrollTop = 0;
+    document.body.style.overflow = "hidden";
+    setTimeout(() => { const f = ov.querySelector(".dcta .btn, .side, .pass-actions .btn, .close"); f && f.focus({ preventScroll: true }); }, 30);
+  }
+  function closeOv(id) {
+    $("#" + id).classList.remove("open");
+    if (!document.querySelector(".ov.open")) document.body.style.overflow = "";
+    if (id === "dossierOv") renderWall();           // drop the raised shutter again
+    lastFocus && lastFocus.focus && lastFocus.focus({ preventScroll: true });
+  }
+  document.querySelectorAll(".ov").forEach(ov => {
+    ov.addEventListener("click", (e) => { if (e.target === ov || e.target.closest("[data-close]")) closeOv(ov.id); });
+  });
+  $("#dossierOv").addEventListener("scroll", () => {
+    $(".dossier").classList.toggle("scrolled", $("#dossierOv").scrollTop > 80);
+  }, { passive: true });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const open = [...document.querySelectorAll(".ov.open")].pop();
+    open && closeOv(open.id);
+  });
+
+  /* ---------- dossier ---------- */
+  function openDossier(id) { pendingId = id; renderDossier(id); openOv("dossierOv"); }
+
+  function renderDossier(id) {
+    const c = byId(id), L = c[lang], picks = S.getPicks(), mine = S.myPick();
+    const isMine = mine && mine.charId === id, takenBy = !isMine && picks[id];
+    const statsHtml = c.stats.map((v, i) => {
+      const cls = v === null ? "" : v === c.strong ? "hi" : v === c.weak ? "lo" : "";
+      const he = ["כוח","זריזות","חוסן","תבונה","חוכמה","כריזמה"][i];
+      const n = v === null ? 0 : Math.max(0, Math.min(10, v - 8));
+      return `<div class="stat ${cls}"><div class="lbl"><span>${lang === "he" ? he : STAT_EN[i]}</span><small>${lang === "he" ? STAT_EN[i] : ""}</small></div>
+        <div class="v">${v === null ? "?" : v}</div><div class="bar">${Array.from({length:10},(_,j)=>`<i class="${j < n ? "on" : ""}"></i>`).join("")}</div></div>`;
+    }).join("");
+    let link = "";
+    if (c.link) {
+      const o = byId(c.link);
+      link = `<div class="dsec"><div class="link-note"><img src="art/${o.num}-s.webp" alt="">
+        <div><b>${t("linkNote")}</b> ${esc(t("linkSister")(o[lang].name))} · <button data-goto="${o.id}">${t("linkOpen")}</button></div></div></div>`;
+    }
+    let cta;
+    if (isMine) cta = `<button class="btn btn-ink" data-act="pass">${t("isMine")}</button>`;
+    else if (takenBy) cta = `<div class="taken-note">${esc(t("takenNote")(takenBy))}</div>`;
+    else cta = `<button class="btn btn-ink" data-act="take">${mine ? t("takeSwitch") : t("take")}</button>`;
+
+    $("#dossier").innerHTML = `
+      <div class="dhead"><span>${t("dFile")(c.num)}</span><span>${t("dClass")}</span></div>
+      <div class="dphoto"><span class="clip"></span><img src="art/${c.num}.webp" alt="${esc(L.name)}"><span class="redact">${t("photoTag")}</span></div>
+      <div class="dtitle">
+        <div class="en">${esc(c.nameEn)}</div>
+        <div class="nm" id="dName">${esc(L.name)}</div>
+        <div class="role">${esc(L.title)}</div>
+        <div class="cls">${esc(L.race)} · ${esc(L.cls)}</div>
+      </div>
+      <div class="dsec"><h3>${t("secBio")}</h3><p>${esc(L.bio)}</p></div>
+      <div class="dsec"><h3>${t("secKnown")}</h3><div class="facts">
+        <div><b>${t("factQuote")}</b>${esc(L.quote)}</div>
+        <div class="risk"><b>${t("factRisk")}</b>${esc(L.caution)}</div></div></div>
+      <div class="dsec"><h3>${t("secFocus")}</h3><div class="tags">${L.focus.map(f=>`<span>${esc(f)}</span>`).join("")}</div></div>
+      <div class="dsec"><h3>${t("secAbility")}</h3><div class="ability">
+        <div class="an">${esc(L.abilityTitle)}</div><div class="ae">${esc(c.ability)}</div><p>${esc(L.desc)}</p></div></div>
+      <div class="dsec"><h3>${t("secStats")}</h3><div class="stats">${statsHtml}</div>
+        <div class="vitals"><span>${t("hp")}<b>${c.hp}</b></span><span>${t("ac")}<b>${esc(c.ac)}</b></span></div></div>
+      ${link}
+      <div class="dcta"><button class="more" type="button" data-more><span>${t("more")}</span><span class="arr" aria-hidden="true">↓</span></button>${cta}</div>`;
+    $(".dossier").classList.remove("scrolled");
+    $("[data-more]", $("#dossier")).addEventListener("click", () => {
+      const sec = $(".dsec", $("#dossier"));
+      $("#dossierOv").scrollTo({ top: sec.getBoundingClientRect().top + $("#dossierOv").scrollTop - 70, behavior: "smooth" });
+    });
+
+    const go = $("[data-goto]", $("#dossier"));
+    go && go.addEventListener("click", () => { pendingId = go.dataset.goto; renderDossier(pendingId); $("#dossierOv").scrollTop = 0; });
+    const act = $("[data-act]", $("#dossier"));
+    act && act.addEventListener("click", () => act.dataset.act === "pass" ? (closeOv("dossierOv"), openPass(false)) : startTake(id));
+  }
+
+  function startTake(id) {
+    const mine = S.myPick(), c = byId(id);
+    if (mine && mine.charId !== id) {
+      const from = byId(mine.charId);
+      if (!confirm(t("confirmSwitch")(from[lang].title, c[lang].title))) return;
+    }
+    pendingId = id;
+    closeOv("dossierOv");
+    openOv("sideOv");
+  }
+
+  document.querySelectorAll("[data-side]").forEach(b => b.addEventListener("click", () => {
+    const p = S.getProfile(); if (!p || !pendingId) return;
+    const mine = S.myPick();
+    const res = (mine && mine.charId === pendingId) ? { ok: true } : S.claim(pendingId, p.name);
+    if (!res.ok) { closeOv("sideOv"); toast(t("takenNote")(res.takenBy)); renderWall(); return; }
+    if (mine && mine.charId !== pendingId) S.release(mine.charId);
+    S.setMyPick(pendingId, p.name);
+    S.setSide(b.dataset.side);
+    closeOv("sideOv");
+    renderWall();
+    openPass(true);
+  }));
+
+  /* ---------- pass ---------- */
+  function openPass(fresh) { renderPass(fresh); openOv("passOv"); }
+
+  function renderPass(fresh) {
+    const p = S.getProfile(), mine = S.myPick();
+    if (!p || !mine) return;
+    const c = byId(mine.charId), L = c[lang], side = p.side || "open";
+    $("#passWrap").innerHTML = `
+      <div class="pass ${fresh ? "fresh" : ""}">
+        <div class="pass-top"><img src="logo.png" alt="Oy.Vey"><span class="lbl">${t("passKicker")}</span></div>
+        <div class="pass-photo"><img src="art/${c.num}-s.webp" alt="${esc(L.name)}">
+          <div><div class="lbl">${t("passAgent")}</div><div class="agent" id="passAgent">${esc(p.name)}</div></div></div>
+        <div style="margin-top:14px"><div class="lbl">${t("passCover")}</div>
+          <div class="cover">${esc(L.title)}</div><div class="covername">${esc(L.name)} · ${esc(L.cls)}</div></div>
+        <div class="pass-rows">
+          <div><div class="lbl">${t("passSide")}</div><span class="sideval ${side}">${t("sideName")[side]}</span></div>
+          <div><div class="lbl">${t("passLvl")}</div>${t("lvlName")[p.level] || ""}</div>
+        </div>
+        <div class="barcode" aria-hidden="true"></div>
+        <span class="stamp">${t("stampOk")}</span>
+      </div>
+      <p class="pass-note">${t("passNote")}</p>
+      <div class="pass-actions">
+        <a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(t("shareText")(L.title) + " " + URL_SELF)}">${t("share")}</a>
+        ${TICKET_URL ? `<a class="btn btn-cyan" target="_blank" rel="noopener" href="${TICKET_URL}">${t("tickets")}</a>` : ""}
+        <button class="btn btn-ghost" data-pa="change">${t("change")}</button>
+        <button class="btn btn-ghost" data-pa="back">${t("back")}</button>
+      </div>`;
+    $('[data-pa="back"]', $("#passWrap")).addEventListener("click", () => closeOv("passOv"));
+    $('[data-pa="change"]', $("#passWrap")).addEventListener("click", () => {
+      S.release(mine.charId);
+      closeOv("passOv");
+      renderWall();
+      toast(t("released"));
+    });
+  }
+  $("#openPass").addEventListener("click", () => openPass(false));
+
+  /* ---------- misc ---------- */
+  let toastT;
+  function toast(msg) {
+    const el = $("#toast"); el.textContent = msg; el.classList.add("show");
+    clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), 2600);
+  }
+  $("#langBtn").addEventListener("click", () => {
+    lang = lang === "he" ? "en" : "he";
+    try { localStorage.setItem("oyvey_lang", lang); } catch (e) {}
+    applyLang();
+  });
+  S.onPicksChange(renderWall);
+
+  applyLang();
+  const prof = S.getProfile();
+  if (prof) {
+    $("#nameIn").value = prof.name;
+    showWall(false);
+  }
+})();
+</script>
+</body>
+</html>
